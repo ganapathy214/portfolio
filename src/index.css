@@ -1,0 +1,128 @@
+@import "tailwindcss";
+/* Optional: Smooth Scroll */
+html {
+  scroll-behavior: smooth;
+}
+
+:root {
+  /* font-family: system-ui, Avenir, Helvetica, Arial, sans-serif; */
+  line-height: 1.5;
+  font-weight: 400;
+  font-family: "Lato", "Ubuntu", sans-serif;
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  cursor: none !important;
+  --primary-oklch: oklch(68.5% 0.169 237.323);
+  user-select: none;
+}
+
+a {
+  font-weight: 500;
+  color: transparent;
+  text-decoration: inherit;
+}
+a:hover {
+  color: transparent;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+.primary_button,
+.secondary_button {
+  border-width: 1px;
+  border-style: solid;
+}
+
+.primary_button {
+  background-color: var(--primary-oklch);
+  color: #1a1a1a;
+  border-color: transparent;
+}
+
+.primary_button:hover {
+  background-color: #1a1a1a;
+  color: var(--primary-oklch);
+  border-color: var(--primary-oklch);
+}
+
+.secondary_button {
+  background-color: #1a1a1a;
+  color: var(--primary-oklch);
+  border-color: var(--primary-oklch);
+}
+
+.secondary_button:hover {
+  background-color: var(--primary-oklch);
+  color: #1a1a1a;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+  a:hover {
+    color: #747bff;
+  }
+  button {
+    background-color: #f9f9f9;
+  }
+}
+
+@keyframes infinite-scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-infinite-scroll {
+  animation: infinite-scroll 25s linear infinite;
+}
+
+.perspective {
+  perspective: 1500px;
+}
+.backface-hidden {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+.transform-style-preserve-3d {
+  transform-style: preserve-3d;
+}
+.rotate-y-180 {
+  transform: rotateY(180deg);
+}
