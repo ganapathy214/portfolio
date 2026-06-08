@@ -4,6 +4,7 @@ import React, { useRef, useState } from "react";
 import { CiLocationOn, CiMail, CiPhone } from "react-icons/ci";
 import ShinyText from "../common/ShinyText";
 import SectionLayout from "../layout/SectionLayout";
+import { CONTACT_INFO } from "../const";
 
 const ContactInfoCard = ({ icon, label, value, delay }) => {
   return (
@@ -13,13 +14,17 @@ const ContactInfoCard = ({ icon, label, value, delay }) => {
       transition={{ duration: 0.6, delay }}
       className="group relative cursor-pointer overflow-hidden bg-white/10 px-6 pt-10 pb-8 shadow-xl ring-1 ring-sky-500/30 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl rounded-lg"
     >
-      <span className="absolute top-12 z-0 h-20 w-20 rounded-full bg-sky-500 transition-all duration-300 group-hover:scale-[10]" />
       <div className="relative z-10 mx-auto max-w-md">
         <div className="flex gap-10 items-center">
-          <span className="grid h-20 w-20 place-items-center rounded-full bg-sky-500 transition-all duration-300 group-hover:bg-white group-hover:text-sky-500">
-            {icon}
-          </span>
-          <div className="space-y-4 pt-5 leading-7 transition-all duration-300 group-hover:text-black">
+          <div className="relative h-20 w-20 flex-shrink-0">
+            {/* Background hover expansion circle, perfectly aligned with the icon */}
+            <span className="absolute inset-0 -z-10 rounded-full bg-sky-500 transition-all duration-300 group-hover:scale-[15]" />
+            {/* Icon circle */}
+            <span className="relative z-10 grid h-full w-full place-items-center rounded-full bg-sky-500 transition-all duration-300 group-hover:bg-white group-hover:text-sky-500">
+              {icon}
+            </span>
+          </div>
+          <div className="relative z-10 space-y-4 pt-5 leading-7 transition-all duration-300 group-hover:text-black">
             <div className="text-2xl font-semibold">{label}</div>
             <div>{value}</div>
           </div>
@@ -40,7 +45,7 @@ const Contact = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const mailtoLink = `mailto:info@example.com?subject=${encodeURIComponent(
+    const mailtoLink = `mailto:${CONTACT_INFO.email}?subject=${encodeURIComponent(
       formData.subject
     )}&body=${encodeURIComponent(
       `Name: ${formData.name}\nEmail: ${formData.email}\n\n${formData.message}`
@@ -57,19 +62,19 @@ const Contact = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
         <ContactInfoCard
           label="Address"
-          value="Coimbatore, Tamil Nadu, India"
+          value={CONTACT_INFO.address}
           delay={0.1}
           icon={<CiLocationOn size={40} />}
         />
         <ContactInfoCard
           label="Phone"
-          value="+91 8778144579"
+          value={CONTACT_INFO.phone}
           delay={0.2}
           icon={<CiPhone size={40} />}
         />
         <ContactInfoCard
           label="Email"
-          value="info@example.com"
+          value={CONTACT_INFO.email}
           delay={0.3}
           icon={<CiMail size={40} />}
         />
@@ -78,7 +83,7 @@ const Contact = () => {
       <div className="flex flex-col md:flex-row gap-10">
         <motion.iframe
           title="Google Maps"
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d125322.50873824842!2d76.967235!3d11.013968899999998!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ba859af2f971cb5%3A0x2fc1c81e183ed282!2sCoimbatore%2C%20Tamil%20Nadu!5e0!3m2!1sen!2sin!4v1750425272393!5m2!1sen!2sin"
+          src={CONTACT_INFO.googleMapsUrl}
           className="w-full md:w-1/2 rounded border"
           allowFullScreen=""
           loading="lazy"
@@ -153,4 +158,4 @@ const Contact = () => {
   );
 };
 
-export default Contact;
+export default React.memo(Contact);

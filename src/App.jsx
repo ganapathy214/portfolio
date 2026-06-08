@@ -2,7 +2,7 @@ import "./App.css";
 
 import { useEffect, useRef, useState } from "react";
 import CustomCursor from "./common/CustomCursor";
-// import Particles from "./common/Particles";
+import Particles from "./common/Particles";
 import Sidebar from "./components/Sidebar";
 import { sidebarItems } from "./const";
 import About from "./sections/About";
@@ -17,56 +17,62 @@ import { motion } from "framer-motion";
 
 export default function App() {
   const [activeSection, setActiveSection] = useState("Home");
-  const [scrollProgress, setScrollProgress] = useState(0);
   const mainRef = useRef(null);
-  const cursorRef = useRef(null);
+  const beamFillRef = useRef(null);
 
   useEffect(() => {
     const mainEl = mainRef.current;
     if (!mainEl) return;
 
+    // Cache the section elements on mount to avoid document.getElementById queries on scroll
+    const cachedSections = sidebarItems.map((item) => {
+      const id = item.href.replace("#", "");
+      const el = document.getElementById(id);
+      return { name: item.name, href: item.href, el };
+    }).filter(item => item.el);
+
     const handleScroll = () => {
       const scrollTop = mainEl.scrollTop;
-      const sectionOffsets = sidebarItems.map((item) => {
-        const id = item.href.replace("#", "");
-        const el = document.getElementById(id);
-        if (!el) return { name: item.name, offset: Infinity };
-        // Offset relative to the scroll container
-        const offset = Math.abs(el.offsetTop - scrollTop);
-        // Only consider sections above or near the top
-        return { name: item.name, offset, el };
+
+      // 1. Mutate tracking beam directly to bypass React render cycle
+      const scrollHeight = mainEl.scrollHeight - mainEl.clientHeight;
+      const progress = scrollHeight > 0 ? scrollTop / scrollHeight : 0;
+      if (beamFillRef.current) {
+        beamFillRef.current.style.height = `${Math.max(progress * 100, 5)}%`;
+      }
+
+      if (cachedSections.length === 0) return;
+
+      // 2. Find the active section using cached offsets
+      const sectionOffsets = cachedSections.map((sec) => {
+        const offset = Math.abs(sec.el.offsetTop - scrollTop);
+        return { name: sec.name, href: sec.href, offset };
       });
-      // Find the section with the smallest offset (closest to top)
+
       const closest = sectionOffsets.reduce((a, b) =>
         a.offset < b.offset ? a : b
       );
-      setActiveSection(closest.name);
-      // Update URL hash
-      const item = sidebarItems.find((i) => i.name === closest.name);
-      if (item) window.history.replaceState(null, "", item.href);
 
-      // Calculate scroll progress
-      const scrollHeight = mainEl.scrollHeight - mainEl.clientHeight;
-      const progress = scrollHeight > 0 ? scrollTop / scrollHeight : 0;
-      setScrollProgress(progress);
+      // 3. Only update state when section transitions occur
+      setActiveSection((prev) => {
+        if (prev !== closest.name) {
+          window.history.replaceState(null, "", closest.href);
+          return closest.name;
+        }
+        return prev;
+      });
     };
 
     mainEl.addEventListener("scroll", handleScroll, { passive: true });
-    handleScroll(); // Initial check
+    
+    const initTimeout = setTimeout(() => {
+      handleScroll();
+    }, 100);
 
-    return () => mainEl.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  useEffect(() => {
-    const handleMouseMove = (e) => {
-      if (cursorRef.current) {
-        cursorRef.current.style.transform = `translate3d(${e.clientX - 10}px, ${
-          e.clientY - 10
-        }px, 0)`;
-      }
+    return () => {
+      mainEl.removeEventListener("scroll", handleScroll);
+      clearTimeout(initTimeout);
     };
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
   }, []);
 
   const handleSidebarClick = (item) => {
@@ -100,8 +106,8 @@ export default function App() {
 
   return (
     <div className="relative min-h-screen flex flex-col md:flex-row bg-black">
-      <CustomCursor ref={cursorRef} />
-      {/* <div
+      <CustomCursor />
+      <div
         className="fixed inset-0 w-full h-full -z-10"
         style={{
           backgroundColor: "black",
@@ -119,7 +125,7 @@ export default function App() {
           disableRotation={false}
           style={{ width: "100%", height: "100%" }}
         />
-      </div> */}
+      </div>
 
       {/* Tracking Beam */}
       <div
@@ -127,10 +133,11 @@ export default function App() {
         onClick={handleBeamClick}
       >
         <div
+          ref={beamFillRef}
           className="absolute left-0 w-full bg-sky-500 rounded-full transition-all duration-200"
           style={{
             top: 0,
-            height: `${Math.max(scrollProgress * 100, 5)}%`,
+            height: "5%",
           }}
         />
       </div>
@@ -183,9 +190,6 @@ export default function App() {
           <section id="about">
             <About />
           </section>
-          {/* <section id="personal">
-            <Summary />
-          </section> */}
           <section id="skills">
             <Skills />
           </section>
@@ -195,9 +199,6 @@ export default function App() {
           <section id="certification">
             <Certification />
           </section>
-          {/* <section id="testimonials">
-            <Testimonials />
-          </section> */}
           <section id="journey">
             <Journey />
           </section>

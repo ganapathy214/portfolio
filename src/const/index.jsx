@@ -29,8 +29,6 @@ import TypescriptIcon from "../assets/stacks/basics/ts.svg";
 
 import NextIcon from "../assets/stacks/fe/nextjs.svg";
 import ReactNativeIcon from "../assets/stacks/fe/react-native.svg";
-import ReactNativeRouterIcon from "../assets/stacks/fe/react-navigation.svg";
-import ReactRouterIcon from "../assets/stacks/fe/react-router.svg";
 import ReactIcon from "../assets/stacks/fe/react.svg";
 import ReduxIcon from "../assets/stacks/fe/redux.svg";
 import ViteIcon from "../assets/stacks/fe/vite.svg";
@@ -156,28 +154,33 @@ export const framerVariants = [
 export const sidebarItems = [
   { name: "Home", href: "#home", icon: HiSquares2X2 },
   { name: "About", href: "#about", icon: HiIdentification },
-  // { name: "Summary", href: "#summary", icon: HiUserCircle },
   { name: "Skills", href: "#skills", icon: HiCog },
   { name: "Projects", href: "#projects", icon: HiCodeBracket },
   { name: "Certification", href: "#certification", icon: GrCertificate },
-  // { name: "Testimonials", href: "#testimonials", icon: HiRocketLaunch },
   { name: "Journey", href: "#journey", icon: HiRocketLaunch },
   { name: "Contact", href: "#contact", icon: HiEnvelope },
 ];
 
 // About
 export const PROFESSIONAL_TITLES = [
-  "Software Developer",
-  "Fullstack JS Developer",
+  "Senior Frontend Developer",
+  "Senior Full Stack Developer",
+  "React & Next.js Specialist",
 ];
 
 export const SOCIAL_LINKS = [
   {
-    href: "https://www.linkedin.com/in/ganapathy-natarajan-300890248/",
+    href: "https://www.linkedin.com/in/gananata/",
     icon: "FaLinkedinIn",
     label: "LinkedIn",
+    containerClass: "containerThree",
   },
-  // Add more if needed
+  {
+    href: "https://github.com/ganapathy214",
+    icon: "FaGithub",
+    label: "Github",
+    containerClass: "containerFive",
+  },
 ];
 
 //Skills
@@ -221,11 +224,8 @@ export const skills = [
   { name: "Bootstrap", icon: BootstrapIcon },
 
   { name: "React", icon: ReactIcon },
-  // { name: "React Router", icon: ReactRouterIcon },
-  // { name: "Redux", icon: ReduxIcon },
   { name: "Next.js", icon: NextIcon },
   { name: "React Native", icon: ReactNativeIcon },
-  // { name: "React Navigation", icon: ReactNativeRouterIcon },
   { name: "Vite", icon: ViteIcon },
   { name: "Ant Design", icon: AntDesignIcon },
   { name: "Chakra UI", icon: ChakraIcon },
@@ -257,7 +257,7 @@ export const skillCategories = [
     label: "Frontend Development",
     content: (
       <div className="h-75 w-full sm:w-[400px] md:w-[600px] lg:w-[700px] max-w-full transition">
-        <div className="flex flex-wrap gap-2 mb-4">
+        <div className="flex flex-wrap gap-2 mb-4 justify-center">
           {skills
             .filter((s) =>
               [
@@ -283,23 +283,23 @@ export const skillCategories = [
         <ul className="list-disc pl-6 space-y-2 text-white text-wrap">
           <li>
             <strong className="text-sky-400">Performance Optimization:</strong>{" "}
-            Lighthouse audits, lazy loading, code splitting
+            Lazy loading, dynamic imports, memoization, virtualization, bundle optimization, SSR/SSG/ISR, rendering optimization.
+          </li>
+          <li>
+            <strong className="text-sky-400">Modern Frontend & Mobile:</strong>{" "}
+            React.js, Next.js App Router, React Native, Expo, Micro Frontend Architecture.
           </li>
           <li>
             <strong className="text-sky-400">Scalable UI Systems:</strong>{" "}
-            Component-driven architecture using design systems
+            Storybook, Tailwind CSS, Material UI, Ant Design, Styled Components, Shadcn UI.
           </li>
           <li>
-            <strong className="text-sky-400">Accessibility (a11y):</strong>{" "}
-            WCAG-compliant, screen-reader & keyboard support
+            <strong className="text-sky-400">State Management:</strong>{" "}
+            Redux Toolkit, Redux-Saga, Zustand, TanStack Query.
           </li>
           <li>
-            <strong className="text-sky-400">Responsive Design:</strong>{" "}
-            Mobile-first, cross-device consistency
-          </li>
-          <li>
-            <strong className="text-sky-400">State Management:</strong> Redux,
-            Context API, Zustand
+            <strong className="text-sky-400">Best Practices:</strong>{" "}
+            Component-driven design, accessibility (WCAG), unit/E2E testing (Jest), Agile/Scrum.
           </li>
         </ul>
       </div>
@@ -310,7 +310,7 @@ export const skillCategories = [
     label: "Backend Development",
     content: (
       <div className="h-75 w-full sm:w-[400px] md:w-[600px] lg:w-[700px] max-w-full transition">
-        <div className="flex flex-wrap gap-2 mb-4">
+        <div className="flex flex-wrap gap-2 mb-4 justify-center">
           {skills
             .filter((s) =>
               [
@@ -336,24 +336,19 @@ export const skillCategories = [
         </div>
         <ul className="list-disc pl-6 space-y-2 text-white text-base">
           <li>
-            <strong className="text-sky-400">API Design:</strong> RESTful and
-            GraphQL, versioned architecture
+            <strong className="text-sky-400">Runtime & Frameworks:</strong> Node.js, Express.js for scalable backend services.
           </li>
           <li>
-            <strong className="text-sky-400">Authentication:</strong> OAuth2,
-            JWT, Google IAP, OpenID Connect
+            <strong className="text-sky-400">API Design & Security:</strong> RESTful APIs, protected routing, Role-Based Access Control (RBAC).
           </li>
           <li>
-            <strong className="text-sky-400">Scalability:</strong>{" "}
-            Microservices, load balancing, rate limiting
+            <strong className="text-sky-400">Database Integration:</strong> PostgreSQL, MongoDB, schema design, and query optimization.
           </li>
           <li>
-            <strong className="text-sky-400">Security:</strong> Input
-            validation, token encryption, CORS
+            <strong className="text-sky-400">Third-Party Services:</strong> Payment gateways, SMS/email notifications, Webhooks, Generative AI APIs.
           </li>
           <li>
-            <strong className="text-sky-400">Performance:</strong> Caching,
-            profiling, optimized queries
+            <strong className="text-sky-400">Cloud & DevOps:</strong> AWS (EC2, S3, Lambda), Firebase, CI/CD pipelines (GitHub Actions).
           </li>
         </ul>
       </div>
@@ -364,7 +359,7 @@ export const skillCategories = [
     label: "Database & Data Management",
     content: (
       <div className="h-75 w-full sm:w-[400px] md:w-[600px] lg:w-[700px] max-w-full transition">
-        <div className="flex flex-wrap gap-2 mb-4">
+        <div className="flex flex-wrap gap-2 mb-4 justify-center">
           {skills
             .filter((s) =>
               ["MongoDB", "MySQL", "PostgreSQL", "SQL"].includes(s.name)
@@ -409,7 +404,7 @@ export const skillCategories = [
     label: "Cloud & DevOps",
     content: (
       <div className="h-75 w-full sm:w-[400px] md:w-[600px] lg:w-[700px] max-w-full transition">
-        <div className="flex flex-wrap gap-2 mb-4">
+        <div className="flex flex-wrap gap-2 mb-4 justify-center">
           {skills
             .filter((s) => ["AWS", "Firebase", "Digitalocean"].includes(s.name))
             .map((skill, index) => (
@@ -452,7 +447,7 @@ export const skillCategories = [
     label: "Version Control & Tooling",
     content: (
       <div className="h-75 w-full sm:w-[400px] md:w-[600px] lg:w-[700px] max-w-full transition">
-        <div className="flex flex-wrap gap-2 mb-4">
+        <div className="flex flex-wrap gap-2 mb-4 justify-center">
           {skills
             .filter((s) => ["Git", "Bitbucket", "Azure"].includes(s.name))
             .map((skill, index) => (
@@ -495,7 +490,7 @@ export const skillCategories = [
     label: "Automation Testing",
     content: (
       <div className="h-75 w-full sm:w-[400px] md:w-[600px] lg:w-[700px] max-w-full transition">
-        <div className="flex flex-wrap gap-2 mb-4">
+        <div className="flex flex-wrap gap-2 mb-4 justify-center">
           {skills
             .filter((s) => ["Jest", "Playwright"].includes(s.name))
             .map((skill, index) => (
@@ -596,166 +591,272 @@ export const skillCategories = [
 // Projects
 export const projects = [
   {
-    title: "Maritime Vessels and Machinery Services",
+    title: "Health Care Application",
     synopsis:
-      "A web-based internal tool for managing the machinery lifecycle of maritime vessels, including servicing schedules, component tracking, and documentation. Designed to support ship management companies, the application enables efficient maintenance logging, spare part ordering, and operational reporting. I developed the frontend using React and Tailwind, introducing a clean tab-based UI and searchable tables. Worked closely with marine engineers to understand workflows and translated them into actionable UI components. Integrated PDF export, dynamic service timelines, and access-level management. This platform helped reduce machinery downtime and streamlined audits for vessel maintenance records.",
-    image: mms,
-    category: "Frontend (Web)",
-    duration: "Mar 25 - Current",
-    role: "Lead Frontend Developer",
-    client: "England",
-    teamSize: 2,
-    stacks: ["React", "Material UI", "Swagger"],
-    responsibilities: [
-      "Built internal tools for asset and service management.",
-      "Implemented reporting features for ship machinery.",
-      "Worked closely with stakeholders to gather requirements.",
-      "Maintained and updated the platform for new features.",
-    ],
-  },
-  {
-    title: "Health and Wellness Platform",
-    synopsis:
-      "A data-driven health dashboard that offers personalized tracking for users focusing on fitness, mental well-being, and lifestyle habits. The platform consolidates inputs from wearables, questionnaires, and user logs into intuitive charts and progress reports. I built the entire UI layer using React, integrated multiple third-party APIs, and implemented a modular component system for personalization. The platform includes reminders, trend analysis, and gamification elements. Through continuous collaboration with UX designers and stakeholders, we ensured maximum user engagement. This product significantly improved user adherence to health plans and received positive feedback from early adopters in beta trials.",
+      "An Integrated Health-Tech Platform designed to connect patients, doctors, and pharmacies through scalable web and mobile applications supporting online medicine ordering, virtual consultations, appointment scheduling, and home healthcare services with secure and responsive user experiences.",
     image: wms,
-    category: "Full Stack (Web) + Automation",
-    duration: "Feb 25 - Current",
-    role: "Team Lead",
-    client: "India",
-    teamSize: 3,
-    stacks: ["React", "Next JS", "Node.js", "Express.js", "MongoDB"],
-    responsibilities: [
-      "Developed personalized dashboards for health tracking.",
-      "Implemented monitoring features for user wellness data.",
-      "Collaborated with designers to enhance user experience.",
-      "Integrated third-party APIs for health data synchronization.",
-    ],
-  },
-  {
-    title: "Banking and Financial Services Platform",
-    synopsis:
-      "A secure financial services dashboard catering to banking institutions for managing customers, transactions, and compliance workflows. I developed user-centric dashboards for KYC, customer risk profiles, and automated alerts for suspicious transactions. My role focused on building reusable frontend modules with React, ensuring compliance with accessibility standards and integrating automation tools. I closely worked with backend teams to consume secure APIs and implemented role-based access throughout the system. The platform reduced manual data handling, improved audit readiness, and supported financial advisors in providing more personalized insights.",
-    image: bms,
-    category: "Frontend (Web) + Automation",
-    duration: "Sep 24 - Feb 25",
-    role: "Frontend Developer",
-    client: "USA",
-    teamSize: 4,
-    stacks: ["React", "Material", "Jest"],
-    responsibilities: [
-      "Developed dashboards for customer and transaction management.",
-      "Implemented automation tools to streamline financial operations.",
-      "Collaborated with cross-functional teams for feature delivery.",
-      "Ensured compliance with security and data privacy standards.",
-    ],
-  },
-  {
-    title: "AI-powered Cybersecurity Platform",
-    synopsis:
-      "A cutting-edge LLM-driven cybersecurity solution designed for real-time detection, log enrichment, and intelligent alerting of malicious threats. The frontend offers intuitive dashboards for SOC analysts to visualize anomalies, investigate incidents, and act on alerts. I built the UI with React, Tailwind, and TypeScript, incorporating advanced filtering, real-time stream views, and audit trails. Collaborated with DevSecOps and LLM teams to visualize enriched logs and ensure UI scalability under data-intensive workloads. Delivered critical modules for log analytics and integrated them with secure cloud storage. The platform enhanced threat triage speed and reduced alert fatigue for enterprise clients.",
-    image: network_security,
-    category: "Frontend (Web)",
-    duration: "Jun 24 - Sep 24",
-    role: "Frontend Developer",
+    category: "Full Stack (Web + Mobile)",
+    platform: "Web & Mobile",
+    duration: "Feb 2025 - May 2026",
+    role: "Full Stack Team Lead",
     client: "India",
     teamSize: 5,
-    stacks: ["Next.JS", "shadcn/ui"],
+    stacks: [
+      "React.js",
+      "Next.js",
+      "React Native",
+      "TypeScript",
+      "JavaScript",
+      "Tailwind CSS",
+      "Redux Toolkit",
+      "React Query",
+      "Micro Frontend Architecture",
+      "Storybook",
+      "REST APIs",
+      "AWS (EC2, S3)",
+      "DigitalOcean",
+      "Git",
+      "GitHub Actions",
+      "CI/CD",
+      "Generative AI",
+      "LLM Integration",
+    ],
     responsibilities: [
-      "Developed a responsive UI using React.js, Tailwind CSS, and TypeScript.",
-      "Implemented log enrichment, filtering, and cloud storage.",
-      "Integrated and trained LLM models to detect security threats.",
-      "Optimized log processing and ensured scalable architecture.",
-      "Mentored frontend team members and led feature delivery.",
+      "Developed scalable and high-performance web and mobile applications using React.js, Next.js, React Native, TypeScript, and Tailwind CSS with reusable component architecture and Micro Frontend implementation.",
+      "Built responsive healthcare modules including appointment scheduling, virtual consultations, medicine ordering, patient dashboards, and real-time healthcare workflows across web and mobile platforms.",
+      "Designed reusable UI systems and scalable component libraries using Storybook, improving frontend consistency, maintainability, and development efficiency across applications.",
+      "Optimized frontend and mobile application performance using lazy loading, memoization, dynamic imports, code splitting, SSR, and rendering optimization with Redux Toolkit and React Query.",
+      "Integrated Generative AI / LLM-powered features to enhance healthcare assistance, intelligent workflows, and personalized user experiences.",
+      "Collaborated with UI/UX teams and Agile/Scrum teams while managing frontend deployment workflows using GitHub Actions, AWS, DigitalOcean, and CI/CD automation.",
     ],
   },
   {
-    title: "GenAI-powered Insurance Automation Platform",
+    title: "Maritime Asset & Vessel Management Platform",
     synopsis:
-      "An advanced AI-driven insurance platform focused on automating repetitive workflows such as policy data extraction, form recognition, and decision intelligence. Leveraging GenAI and NLP, it empowers insurers, brokers, and MGAs to streamline underwriting, claims, and reporting. I contributed to building a highly modular frontend architecture using React and Tailwind, integrating seamlessly with custom-built AI APIs. Features included visual policy viewers, approval workflows, and error reduction modules. Collaborated with AI/ML teams on UI feedback loops. This product accelerated claims processing by 50% and eliminated over 60% of manual form errors, improving both accuracy and operational efficiency.",
-    image: fms,
-    category: "Full Stack (Web)",
-    duration: "Sep 23 - Oct 24",
-    role: "Full Stack Developer",
-    client: "London",
-    teamSize: 6,
-    stacks: ["React", "Bootstrap", "Material UI", "Node.js", "AWS"],
-    responsibilities: [
-      "Built components for automation of insurance workflows.",
-      "Integrated AI-driven analysis tools for faster decisions.",
-      "Managed reusable UI modules to scale across teams.",
-      "Delegated and reviewed tasks for timely releases.",
-      "Collaborated with product and data science teams.",
-    ],
-  },
-  {
-    title: "Fleet Management System (SAAS)",
-    synopsis:
-      "A full-stack fleet tracking SaaS platform built to support logistics and vehicle rental businesses in real-time operations. Key features included live GPS tracking, route optimization, vehicle maintenance alerts, and fleet performance dashboards. I implemented the frontend in React and Tailwind, ensuring high performance on both web and mobile devices. Collaborated with backend developers to integrate RESTful services and push notifications. I also built reusable components and introduced lazy loading to enhance performance. The platform helped reduce scheduling conflicts, enabled preventive maintenance alerts, and improved fleet uptime across partner operations.",
-    image: fms,
+      "An enterprise-grade maritime management platform developed to streamline fleet operations, vessel tracking, cargo workflows, and secure document management through scalable web and mobile applications with real-time monitoring and responsive user experiences.",
+    image: mms,
     category: "Frontend (Web + Mobile)",
-    duration: "Jun 23 - Aug 23",
-    role: "Frontend Developer",
-    client: "Australia",
-    teamSize: 3,
-    stacks: ["React", "React Native", "Ant Design"],
+    platform: "Web & Mobile",
+    duration: "Dec 2024 - Jan 2025",
+    role: "Frontend Team Lead",
+    client: "UK",
+    teamSize: 4,
+    stacks: [
+      "React.js",
+      "Next.js",
+      "React Native",
+      "TypeScript",
+      "Tailwind CSS",
+      "Redux Toolkit",
+      "REST APIs",
+      "Storybook",
+      "MongoDB",
+      "Git",
+      "GitHub",
+      "Github actions",
+      "CI/CD",
+      "Agile Scrum",
+      "RBAC",
+      "Cloud Architecture",
+    ],
     responsibilities: [
-      "Developed dashboards for real-time fleet tracking.",
-      "Implemented scheduling and maintenance modules.",
-      "Ensured cross-device compatibility.",
-      "Optimized UI load performance and API sync.",
+      "Developed scalable and responsive web and mobile applications using React.js, Next.js, React Native, and TypeScript for vessel operations, cargo workflows, fleet monitoring, and enterprise asset management systems.",
+      "Built dynamic frontend modules for fleet tracking, cargo management, machinery monitoring, document workflows, and operational dashboards with optimized user experiences across web and mobile platforms.",
+      "Designed reusable UI components and scalable frontend architecture using Storybook, modular component patterns, and responsive design systems to improve maintainability and development consistency.",
+      "Implemented secure frontend integrations with REST APIs, authentication systems, protected workflows, and Role-Based Access Control (RBAC) for enterprise-level operational security.",
+      "Developed advanced document management interfaces supporting document creation, versioning, audit tracking, publishing workflows, access restrictions, and controlled document lifecycle operations.",
+      "Optimized frontend performance using lazy loading, memoization, dynamic imports, SSR, rendering optimization, and efficient state management techniques for large-scale enterprise workflows.",
+      "Collaborated with cross-functional teams in Agile/Scrum environments while managing frontend deployment workflows using AWS Pipelines, GitHub, cloud-native CI/CD automation, and continuous delivery practices.",
     ],
   },
   {
     title: "Learning Management System",
     synopsis:
-      "A robust web-based LMS developed for an educational tech provider offering security training. The platform supports dynamic course management, multi-role access (admin, trainer, learner), and real-time assessment tracking. I led the frontend implementation using React and Tailwind, optimizing for responsiveness and accessibility. Features included interactive topologies, quiz modules, and role-specific dashboards. I collaborated with backend teams to integrate course APIs and deployed the system on AWS with CI/CD. My role also involved mentoring junior developers, overseeing UI consistency, and ensuring cross-browser compatibility. This solution streamlined e-learning for 500+ users and improved onboarding time for trainers by 30%.",
+      "A cybersecurity-focused Learning Management System (LMS) developed to deliver interactive e-learning experiences, hands-on security training, assessments, and simulation-based learning through scalable web and mobile applications with secure user access and centralized learning management.",
     image: lms,
-    category: "Full Stack (Web)",
-    duration: "Jan 23 - May 23",
-    role: "Full Stack Developer",
+    category: "Full Stack (Web + Mobile)",
+    platform: "Web & Mobile",
+    duration: "Apr 2024 - Oct 2024",
+    role: "Senior Frontend Developer",
     client: "India",
-    teamSize: 5,
-    stacks: ["React", "Ant Design", "Node.js", "PostgreSQL"],
+    teamSize: 6,
+    stacks: [
+      "React.js",
+      "Next.js",
+      "React Native",
+      "TypeScript",
+      "JavaScript",
+      "Bootstrap",
+      "Ant Design",
+      "React Query",
+      "REST APIs",
+      "PostgreSQL",
+      "Git",
+      "GitHub",
+      "RBAC",
+      "AWS",
+      "Jest",
+      "Agile Scrum",
+    ],
     responsibilities: [
-      "Led frontend module development and mentoring.",
-      "Built course and exam components with validations.",
-      "Deployed CI/CD pipelines on AWS.",
-      "Handled cross-browser testing and bug fixes.",
+      "Developed scalable and responsive web and mobile applications using React.js, Next.js, React Native, TypeScript, Bootstrap, and Ant Design, delivering interactive learning experiences and cybersecurity training workflows.",
+      "Built dynamic LMS modules including course management, progress tracking, assessment systems, subscription workflows, and simulation-based learning dashboards with responsive and user-friendly interfaces.",
+      "Implemented efficient frontend state management, API integration, and data synchronization using React Query, improving caching strategies, application responsiveness, and real-time user experiences across LMS modules.",
+      "Designed reusable and modular UI components following scalable frontend architecture and component-driven development practices to improve maintainability, consistency, and development efficiency.",
+      "Integrated secure frontend workflows with REST APIs, authentication systems, protected routing, and Role-Based Access Control (RBAC) for secure learner and administrator access management.",
+      "Optimized frontend performance using lazy loading, component optimization, reusable architecture patterns, and efficient rendering techniques for scalable learning platforms.",
+      "Collaborated with UI/UX designers and Agile/Scrum teams through sprint planning, code reviews, debugging, testing, and feature delivery while contributing to frontend quality and continuous application improvements.",
+      "Supported frontend deployment workflows and release management using AWS, GitHub, CI/CD pipelines, version control best practices, and automated deployment processes for reliable application delivery.",
+    ],
+  },
+
+  {
+    title: "Lead Distribution System (SaaS)",
+    synopsis:
+      "A scalable Real Estate Lead Management Platform developed to automate and optimize verified seller lead distribution through mobile-first web and mobile applications with onboarding workflows, real-time communication integrations, and secure API-driven systems.",
+    image: fms,
+    category: "Full Stack (Web + Mobile)",
+    platform: "Web & Mobile",
+    duration: "Nov 2023 - Apr 2024",
+    role: "Senior Frontend Developer",
+    client: "Australia",
+    teamSize: 4,
+    stacks: [
+      "React Native",
+      "React.js",
+      "Next.js",
+      "TypeScript",
+      "Styled Components",
+      "Node.js",
+      "Express.js",
+      "PostgreSQL",
+      "REST APIs",
+      "Git",
+      "GitHub",
+      "SMS Integration",
+      "Email Services",
+      "Webhooks",
+      "Agile Scrum",
+    ],
+    responsibilities: [
+      "Developed scalable mobile-first web and mobile applications using React Native, React.js, Next.js, TypeScript, and Styled Components for lead management and onboarding workflows.",
+      "Built core SaaS modules including lead lifecycle management, sales territory allocation, onboarding workflows, scheduling systems, and investor management dashboards.",
+      "Integrated real-time communication systems using SMS services, email notifications, and webhook integrations to ensure instant lead delivery and workflow synchronization.",
+      "Designed responsive UI components and reusable frontend architecture patterns to improve scalability, maintainability, and user experience consistency across platforms.",
+      "Implemented secure frontend integrations with REST APIs, authentication workflows, protected routing, and role-based operational access controls.",
+      "Optimized application performance using lazy loading, reusable architecture patterns, rendering optimization, and efficient API handling for scalable SaaS workflows.",
+      "Collaborated in Agile/Scrum environments through sprint planning, debugging, testing, feature delivery, and continuous frontend improvements to enhance platform scalability and operational efficiency.",
     ],
   },
   {
-    title: "Weight loss Social platform",
+    title: "WeightLossBuddy",
     synopsis:
-      "A mobile-first social wellness platform tailored for individuals on a weight loss journey. The application enables users to log daily progress, share milestones, and engage with a supportive fitness community. It integrates real-time data tracking, interactive feed features, and user-friendly visualizations to enhance motivation and engagement. Designed with a clean UI and efficient navigation, it supports seamless integration with third-party APIs like fitness wearables. As the sole frontend engineer, I built responsive components in React Native, collaborated on REST API contracts, and implemented state management with Redux. The platform significantly boosted user retention and community participation in closed-group testing.",
+      "WeightLossBuddy - caters to those individuals who want to lose weight and need help. Help in the way of support from others on a similar journey. This app gives you access to a large weight loss community that is ready to give you support, effective weight loss tips, and help you in any way possible to reach your weight loss goal.",
     image: wlb,
-    category: "Frontend (Mobile)",
-    duration: "Nov 22 - Jan 23",
+    category: "Frontend (Web + Mobile)",
+    platform: "Web & Mobile",
+    duration: "Apr 2023 - Sep 2023",
     role: "Frontend Developer",
-    client: "Canada",
+    client: "USA",
     teamSize: 2,
-    stacks: ["React", "React Native", "Bootstrap"],
+    stacks: ["React Native", "React.js", "Redux", "JavaScript", "REST APIs", "Git", "GitHub"],
     responsibilities: [
-      "Developed mobile-friendly UI using React and Tailwind.",
-      "Integrated real-time community interaction features.",
-      "Worked with backend teams to optimize endpoints.",
-      "Ensured smooth performance on mid-tier mobile devices.",
+      "Developed cross-platform mobile and web interfaces using React Native and React.",
+      "Integrated Redux state management to enable real-time updates and seamless user interaction across screens.",
+      "Collaborated on designing screens, navigation flows, and reusable UI components for support groups and activity tracking.",
+      "Optimized application assets and API synchronization to enhance performance on mid-tier mobile devices.",
+    ],
+  },
+  {
+    title: "Cyber Security SaaS Application",
+    synopsis:
+      "This is an LLM platform for networking side usage. It's a product used to find out the cause quickly. In an organization, if some process ran more than a time in a short interval then that was a malicious thing. So we get all the logs from the organization, from the logs we enrich the logs, filter the logs and save it in the cloud so that LLM can use that and return a solution for that particular malicious thing. In future the LLM needs some more prompt then we train them with the details we have as enriched logs.",
+    image: network_security,
+    category: "Full Stack (Web + Mobile)",
+    platform: "Web & Mobile",
+    duration: "Jun 2022 - Apr 2023",
+    role: "Senior Frontend & Mobile Developer",
+    client: "India",
+    teamSize: 5,
+    stacks: ["React Native", "React.js", "TypeScript", "Tailwind CSS", "AWS", "REST APIs", "Git", "GitHub Actions", "CI/CD", "LLM Integration", "Log Processing"],
+    responsibilities: [
+      "Developed cross-platform mobile and web interfaces using React Native and React.",
+      "Implemented secure log enrichment, filtering, and cloud storage workflows.",
+      "Integrated LLM-based analysis for detecting malicious activities.",
+      "Optimized performance for large-scale log processing.",
+      "Led and mentored developers, ensuring on-time delivery.",
+    ],
+  },
+  {
+    title: "Insurance Management System",
+    synopsis:
+      "This platform specializes in insurance software, offering automation for manual tasks like data extraction, AI-driven data analysis to aid decision-making, and improved accuracy. With streamlined workflows, it enhances efficiency for insurers, brokers, and MGAs. Their suite is designed to optimize operations and profitability in the insurance sector. This tech stack provides robust scalability and performance to support the dynamic needs of the insurance industry.",
+    image: fms,
+    category: "Full Stack (Web + Mobile)",
+    platform: "Web & Mobile",
+    duration: "Aug 2021 - May 2022",
+    role: "Tech Lead / Full Stack Developer",
+    client: "India",
+    teamSize: 4,
+    stacks: ["React Native", "React.js", "TypeScript", "MySQL", "NestJS", "REST APIs", "Git", "GitHub", "AI Data Analysis", "Workflow Automation"],
+    responsibilities: [
+      "Built React Native mobile features for insurers and brokers.",
+      "Shared business logic between mobile and web platforms.",
+      "Automated data extraction and AI-assisted analysis workflows.",
+      "Led team execution and enforced clean architecture.",
     ],
   },
 ];
 
 // Journey
-const joiningDate = new Date(2022, 9); // October 2022
+const joiningDate = new Date(2020, 0); // January 2020
 const now = new Date();
 const yearsOfExperience = (now - joiningDate) / (1000 * 60 * 60 * 24 * 365.25);
 
 export const summaryStats = [
-  { value: 6, label: "Happy Clients" },
+  { value: 7, label: "Happy Clients" },
   {
     value: yearsOfExperience.toFixed(1),
     label: "Years of Experience",
     decimals: 1,
   },
-  { value: 10, label: "Projects" },
+  { value: 12, label: "Projects" },
+];
+
+export const timelineData = [
+  {
+    time: "Oct 2022 - Present",
+    title: "Senior Frontend & Full Stack Developer",
+    org: "",
+    location: "Coimbatore, Tamil Nadu.",
+  },
+  {
+    time: "Jan 2020 - Oct 2022",
+    title: "Frontend Developer",
+    org: "",
+    location: "Coimbatore, Tamil Nadu.",
+  },
+  {
+    time: "Aug 2015 - May 2019",
+    title: "BE in Electronics and Communication Engineering",
+    percent: "6.9 CGPA",
+    org: "",
+    location: "Erode, Tamil Nadu.",
+  },
+  {
+    time: "June 2013 - May 2015",
+    title: "Higher Secondary Certificate",
+    percent: "80.83%",
+    org: "",
+    location: "Erode, Tamil Nadu.",
+  },
+  {
+    time: "June 2012 - May 2013",
+    title: "Secondary School Leaving Certificate",
+    percent: "93.2%",
+    org: "",
+    location: "Erode, Tamil Nadu.",
+  },
 ];
 
 export const serviceVarients = [
@@ -906,3 +1007,10 @@ export const certifications = [
     pdfFile: "React .pdf",
   },
 ];
+
+export const CONTACT_INFO = {
+  email: "[EMAIL_ADDRESS]",
+  phone: "[MOBILE]",
+  address: "Coimbatore, Tamil Nadu, India",
+  googleMapsUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d125322.50873824842!2d76.967235!3d11.013968899999998!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ba859af2f971cb5%3A0x2fc1c81e183ed282!2sCoimbatore%2C%20Tamil%20Nadu!5e0!3m2!1sen!2sin!4v1750425272393!5m2!1sen!2sin",
+};

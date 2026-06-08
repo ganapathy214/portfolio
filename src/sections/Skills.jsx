@@ -19,16 +19,16 @@ const ServiceCard = ({ title, description }) => (
   </li>
 );
 
-export default function Skills() {
+const Skills = () => {
   const headerRef = useRef(null);
   const proximityRef = useRef(null);
 
   const skillSlides = skillCategories.map((category) => (
-    <div className="h-full w-full flex items-center" key={category.id}>
-      <div>
+    <div className="h-full w-full flex items-center justify-center" key={category.id}>
+      <div className="flex flex-col items-center justify-center w-full max-w-full">
         <div
           ref={proximityRef}
-          className="text-2xl mb-4 text-sky-400 border-b-4"
+          className="text-2xl mb-6 text-sky-400 border-b-2 border-sky-400/30 pb-2 w-fit mx-auto text-center"
           style={{ position: "relative" }}
         >
           <VariableProximity
@@ -41,7 +41,9 @@ export default function Skills() {
             falloff="linear"
           />
         </div>
-        {category.content}
+        <div className="w-full flex justify-center">
+          {category.content}
+        </div>
       </div>
     </div>
   ));
@@ -61,4 +63,6 @@ export default function Skills() {
       </div>
     </SectionLayout>
   );
-}
+};
+
+export default React.memo(Skills);
