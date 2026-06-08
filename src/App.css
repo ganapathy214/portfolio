@@ -311,7 +311,6 @@
 .socialContainer {
   width: 52px;
   height: 52px;
-  background-color: oklch(68.5% 0.169 237.323);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -319,32 +318,32 @@
   transition-duration: 0.3s;
   border-radius: 30px;
 }
-/* instagram*/
-.containerOne:hover {
+/* Set default brand backgrounds */
+.containerOne {
   background-color: #d62976;
-  transition-duration: 0.3s;
-  transform: scale(1.2);
 }
-/* twitter*/
-.containerTwo:hover {
+.containerTwo {
   background-color: #00acee;
-  transition-duration: 0.3s;
-  transform: scale(1.2);
 }
-/* linkdin*/
-.containerThree:hover {
+.containerThree {
   background-color: #0072b1;
-  color: #fff;
-
-  transition-duration: 0.3s;
-  transform: scale(1.2);
 }
-/* Whatsapp*/
-.containerFour:hover {
+.containerFour {
   background-color: #144d37;
-  color: #ffffff !important;
-  transition-duration: 0.3s;
+}
+.containerFive {
+  background-color: #181717;
+}
+
+/* Hover & Active Effects */
+.socialContainer:hover {
   transform: scale(1.2);
+  transition-duration: 0.3s;
+}
+
+/* Ensure SVG icons are white in all views */
+.socialContainer svg {
+  color: #ffffff !important;
 }
 
 .socialContainer:active {

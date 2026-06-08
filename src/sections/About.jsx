@@ -1,8 +1,9 @@
 //eslint-disable-next-line
 import { motion } from "framer-motion";
 import React, { useRef } from "react";
-import { FaLinkedinIn } from "react-icons/fa";
+import { FaLinkedinIn, FaGithub } from "react-icons/fa";
 import avatar from "../assets/avatar.png";
+import resumePdf from "../assets/resume.pdf";
 
 import ProfileCard from "../common/ProfileCard";
 import { useTypewriter } from "../common/utils/hooks/useTypewriter";
@@ -12,30 +13,30 @@ import { PrimaryButton, SecondaryButton } from "../common/Buttons";
 
 const ICONS = {
   FaLinkedinIn,
-  // Extend with FaInstagram, FaWhatsapp, etc.
+  FaGithub,
 };
 
 const SocialLinks = () => (
   <div className="icon_card flex mt-4">
-    {SOCIAL_LINKS.map(({ href, icon, label }) => {
+    {SOCIAL_LINKS.map(({ href, icon, label, containerClass }) => {
       const IconComponent = ICONS[icon];
       return (
         <a
           key={label}
-          className="socialContainer containerThree"
+          className={`socialContainer ${containerClass}`}
           href={href}
           target="_blank"
           rel="noopener noreferrer"
           aria-label={label}
         >
-          <IconComponent className="text-2xl text-black" />
+          <IconComponent className="text-2xl text-white transition-colors duration-300" />
         </a>
       );
     })}
   </div>
 );
 
-export default function About() {
+const About = () => {
   const headerRef = useRef(null);
   const typewriterText = useTypewriter(PROFESSIONAL_TITLES);
 
@@ -45,8 +46,8 @@ export default function About() {
         {/* ProfileCard (Image) - Show first on mobile */}
         <motion.div className="flex flex-col items-center order-1 md:order-2 mb-6 md:mb-0">
           <ProfileCard
-            name="Ganapathy"
-            title="Software Developer"
+            name="Ganapathy N"
+            title="Senior Frontend & Full Stack Developer"
             avatarUrl={avatar}
             enableTilt={true}
             onContactClick={() => console.log("Contact clicked")}
@@ -55,8 +56,8 @@ export default function About() {
             <PrimaryButton
               onClick={() => {
                 const link = document.createElement("a");
-                link.href = "/src/assets/files/Resume.pdf";
-                link.download = "Resume.pdf";
+                link.href = resumePdf;
+                link.download = "Ganapathy_N_Resume.pdf";
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
@@ -67,8 +68,8 @@ export default function About() {
             <SecondaryButton
               onClick={() => {
                 const link = document.createElement("a");
-                link.href = "/src/assets/files/Resume.pdf";
-                link.download = "Resume.pdf";
+                link.href = resumePdf;
+                link.download = "Ganapathy_N_Resume.pdf";
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
@@ -97,16 +98,13 @@ export default function About() {
           </div>
 
           <p className="text-gray-300 mb-6 text-sm md:text-base leading-relaxed max-w-3xl mx-auto md:mx-0">
-            with expertise in React, Next.js, React Native, Node.js, and modern
-            web technologies. I specialize in building user-friendly
-            applications that solve real-world problems. With a deep
-            understanding of frontend and backend development, state management,
-            API development and integration, Version Contole and Deployement, I
-            can bring your ideas to life.
+            Senior Frontend & Full Stack Developer with 6+ years of experience specializing in React.js, Next.js, React Native, TypeScript, and modern JavaScript ecosystems. I design and build high-performance, accessible, and scalable enterprise web and mobile applications. With hands-on expertise spanning state management (Redux Toolkit, Zustand, React Query), UI systems, backend APIs (Node.js, Express.js), and AWS cloud DevOps architectures, I collaborate to deliver modern solutions aligned with business goals.
           </p>
           <SocialLinks />
         </motion.div>
       </div>
     </SectionLayout>
   );
-}
+};
+
+export default React.memo(About);

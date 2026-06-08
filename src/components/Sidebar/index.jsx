@@ -2,6 +2,7 @@
 import { motion } from "framer-motion";
 import React from "react";
 import { sidebarItems } from "../../const";
+import DecryptedText from "../../common/DecryptedText";
 
 const Sidebar = ({ activeSection, onItemClick }) => {
   return (
@@ -37,7 +38,15 @@ const Sidebar = ({ activeSection, onItemClick }) => {
                   aria-current={isActive ? "page" : undefined}
                 >
                   <item.icon className={iconClasses} />
-                  <span className={textClasses}>{item.name}</span>
+                  <DecryptedText
+                    text={item.name}
+                    className={textClasses}
+                    parentClassName="flex items-center justify-center"
+                    animateOn="hover"
+                    speed={40}
+                    maxIterations={5}
+                    sequential={true}
+                  />
                 </a>
               </div>
             );
@@ -48,4 +57,4 @@ const Sidebar = ({ activeSection, onItemClick }) => {
   );
 };
 
-export default Sidebar;
+export default React.memo(Sidebar);

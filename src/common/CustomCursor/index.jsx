@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 const lerp = (a, b, n) => (1 - n) * a + n * b;
 
@@ -6,21 +6,41 @@ export default function CustomCursor() {
   const cursorRef = useRef(null);
   const mouse = useRef({ x: window.innerWidth / 2, y: window.innerHeight / 2 });
   const pos = useRef({ x: window.innerWidth / 2, y: window.innerHeight / 2 });
+  const [isHovering, setIsHovering] = useState(false);
 
   useEffect(() => {
     const handleMouseMove = (e) => {
       mouse.current.x = e.clientX;
       mouse.current.y = e.clientY;
     };
+
+    const handleMouseOver = (e) => {
+      if (!e.target) return;
+      // Detect interactive elements
+      const target = e.target;
+      if (
+        target.closest("a, button, [role='button'], .cursor-pointer, input, textarea")
+      ) {
+        setIsHovering(true);
+      } else {
+        setIsHovering(false);
+      }
+    };
+
     window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mouseover", handleMouseOver);
+
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseover", handleMouseOver);
+    };
   }, []);
 
   useEffect(() => {
     let animationFrame;
     const animate = () => {
-      pos.current.x = lerp(pos.current.x, mouse.current.x, 0.18);
-      pos.current.y = lerp(pos.current.y, mouse.current.y, 0.18);
+      pos.current.x = lerp(pos.current.x, mouse.current.x, 0.95);
+      pos.current.y = lerp(pos.current.y, mouse.current.y, 0.95);
       if (cursorRef.current) {
         cursorRef.current.style.transform = `translate3d(${
           pos.current.x - 10
@@ -42,12 +62,15 @@ export default function CustomCursor() {
         width: 20,
         height: 20,
         borderRadius: "50%",
-        background: "rgba(255,255,255,0.8)",
-        boxShadow: "0 2px 12px 2px rgba(255,255,255,0.2)",
+        background: isHovering ? "rgba(56, 189, 248, 0.6)" : "rgba(255, 255, 255, 0.8)",
+        boxShadow: isHovering 
+          ? "0 0 20px 4px rgba(56, 189, 248, 0.4)" 
+          : "0 2px 12px 2px rgba(255, 255, 255, 0.2)",
         pointerEvents: "none",
         zIndex: 9999,
-        mixBlendMode: "difference",
-        transition: "background 0.2s",
+        mixBlendMode: isHovering ? "normal" : "difference",
+        scale: isHovering ? "1.8" : "1",
+        transition: "background 0.3s, box-shadow 0.3s, scale 0.2s ease-out",
       }}
     />
   );

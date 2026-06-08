@@ -1,118 +1,134 @@
 //eslint-disable-next-line
-import { motion } from "framer-motion";
-import React, { useRef, useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import React, { useRef, useState } from "react";
 
 import { projects } from "../const";
 import SectionLayout from "../layout/SectionLayout";
-import { FiExternalLink } from "react-icons/fi";
 
-export default function Projects() {
+const Projects = () => {
   const headerRef = useRef(null);
-  const [selectedIdx, setSelectedIdx] = useState(null);
-  const selected = selectedIdx !== null ? projects[selectedIdx] : null;
+  const [expandedIdx, setExpandedIdx] = useState(null);
 
-  useEffect(() => {
-    if (selected) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "auto";
-    }
-    return () => {
-      document.body.style.overflow = "auto";
-    };
-  }, [selected]);
+  const toggleProject = (idx) => {
+    setExpandedIdx((prev) => (prev === idx ? null : idx));
+  };
 
   return (
     <SectionLayout id="projects" label="What I did ?" headerRef={headerRef}>
-      <div className="min-h-[77vh] grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-        {projects.map((project, idx) => (
-          <motion.div
-            key={idx}
-            layout
-            onClick={() => setSelectedIdx(idx)}
-            whileHover={{ scale: 1.03 }}
-            className="bg-white/10 p-6 rounded-xl cursor-pointer transition-all border border-white/10 hover:border-sky-500 hover:shadow-xl backdrop-blur"
-          >
-            <h3 className="text-lg font-semibold text-sky-400 mb-2">
-              {project.title}
-            </h3>
-            <p className="text-xs text-white/70 mb-1">
-              <strong className="text-white">Duration:</strong>{" "}
-              {project.duration}
-            </p>
-            <p className="text-xs text-white/70">
-              <strong className="text-white">Platform:</strong>{" "}
-              {project.platform || "N/A"}
-            </p>
-            <div className="mt-4 flex flex-wrap gap-2">
-              {project.stacks.slice(0, 3).map((stack, i) => (
-                <span
-                  key={i}
-                  className="bg-gray-800 text-sky-400 text-xs px-2 py-1 rounded-full border border-sky-500"
-                >
-                  {stack}
-                </span>
-              ))}
-            </div>
-          </motion.div>
-        ))}
-      </div>
+      <div className="min-h-[77vh] w-full overflow-x-auto rounded-xl border border-white/10 bg-white/5 backdrop-blur-md">
+        <table className="w-full border-collapse text-left text-sm text-white">
+          <thead className="bg-white/10 text-sky-400 uppercase tracking-wider text-xs font-semibold">
+            <tr>
+              <th scope="col" className="py-4 px-6">Project Name</th>
+              <th scope="col" className="py-4 px-6">Role</th>
+              <th scope="col" className="py-4 px-6">Client</th>
+              <th scope="col" className="py-4 px-6">Duration</th>
+              <th scope="col" className="py-4 px-6">Platform</th>
+              <th scope="col" className="py-4 px-6">Key Technologies</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-white/10">
+            {projects.map((project, idx) => {
+              const isExpanded = expandedIdx === idx;
+              return (
+                <React.Fragment key={idx}>
+                  <tr
+                    onClick={() => toggleProject(idx)}
+                    className="hover:bg-white/10 transition-colors duration-200 cursor-pointer"
+                  >
+                    <td className="py-4 px-6 font-semibold text-sky-300 whitespace-nowrap">
+                      <div className="flex items-center gap-2.5">
+                        <span
+                          className="text-[10px] text-sky-400 transition-transform duration-200"
+                          style={{
+                            display: "inline-block",
+                            transform: isExpanded ? "rotate(90deg)" : "rotate(0deg)",
+                          }}
+                        >
+                          ▶
+                        </span>
+                        {project.title}
+                      </div>
+                    </td>
+                    <td className="py-4 px-6 text-white/80 whitespace-nowrap">{project.role}</td>
+                    <td className="py-4 px-6 text-white/80">{project.client}</td>
+                    <td className="py-4 px-6 text-white/60 text-xs whitespace-nowrap">{project.duration}</td>
+                    <td className="py-4 px-6 text-white/80 whitespace-nowrap">{project.platform || "N/A"}</td>
+                    <td className="py-4 px-6">
+                      <div className="flex flex-wrap gap-1.5 max-w-xs md:max-w-md">
+                        {project.stacks.slice(0, 3).map((stack, i) => (
+                          <span
+                            key={i}
+                            className="bg-gray-800/80 text-sky-400 text-[10px] px-2 py-0.5 rounded-full border border-sky-500/30 whitespace-nowrap"
+                          >
+                            {stack}
+                          </span>
+                        ))}
+                        {project.stacks.length > 3 && (
+                          <span className="text-[10px] text-white/50 self-center whitespace-nowrap">
+                            +{project.stacks.length - 3} more
+                          </span>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                  <AnimatePresence initial={false}>
+                    {isExpanded && (
+                      <tr className="bg-white/[0.02] border-b border-white/10">
+                        <td colSpan={6} className="p-0">
+                          <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: "auto", opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.25, ease: "easeInOut" }}
+                            className="overflow-hidden"
+                          >
+                            <div className="py-6 px-8 space-y-6 text-sm text-gray-300">
+                              <div>
+                                <h4 className="text-sky-400 font-semibold mb-2 text-base">Synopsis</h4>
+                                <p className="text-white/85 leading-relaxed bg-black/20 p-4 rounded-lg border border-white/5">
+                                  {project.synopsis}
+                                </p>
+                              </div>
 
-      {/* Drawer Detail View */}
-      {selected && (
-        <motion.div
-          key={selectedIdx}
-          initial={{ x: "100%", opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          exit={{ x: "100%", opacity: 0 }}
-          transition={{ type: "spring", stiffness: 80, damping: 18 }}
-          className="fixed top-0 right-0 h-full w-full md:w-[450px] z-50 bg-black/90 text-white shadow-xl p-6 overflow-hidden backdrop-blur-lg border-l border-sky-500"
-        >
-          <div className="flex justify-between items-start mb-4">
-            <h2 className="text-xl font-bold text-sky-400">{selected.title}</h2>
-            <button
-              className="text-white hover:text-sky-400 transition"
-              onClick={() => setSelectedIdx(null)}
-            >
-              ✕
-            </button>
-          </div>
-          <div className="mb-3">
-            <strong className="text-sky-400">Role:</strong> {selected.role}
-          </div>
-          <div className="mb-3">
-            <strong className="text-sky-400">Duration:</strong>{" "}
-            {selected.duration}
-          </div>
-          <div className="mb-3">
-            <strong className="text-sky-400">Responsibilities:</strong>
-            <ul className="list-disc pl-5 mt-1 space-y-1">
-              {selected.responsibilities.map((item, i) => (
-                <li key={i}>{item}</li>
-              ))}
-            </ul>
-          </div>
-          <div className="mb-3">
-            <strong className="text-sky-400">Tech Stack:</strong>
-            <div className="flex flex-wrap gap-2 mt-1">
-              {selected.stacks.map((tech, i) => (
-                <span
-                  key={i}
-                  className="bg-gray-800 text-sky-400 px-2 py-1 rounded-full text-xs border border-sky-400"
-                >
-                  {tech}
-                </span>
-              ))}
-            </div>
-          </div>
-          <div className="overflow-y-auto max-h-[320px] pr-1">
-            <strong className="text-sky-400">Synopsis:</strong>
-            <p className="mt-1 text-white/80 leading-relaxed">
-              {selected.synopsis}
-            </p>
-          </div>
-        </motion.div>
-      )}
+                              {project.responsibilities && project.responsibilities.length > 0 && (
+                                <div>
+                                  <h4 className="text-sky-400 font-semibold mb-2 text-base">Key Responsibilities</h4>
+                                  <ul className="list-disc pl-5 space-y-1.5 text-white/85 bg-black/20 p-4 rounded-lg border border-white/5">
+                                    {project.responsibilities.map((resp, i) => (
+                                      <li key={i}>{resp}</li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              )}
+
+                              <div>
+                                <h4 className="text-sky-400 font-semibold mb-2 text-base">Full Tech Stack</h4>
+                                <div className="flex flex-wrap gap-2 bg-black/20 p-4 rounded-lg border border-white/5">
+                                  {project.stacks.map((tech, i) => (
+                                    <span
+                                      key={i}
+                                      className="bg-gray-800/90 text-sky-400 px-2.5 py-1 rounded-full text-xs border border-sky-500/20"
+                                    >
+                                      {tech}
+                                    </span>
+                                  ))}
+                                </div>
+                              </div>
+                            </div>
+                          </motion.div>
+                        </td>
+                      </tr>
+                    )}
+                  </AnimatePresence>
+                </React.Fragment>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
     </SectionLayout>
   );
-}
+};
+
+export default React.memo(Projects);

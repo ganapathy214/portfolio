@@ -34,11 +34,11 @@ export default function Carousel({ slides }) {
 
   return (
     <div
-      className="relative w-full max-w-full h-100 sm:h-80 md:h-96 flex flex-col items-center justify-center rounded-2xl overflow-hidden"
+      className="relative w-full max-w-full min-h-[480px] sm:min-h-[420px] md:min-h-[400px] flex flex-col items-center justify-between rounded-2xl overflow-hidden"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <div className="w-full h-full flex items-center justify-center transition-all duration-700 gap-4 px-2 sm:px-4">
+      <div className="w-full flex-1 flex items-center justify-center transition-all duration-700 gap-4 px-2 sm:px-4">
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={current}
@@ -47,7 +47,7 @@ export default function Carousel({ slides }) {
             animate="center"
             exit="exit"
             transition={{ duration: 0.7, ease: "easeInOut" }}
-            className="flex w-full h-full gap-4"
+            className="flex w-full h-full gap-4 items-center justify-center"
             style={{ minHeight: 0, minWidth: 0 }}
           >
             {currentSlides.map((slide, idx) =>
@@ -61,7 +61,7 @@ export default function Carousel({ slides }) {
         </AnimatePresence>
       </div>
       {/* Slide Indicators */}
-      <div className="flex gap-2 mt-2">
+      <div className="flex gap-2 py-4 z-10">
         {Array.from({ length: pageCount }).map((_, idx) => (
           <span
             key={idx}

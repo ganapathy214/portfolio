@@ -34,7 +34,7 @@ export function useTypewriter(
     );
 
     return () => clearTimeout(timeout);
-  }, [text, isDeleting, titleIndex]);
+  }, [text, isDeleting, titleIndex, titles, pauseTime, deletingSpeed, typingSpeed]);
 
   return text;
 }
