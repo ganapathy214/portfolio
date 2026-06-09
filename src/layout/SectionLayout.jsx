@@ -48,7 +48,7 @@ export default function SectionLayout({
       <SectionHeader containerRef={headerRef} label={label} />
 
       <div className="flex-1 flex min-h-0">
-        <SpotlightCard className="custom-spotlight-card p-8 w-full h-full">
+        <SpotlightCard className="custom-spotlight-card p-3 sm:p-5 md:p-8 w-full h-full">
           <motion.div
             className="w-full h-full"
             variants={containerVariant}

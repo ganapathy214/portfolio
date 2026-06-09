@@ -21,20 +21,20 @@ const Journey = () => {
 
   return (
     <SectionLayout id="journey" label="What I've done ?" headerRef={journeyRef}>
-      <div className="flex flex-col xl:flex-row justify-center items-center gap-10 w-full h-full">
+      <div className="flex flex-col xl:flex-row justify-center items-center gap-8 xl:gap-10 w-full h-full">
         {/* Stats */}
-        <div className="flex flex-col justify-center items-center">
-          <div className="flex sm:flex-col justify-center mt-4 sm:mt-0 sm:gap-8 gap-2 bg-gray-700/60 sm:bg-transparent p-4 rounded-lg z-10">
+        <div className="flex flex-col justify-center items-center w-full xl:w-auto">
+          <div className="flex flex-row xl:flex-col justify-center items-center gap-4 xl:gap-8 flex-wrap">
             {summaryStats.map((stat, idx) => (
               <div
                 key={idx}
-                className="flex flex-col sm:items-end items-center"
+                className="flex flex-col items-center xl:items-end"
               >
-                <div className="inline-flex gap-1 items-center">
-                  <div className="xl:text-8xl md:text-6xl sm:text-4xl text-3xl font-semibold">
+                <div className="inline-flex gap-0.5 items-center">
+                  <div className="text-3xl sm:text-4xl md:text-5xl xl:text-7xl font-semibold">
                     <CountUp end={stat.value} duration={2} />
                   </div>
-                  <h2 className="text-sky-400 text-8xl font-extrabold">
+                  <h2 className="text-sky-400 text-4xl sm:text-5xl md:text-6xl xl:text-8xl font-extrabold leading-none">
                     +
                   </h2>
                 </div>
@@ -52,7 +52,7 @@ const Journey = () => {
         </div>
 
         {/* Timeline */}
-        <div className="space-y-2">
+        <div className="space-y-2 w-full xl:flex-1 max-w-2xl">
           {timelineData.map((item, i) => (
             <motion.div
               className="flex gap-x-3"
@@ -64,7 +64,7 @@ const Journey = () => {
               variants={timelineVariants}
             >
               {/* Left Content */}
-              <div className="min-w-14 text-end w-40">
+              <div className="min-w-10 sm:min-w-14 text-end w-24 sm:w-40 flex-shrink-0">
                 <time className="text-xs text-sky-400">{item.time}</time>
               </div>
               {/* Icon */}
@@ -112,3 +112,4 @@ const Journey = () => {
 };
 
 export default React.memo(Journey);
+

@@ -13,7 +13,7 @@ const Sidebar = ({ activeSection, onItemClick }) => {
         animate={{ x: 0, opacity: 1 }}
         transition={{ type: "spring", stiffness: 200, damping: 30 }}
       >
-        <nav className="w-20 h-screen text-white fixed left-0 top-0 flex flex-col items-center justify-center z-30 gap-5 bg-gray-900 md:bg-transparent">
+        <nav className="w-20 h-screen text-white fixed left-0 top-0 flex flex-col items-center justify-center z-30 gap-5 bg-transparent">
           {sidebarItems.map((item) => {
             const isActive = activeSection === item.name;
             const linkClasses = `flex flex-col items-center justify-center p-2 transition-all duration-200 ${
@@ -53,6 +53,32 @@ const Sidebar = ({ activeSection, onItemClick }) => {
           })}
         </nav>
       </motion.div>
+
+      <motion.nav
+        className="md:hidden fixed bottom-0 left-0 w-full bg-gray-900 border-t border-gray-800 flex justify-around p-3 z-50"
+        initial={{ y: 100 }}
+        animate={{ y: 0 }}
+      >
+        {sidebarItems.map((item) => {
+          const isActive = activeSection === item.name;
+          return (
+            <a
+              key={item.name}
+              href={item.href}
+              onClick={(e) => {
+                e.preventDefault();
+                onItemClick(item);
+              }}
+              className={`flex flex-col items-center gap-1 ${
+                isActive ? "text-sky-400" : "text-gray-400"
+              }`}
+            >
+              <item.icon className="w-6 h-6" />
+              <span className="text-[10px]">{item.name}</span>
+            </a>
+          );
+        })}
+      </motion.nav>
     </>
   );
 };

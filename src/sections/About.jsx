@@ -44,7 +44,7 @@ const About = () => {
     <SectionLayout id="about" label="Who am I ?" headerRef={headerRef}>
       <div className="w-full min-h-[78vh] flex flex-col md:flex-row justify-center items-center gap-8 md:gap-10">
         {/* ProfileCard (Image) - Show first on mobile */}
-        <motion.div className="flex flex-col items-center order-1 md:order-2 mb-6 md:mb-0">
+        <motion.div className="flex flex-col items-center order-1 md:order-2 mb-2 md:mb-0 w-full md:w-auto">
           <ProfileCard
             name="Ganapathy N"
             title="Senior Frontend & Full Stack Developer"
@@ -52,7 +52,7 @@ const About = () => {
             enableTilt={true}
             onContactClick={() => console.log("Contact clicked")}
           />
-          <div className="flex gap-4 mt-4">
+          <div className="flex gap-4 mt-4 flex-wrap justify-center">
             <PrimaryButton
               onClick={() => {
                 const link = document.createElement("a");
@@ -81,15 +81,13 @@ const About = () => {
         </motion.div>
 
         {/* About Text */}
-        <motion.div className="w-full md:w-7/12 relative order-2 md:order-1">
-          <div className="absolute left-[40%] -top-6 md:-left-16 lg:top-0 md:top-6 rotate-0 md:rotate-[-90deg] text-sm tracking-widest">
-            <div className="flex items-center gap-2">
-              <div className="w-16 h-[2px] bg-white" />
-              <p className="text-sky-400">ABOUT</p>
-            </div>
+        <motion.div className="w-full md:w-7/12 relative order-2 md:order-1 px-2 sm:px-0">
+          <div className="flex items-center gap-2 mb-4 text-sm tracking-widest">
+            <div className="w-10 sm:w-16 h-[2px] bg-white" />
+            <p className="text-sky-400">ABOUT</p>
           </div>
 
-          <div className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight mb-4 pl-2 sm:pl-10 text-sky-400">
+          <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-tight mb-4 text-sky-400">
             A Passionate <br />
             <span>
               {typewriterText}
@@ -97,7 +95,7 @@ const About = () => {
             </span>
           </div>
 
-          <p className="text-gray-300 mb-6 text-sm md:text-base leading-relaxed max-w-3xl mx-auto md:mx-0">
+          <p className="text-gray-300 mb-6 text-sm md:text-base leading-relaxed max-w-3xl">
             Senior Frontend & Full Stack Developer with 6+ years of experience specializing in React.js, Next.js, React Native, TypeScript, and modern JavaScript ecosystems. I design and build high-performance, accessible, and scalable enterprise web and mobile applications. With hands-on expertise spanning state management (Redux Toolkit, Zustand, React Query), UI systems, backend APIs (Node.js, Express.js), and AWS cloud DevOps architectures, I collaborate to deliver modern solutions aligned with business goals.
           </p>
           <SocialLinks />
@@ -108,3 +106,4 @@ const About = () => {
 };
 
 export default React.memo(About);
+
