@@ -3,7 +3,7 @@ import VariableProximity from "../VariableProximity";
 export const SectionHeader = ({ containerRef, label }) => (
   <div
     ref={containerRef}
-    className="text-5xl text-end mb-4 text-sky-400 border-b-4"
+    className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-end mb-4 text-sky-400 border-b-4"
     style={{ position: "relative" }}
   >
     <VariableProximity

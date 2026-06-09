@@ -1,14 +1,19 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 
 const lerp = (a, b, n) => (1 - n) * a + n * b;
 
 export default function CustomCursor() {
+  const isTouch = useMemo(
+    () => typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches,
+    []
+  );
   const cursorRef = useRef(null);
   const mouse = useRef({ x: window.innerWidth / 2, y: window.innerHeight / 2 });
   const pos = useRef({ x: window.innerWidth / 2, y: window.innerHeight / 2 });
   const [isHovering, setIsHovering] = useState(false);
 
   useEffect(() => {
+    if (isTouch) return;
     const handleMouseMove = (e) => {
       mouse.current.x = e.clientX;
       mouse.current.y = e.clientY;
@@ -37,6 +42,7 @@ export default function CustomCursor() {
   }, []);
 
   useEffect(() => {
+    if (isTouch) return;
     let animationFrame;
     const animate = () => {
       pos.current.x = lerp(pos.current.x, mouse.current.x, 0.95);
@@ -50,7 +56,9 @@ export default function CustomCursor() {
     };
     animate();
     return () => cancelAnimationFrame(animationFrame);
-  }, []);
+  }, [isTouch]);
+
+  if (isTouch) return null;
 
   return (
     <div

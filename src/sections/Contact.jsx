@@ -12,7 +12,7 @@ const ContactInfoCard = ({ icon, label, value, delay }) => {
       initial={{ opacity: 0, y: 40 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, delay }}
-      className="group relative cursor-pointer overflow-hidden bg-white/10 px-6 pt-10 pb-8 shadow-xl ring-1 ring-sky-500/30 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl rounded-lg"
+      className="group relative cursor-pointer overflow-hidden bg-white/10 px-4 sm:px-6 pt-8 sm:pt-10 pb-6 sm:pb-8 shadow-xl ring-1 ring-sky-500/30 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl rounded-lg"
     >
       <div className="relative z-10 mx-auto max-w-md">
         <div className="flex gap-10 items-center">
@@ -84,7 +84,7 @@ const Contact = () => {
         <motion.iframe
           title="Google Maps"
           src={CONTACT_INFO.googleMapsUrl}
-          className="w-full md:w-1/2 rounded border"
+          className="w-full md:w-1/2 min-h-[250px] sm:min-h-[350px] md:h-auto rounded border"
           allowFullScreen=""
           loading="lazy"
           initial={{ opacity: 0, x: -60 }}

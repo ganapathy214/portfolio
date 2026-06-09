@@ -1,7 +1,6 @@
 import "./App.css";
 
 import { useEffect, useRef, useState } from "react";
-import CustomCursor from "./common/CustomCursor";
 import Particles from "./common/Particles";
 import Sidebar from "./components/Sidebar";
 import { sidebarItems } from "./const";
@@ -19,6 +18,37 @@ export default function App() {
   const [activeSection, setActiveSection] = useState("Home");
   const mainRef = useRef(null);
   const beamFillRef = useRef(null);
+  const activeSectionRef = useRef("Home");
+  const isScrollingRef = useRef(false);
+  const touchStartYRef = useRef(0);
+
+  useEffect(() => {
+    activeSectionRef.current = activeSection;
+  }, [activeSection]);
+
+  const transitionToSection = (item) => {
+    if (!mainRef.current) return;
+    isScrollingRef.current = true;
+    setActiveSection(item.name);
+    window.history.replaceState(null, "", item.href);
+
+    const id = item.href.replace("#", "");
+    const el = document.getElementById(id);
+    if (el) {
+      mainRef.current.scrollTo({
+        top: el.offsetTop,
+        behavior: "smooth",
+      });
+    }
+
+    setTimeout(() => {
+      isScrollingRef.current = false;
+    }, 1000);
+  };
+
+  const handleSidebarClick = (item) => {
+    transitionToSection(item);
+  };
 
   useEffect(() => {
     const mainEl = mainRef.current;
@@ -40,6 +70,8 @@ export default function App() {
       if (beamFillRef.current) {
         beamFillRef.current.style.height = `${Math.max(progress * 100, 5)}%`;
       }
+
+      if (isScrollingRef.current) return;
 
       if (cachedSections.length === 0) return;
 
@@ -63,30 +95,148 @@ export default function App() {
       });
     };
 
+    const handleWheel = (e) => {
+      if (document.querySelector('[role="dialog"]') || document.querySelector('.modal-open') || document.body.style.overflow === 'hidden') {
+        return;
+      }
+
+      if (isScrollingRef.current) {
+        e.preventDefault();
+        return;
+      }
+
+      const activeName = activeSectionRef.current;
+      const activeItem = sidebarItems.find(item => item.name === activeName);
+      if (!activeItem) return;
+
+      const id = activeItem.href.replace("#", "");
+      const el = document.getElementById(id);
+      if (!el) return;
+
+      const scrollTop = mainEl.scrollTop;
+      const clientHeight = mainEl.clientHeight;
+      const sectionTop = el.offsetTop;
+      const sectionHeight = el.offsetHeight;
+      const sectionBottom = sectionTop + sectionHeight;
+
+      const deltaY = e.deltaY;
+
+      if (deltaY > 0) {
+        const isAtBottom = scrollTop + clientHeight >= sectionBottom - 10;
+        if (isAtBottom) {
+          const currentIndex = sidebarItems.findIndex(item => item.name === activeName);
+          if (currentIndex < sidebarItems.length - 1) {
+            e.preventDefault();
+            const nextItem = sidebarItems[currentIndex + 1];
+            transitionToSection(nextItem);
+          }
+        }
+      } else if (deltaY < 0) {
+        const isAtTop = scrollTop <= sectionTop + 10;
+        if (isAtTop) {
+          const currentIndex = sidebarItems.findIndex(item => item.name === activeName);
+          if (currentIndex > 0) {
+            e.preventDefault();
+            const prevItem = sidebarItems[currentIndex - 1];
+            transitionToSection(prevItem);
+          }
+        }
+      }
+    };
+
+    const handleTouchStart = (e) => {
+      if (e.touches.length > 0) {
+        touchStartYRef.current = e.touches[0].clientY;
+      }
+    };
+
+    const handleTouchMove = (e) => {
+      if (document.querySelector('[role="dialog"]') || document.querySelector('.modal-open') || document.body.style.overflow === 'hidden') {
+        return;
+      }
+
+      if (isScrollingRef.current) {
+        e.preventDefault();
+        return;
+      }
+
+      if (e.touches.length === 0) return;
+
+      const touchEndY = e.touches[0].clientY;
+      const deltaY = touchStartYRef.current - touchEndY;
+
+      if (Math.abs(deltaY) < 30) return;
+
+      const activeName = activeSectionRef.current;
+      const activeItem = sidebarItems.find(item => item.name === activeName);
+      if (!activeItem) return;
+
+      const id = activeItem.href.replace("#", "");
+      const el = document.getElementById(id);
+      if (!el) return;
+
+      const scrollTop = mainEl.scrollTop;
+      const clientHeight = mainEl.clientHeight;
+      const sectionTop = el.offsetTop;
+      const sectionHeight = el.offsetHeight;
+      const sectionBottom = sectionTop + sectionHeight;
+
+      if (deltaY > 0) {
+        const isAtBottom = scrollTop + clientHeight >= sectionBottom - 10;
+        if (isAtBottom) {
+          const currentIndex = sidebarItems.findIndex(item => item.name === activeName);
+          if (currentIndex < sidebarItems.length - 1) {
+            if (e.cancelable) e.preventDefault();
+            const nextItem = sidebarItems[currentIndex + 1];
+            transitionToSection(nextItem);
+          }
+        }
+      } else if (deltaY < 0) {
+        const isAtTop = scrollTop <= sectionTop + 10;
+        if (isAtTop) {
+          const currentIndex = sidebarItems.findIndex(item => item.name === activeName);
+          if (currentIndex > 0) {
+            if (e.cancelable) e.preventDefault();
+            const prevItem = sidebarItems[currentIndex - 1];
+            transitionToSection(prevItem);
+          }
+        }
+      }
+    };
+
     mainEl.addEventListener("scroll", handleScroll, { passive: true });
+    mainEl.addEventListener("wheel", handleWheel, { passive: false });
+    mainEl.addEventListener("touchstart", handleTouchStart, { passive: true });
+    mainEl.addEventListener("touchmove", handleTouchMove, { passive: false });
     
     const initTimeout = setTimeout(() => {
       handleScroll();
-    }, 100);
+
+      const hash = window.location.hash;
+      if (hash) {
+        const targetItem = sidebarItems.find(item => item.href === hash);
+        if (targetItem) {
+          const targetId = hash.replace("#", "");
+          const targetEl = document.getElementById(targetId);
+          if (targetEl) {
+            mainEl.scrollTo({
+              top: targetEl.offsetTop,
+              behavior: "auto",
+            });
+            setActiveSection(targetItem.name);
+          }
+        }
+      }
+    }, 200);
 
     return () => {
       mainEl.removeEventListener("scroll", handleScroll);
+      mainEl.removeEventListener("wheel", handleWheel);
+      mainEl.removeEventListener("touchstart", handleTouchStart);
+      mainEl.removeEventListener("touchmove", handleTouchMove);
       clearTimeout(initTimeout);
     };
   }, []);
-
-  const handleSidebarClick = (item) => {
-    const id = item.href.replace("#", "");
-    const el = document.getElementById(id);
-    if (el && mainRef.current) {
-      mainRef.current.scrollTo({
-        top: el.offsetTop,
-        behavior: "smooth",
-      });
-    }
-    setActiveSection(item.name);
-    window.history.replaceState(null, "", item.href);
-  };
 
   const handleBeamClick = (e) => {
     const beam = e.currentTarget;
@@ -105,8 +255,7 @@ export default function App() {
   };
 
   return (
-    <div className="relative min-h-screen flex flex-col md:flex-row bg-black">
-      <CustomCursor />
+    <div className="relative min-h-screen flex flex-col md:flex-row bg-black overflow-hidden">
       <div
         className="fixed inset-0 w-full h-full -z-10"
         style={{
@@ -127,9 +276,9 @@ export default function App() {
         />
       </div>
 
-      {/* Tracking Beam */}
+      {/* Tracking Beam - hidden on mobile */}
       <div
-        className="fixed right-3 top-0 h-full w-1 bg-gray-700/30 z-30 rounded-full cursor-pointer"
+        className="hidden md:block fixed right-3 top-0 h-full w-1 bg-gray-700/30 z-30 rounded-full cursor-pointer"
         onClick={handleBeamClick}
       >
         <div
@@ -165,7 +314,7 @@ export default function App() {
         ref={mainRef}
         className="
           flex-1
-          md:ml-15
+          md:ml-20
           h-screen
           overflow-y-auto
           scroll-smooth
@@ -173,10 +322,9 @@ export default function App() {
           z-10
           p-2
           sm:p-4
-          md:p-5
-          space-y-16
-          sm:space-y-20
-          md:space-y-24
+          md:p-6
+          pb-20
+          md:pb-6
         "
       >
         <motion.div
@@ -184,27 +332,13 @@ export default function App() {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8 }}
         >
-          <section id="home">
-            <Home />
-          </section>
-          <section id="about">
-            <About />
-          </section>
-          <section id="skills">
-            <Skills />
-          </section>
-          <section id="projects">
-            <Projects />
-          </section>
-          <section id="certification">
-            <Certification />
-          </section>
-          <section id="journey">
-            <Journey />
-          </section>
-          <section id="contact">
-            <Contact />
-          </section>
+          <Home />
+          <About />
+          <Skills />
+          <Projects />
+          <Certification />
+          <Journey />
+          <Contact />
         </motion.div>
       </main>
     </div>

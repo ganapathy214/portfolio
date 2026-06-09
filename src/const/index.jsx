@@ -255,338 +255,78 @@ export const skillCategories = [
   {
     id: "frontend",
     label: "Frontend Development",
-    content: (
-      <div className="h-75 w-full sm:w-[400px] md:w-[600px] lg:w-[700px] max-w-full transition">
-        <div className="flex flex-wrap gap-2 mb-4 justify-center">
-          {skills
-            .filter((s) =>
-              [
-                "HTML",
-                "CSS",
-                "JavaScript",
-                "TypeScript",
-                "React",
-                "Next.js",
-                "React Native",
-              ].includes(s.name)
-            )
-            .map((skill, index) => (
-              <div
-                key={index}
-                className="flex items-center gap-2 px-3 py-1.5 bg-white/10 text-white rounded-full border border-sky-400"
-              >
-                <img src={skill.icon} alt={skill.name} className="w-4 h-4" />
-                <span className="text-sm font-medium">{skill.name}</span>
-              </div>
-            ))}
-        </div>
-        <ul className="list-disc pl-6 space-y-2 text-white text-wrap">
-          <li>
-            <strong className="text-sky-400">Performance Optimization:</strong>{" "}
-            Lazy loading, dynamic imports, memoization, virtualization, bundle optimization, SSR/SSG/ISR, rendering optimization.
-          </li>
-          <li>
-            <strong className="text-sky-400">Modern Frontend & Mobile:</strong>{" "}
-            React.js, Next.js App Router, React Native, Expo, Micro Frontend Architecture.
-          </li>
-          <li>
-            <strong className="text-sky-400">Scalable UI Systems:</strong>{" "}
-            Storybook, Tailwind CSS, Material UI, Ant Design, Styled Components, Shadcn UI.
-          </li>
-          <li>
-            <strong className="text-sky-400">State Management:</strong>{" "}
-            Redux Toolkit, Redux-Saga, Zustand, TanStack Query.
-          </li>
-          <li>
-            <strong className="text-sky-400">Best Practices:</strong>{" "}
-            Component-driven design, accessibility (WCAG), unit/E2E testing (Jest), Agile/Scrum.
-          </li>
-        </ul>
-      </div>
-    ),
+    skillNames: ["HTML", "CSS", "JavaScript", "TypeScript", "React", "Next.js", "React Native"],
+    bullets: [
+      "<strong class='text-sky-400'>Performance Optimization:</strong> Lazy loading, dynamic imports, memoization, virtualization, bundle optimization, SSR/SSG/ISR.",
+      "<strong class='text-sky-400'>Modern Frontend &amp; Mobile:</strong> React.js, Next.js App Router, React Native, Expo, Micro Frontend Architecture.",
+      "<strong class='text-sky-400'>Scalable UI Systems:</strong> Storybook, Tailwind CSS, Material UI, Ant Design, Styled Components, Shadcn UI.",
+      "<strong class='text-sky-400'>State Management:</strong> Redux Toolkit, Redux-Saga, Zustand, TanStack Query.",
+      "<strong class='text-sky-400'>Best Practices:</strong> Component-driven design, accessibility (WCAG), unit/E2E testing (Jest), Agile/Scrum.",
+    ],
   },
   {
     id: "backend",
     label: "Backend Development",
-    content: (
-      <div className="h-75 w-full sm:w-[400px] md:w-[600px] lg:w-[700px] max-w-full transition">
-        <div className="flex flex-wrap gap-2 mb-4 justify-center">
-          {skills
-            .filter((s) =>
-              [
-                "Node.js",
-                "TypeScript",
-                "Express",
-                "Next.js",
-                "MongoDB",
-                "MySQL",
-                "PostgreSQL",
-                "SQL",
-              ].includes(s.name)
-            )
-            .map((skill, index) => (
-              <div
-                key={index}
-                className="flex items-center gap-2 px-3 py-1.5 bg-white/10 text-white rounded-full border border-sky-400"
-              >
-                <img src={skill.icon} alt={skill.name} className="w-4 h-4" />
-                <span className="text-sm font-medium">{skill.name}</span>
-              </div>
-            ))}
-        </div>
-        <ul className="list-disc pl-6 space-y-2 text-white text-base">
-          <li>
-            <strong className="text-sky-400">Runtime & Frameworks:</strong> Node.js, Express.js for scalable backend services.
-          </li>
-          <li>
-            <strong className="text-sky-400">API Design & Security:</strong> RESTful APIs, protected routing, Role-Based Access Control (RBAC).
-          </li>
-          <li>
-            <strong className="text-sky-400">Database Integration:</strong> PostgreSQL, MongoDB, schema design, and query optimization.
-          </li>
-          <li>
-            <strong className="text-sky-400">Third-Party Services:</strong> Payment gateways, SMS/email notifications, Webhooks, Generative AI APIs.
-          </li>
-          <li>
-            <strong className="text-sky-400">Cloud & DevOps:</strong> AWS (EC2, S3, Lambda), Firebase, CI/CD pipelines (GitHub Actions).
-          </li>
-        </ul>
-      </div>
-    ),
+    skillNames: ["Node.js", "TypeScript", "Express", "Next.js", "MongoDB", "MySQL", "PostgreSQL", "SQL"],
+    bullets: [
+      "<strong class='text-sky-400'>Runtime &amp; Frameworks:</strong> Node.js, Express.js for scalable backend services.",
+      "<strong class='text-sky-400'>API Design &amp; Security:</strong> RESTful APIs, protected routing, Role-Based Access Control (RBAC).",
+      "<strong class='text-sky-400'>Database Integration:</strong> PostgreSQL, MongoDB, schema design, and query optimization.",
+      "<strong class='text-sky-400'>Third-Party Services:</strong> Payment gateways, SMS/email notifications, Webhooks, Generative AI APIs.",
+      "<strong class='text-sky-400'>Cloud &amp; DevOps:</strong> AWS (EC2, S3, Lambda), Firebase, CI/CD pipelines (GitHub Actions).",
+    ],
   },
   {
     id: "database",
-    label: "Database & Data Management",
-    content: (
-      <div className="h-75 w-full sm:w-[400px] md:w-[600px] lg:w-[700px] max-w-full transition">
-        <div className="flex flex-wrap gap-2 mb-4 justify-center">
-          {skills
-            .filter((s) =>
-              ["MongoDB", "MySQL", "PostgreSQL", "SQL"].includes(s.name)
-            )
-            .map((skill, index) => (
-              <div
-                key={index}
-                className="flex items-center gap-2 px-3 py-1.5 bg-white/10 text-white rounded-full border border-sky-400"
-              >
-                <img src={skill.icon} alt={skill.name} className="w-4 h-4" />
-                <span className="text-sm font-medium">{skill.name}</span>
-              </div>
-            ))}
-        </div>
-        <ul className="list-disc pl-6 space-y-2 text-white text-base">
-          <li>
-            <strong className="text-sky-400">Schema Design:</strong>{" "}
-            Normalization, relationships, indexing
-          </li>
-          <li>
-            <strong className="text-sky-400">Query Optimization:</strong> Index
-            tuning, explain plans
-          </li>
-          <li>
-            <strong className="text-sky-400">ORM Tools:</strong> Prisma,
-            Mongoose, Sequelize, Knex.js
-          </li>
-          <li>
-            <strong className="text-sky-400">Backup & Recovery:</strong>{" "}
-            Snapshots, replication, failover handling
-          </li>
-          <li>
-            <strong className="text-sky-400">Monitoring:</strong> Slow query
-            logs, profiling tools
-          </li>
-        </ul>
-      </div>
-    ),
+    label: "Database & Data",
+    skillNames: ["MongoDB", "MySQL", "PostgreSQL", "SQL"],
+    bullets: [
+      "<strong class='text-sky-400'>Schema Design:</strong> Normalization, relationships, indexing strategies.",
+      "<strong class='text-sky-400'>Query Optimization:</strong> Index tuning, explain plans, partitioning.",
+      "<strong class='text-sky-400'>ORM Tools:</strong> Prisma, Mongoose, Sequelize, Knex.js.",
+      "<strong class='text-sky-400'>Backup &amp; Recovery:</strong> Snapshots, replication, failover handling.",
+      "<strong class='text-sky-400'>Monitoring:</strong> Slow query logs, profiling tools.",
+    ],
   },
   {
     id: "cloud",
     label: "Cloud & DevOps",
-    content: (
-      <div className="h-75 w-full sm:w-[400px] md:w-[600px] lg:w-[700px] max-w-full transition">
-        <div className="flex flex-wrap gap-2 mb-4 justify-center">
-          {skills
-            .filter((s) => ["AWS", "Firebase", "Digitalocean"].includes(s.name))
-            .map((skill, index) => (
-              <div
-                key={index}
-                className="flex items-center gap-2 px-3 py-1.5 bg-white/10 text-white rounded-full border border-sky-400"
-              >
-                <img src={skill.icon} alt={skill.name} className="w-4 h-4" />
-                <span className="text-sm font-medium">{skill.name}</span>
-              </div>
-            ))}
-        </div>
-        <ul className="list-disc pl-6 space-y-2 text-white text-base">
-          <li>
-            <strong className="text-sky-400">AWS Services:</strong> EC2, Lambda,
-            RDS, CloudWatch, S3
-          </li>
-          <li>
-            <strong className="text-sky-400">Firebase Stack:</strong> Auth,
-            Firestore, Cloud Functions, FCM
-          </li>
-          <li>
-            <strong className="text-sky-400">Deployment:</strong> CI/CD
-            pipelines with GitHub/Bitbucket
-          </li>
-          <li>
-            <strong className="text-sky-400">Monitoring:</strong> CloudWatch,
-            Crashlytics, uptime alerts
-          </li>
-          <li>
-            <strong className="text-sky-400">IaC:</strong> Terraform, AWS CDK
-            for reproducible infra
-          </li>
-        </ul>
-      </div>
-    ),
+    skillNames: ["AWS", "Firebase", "Digitalocean"],
+    bullets: [
+      "<strong class='text-sky-400'>AWS Services:</strong> EC2, Lambda, RDS, CloudWatch, S3.",
+      "<strong class='text-sky-400'>Firebase Stack:</strong> Auth, Firestore, Cloud Functions, FCM.",
+      "<strong class='text-sky-400'>Deployment:</strong> CI/CD pipelines with GitHub Actions &amp; Bitbucket Pipelines.",
+      "<strong class='text-sky-400'>Monitoring:</strong> CloudWatch, Crashlytics, uptime alerts.",
+      "<strong class='text-sky-400'>IaC:</strong> Terraform, AWS CDK for reproducible infrastructure.",
+    ],
   },
   {
     id: "tools",
-    label: "Version Control & Tooling",
-    content: (
-      <div className="h-75 w-full sm:w-[400px] md:w-[600px] lg:w-[700px] max-w-full transition">
-        <div className="flex flex-wrap gap-2 mb-4 justify-center">
-          {skills
-            .filter((s) => ["Git", "Bitbucket", "Azure"].includes(s.name))
-            .map((skill, index) => (
-              <div
-                key={index}
-                className="flex items-center gap-2 px-3 py-1.5 bg-white/10 text-white rounded-full border border-sky-400"
-              >
-                <img src={skill.icon} alt={skill.name} className="w-4 h-4" />
-                <span className="text-sm font-medium">{skill.name}</span>
-              </div>
-            ))}
-        </div>
-        <ul className="list-disc pl-6 space-y-2 text-white text-base">
-          <li>
-            <strong className="text-sky-400">VCS:</strong> Git workflows, PR
-            reviews, merge safety
-          </li>
-          <li>
-            <strong className="text-sky-400">Dev Environments:</strong> VS Code,
-            Cursor
-          </li>
-          <li>
-            <strong className="text-sky-400">Tooling:</strong> ESLint, Prettier,
-            Husky, Commitlint
-          </li>
-          <li>
-            <strong className="text-sky-400">Package Managers:</strong> NPM,
-            Yarn, PNPM
-          </li>
-          <li>
-            <strong className="text-sky-400">Build Tools:</strong> Vite,
-            Webpack, Babel
-          </li>
-        </ul>
-      </div>
-    ),
+    label: "Tooling & VCS",
+    skillNames: ["Git", "Bitbucket", "Azure"],
+    bullets: [
+      "<strong class='text-sky-400'>VCS:</strong> Git workflows, PR reviews, merge safety, branching strategies.",
+      "<strong class='text-sky-400'>Dev Environments:</strong> VS Code, Cursor, WSL.",
+      "<strong class='text-sky-400'>Tooling:</strong> ESLint, Prettier, Husky, Commitlint.",
+      "<strong class='text-sky-400'>Package Managers:</strong> NPM, Yarn, PNPM.",
+      "<strong class='text-sky-400'>Build Tools:</strong> Vite, Webpack, Babel.",
+    ],
   },
   {
     id: "testing",
     label: "Automation Testing",
-    content: (
-      <div className="h-75 w-full sm:w-[400px] md:w-[600px] lg:w-[700px] max-w-full transition">
-        <div className="flex flex-wrap gap-2 mb-4 justify-center">
-          {skills
-            .filter((s) => ["Jest", "Playwright"].includes(s.name))
-            .map((skill, index) => (
-              <div
-                key={index}
-                className="flex items-center gap-2 px-3 py-1.5 bg-white/10 text-white rounded-full border border-sky-400"
-              >
-                <img src={skill.icon} alt={skill.name} className="w-4 h-4" />
-                <span className="text-sm font-medium">{skill.name}</span>
-              </div>
-            ))}
-        </div>
-        <ul className="list-disc pl-6 space-y-2 text-white text-base">
-          <li>
-            <strong className="text-sky-400">Test Types:</strong> Unit, E2E,
-            integration, regression
-          </li>
-          <li>
-            <strong className="text-sky-400">Tools Used:</strong> Jest,
-            Playwright, BrowserStack
-          </li>
-          <li>
-            <strong className="text-sky-400">CI Testing:</strong> Coverage
-            reports in pipelines
-          </li>
-          <li>
-            <strong className="text-sky-400">Debugging:</strong> Chrome
-            DevTools, Postman, Swagger UI
-          </li>
-        </ul>
-      </div>
-    ),
-  },
-  {
-    id: "team-leadership",
-    label: "Team Leadership",
-    content: (
-      <div className="h-75 w-full sm:w-[400px] md:w-[600px] lg:w-[700px] max-w-full transition">
-        <ul className="list-disc pl-6 space-y-2 text-white text-base">
-          <li>
-            <strong className="text-sky-400">Leadership Roles:</strong> Tech
-            lead, senior dev in product squads
-          </li>
-          <li>
-            <strong className="text-sky-400">Team Coaching:</strong> 1:1
-            mentoring, onboarding, skills development
-          </li>
-          <li>
-            <strong className="text-sky-400">Code Quality:</strong> Review
-            processes, codebase hygiene
-          </li>
-          <li>
-            <strong className="text-sky-400">
-              Cross-functional Alignment:
-            </strong>{" "}
-            Syncing frontend, backend, QA, design
-          </li>
-          <li>
-            <strong className="text-sky-400">Stakeholder Comms:</strong>{" "}
-            Updates, demos, release planning
-          </li>
-        </ul>
-      </div>
-    ),
-  },
-  {
-    id: "agile-project-management",
-    label: "Agile & Project Management",
-    content: (
-      <div className="h-75 w-full sm:w-[400px] md:w-[600px] lg:w-[700px] max-w-full transition">
-        <ul className="list-disc pl-6 space-y-2 text-white text-base">
-          <li>
-            <strong className="text-sky-400">Agile Methods:</strong> Scrum,
-            Kanban, hybrid sprints
-          </li>
-          <li>
-            <strong className="text-sky-400">Planning:</strong> Epics, story
-            points, ClickUp & Jira
-          </li>
-          <li>
-            <strong className="text-sky-400">Backlog Management:</strong>{" "}
-            Feature grooming, stakeholder sync
-          </li>
-          <li>
-            <strong className="text-sky-400">Risk Handling:</strong> Blocker
-            identification, timeline control
-          </li>
-          <li>
-            <strong className="text-sky-400">Releases:</strong> Versioning, QA,
-            deployment pipeline ownership
-          </li>
-        </ul>
-      </div>
-    ),
-  },
-];
+    skillNames: ["Jest", "Playwright"],
+    bullets: [
+      "<strong class='text-sky-400'>Test Types:</strong> Unit, E2E, integration, regression.",
+      "<strong class='text-sky-400'>Tools Used:</strong> Jest, Playwright, BrowserStack.",
+      "<strong class='text-sky-400'>CI Testing:</strong> Coverage reports in pipelines.",
+      "<strong class='text-sky-400'>Debugging:</strong> Chrome DevTools, Postman, Swagger UI.",
+    ],
+  }
+].map((cat) => ({
+  ...cat,
+  _skills: skills.filter((s) => cat.skillNames.includes(s.name)),
+}));
 
 // Projects
 export const projects = [

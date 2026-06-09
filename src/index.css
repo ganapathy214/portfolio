@@ -17,9 +17,17 @@ html {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  cursor: none !important;
   --primary-oklch: oklch(68.5% 0.169 237.323);
   user-select: none;
+}
+
+@media (pointer: coarse) {
+  :root {
+    cursor: auto !important;
+  }
+  * {
+    cursor: auto !important;
+  }
 }
 
 a {

@@ -195,11 +195,12 @@
 
 .split-text-container {
   display: flex;
-  font-size: 5rem;
+  font-size: clamp(2rem, 6vw, 6rem);
   font-weight: bold;
   text-transform: uppercase;
   color: #fff;
   overflow: hidden;
+  justify-content: center;
 }
 
 .text-part {
@@ -388,20 +389,21 @@
   }
 }
 
-@media (max-width: 900px) {
+/* Large screens (TV / 4K displays) */
+@media (min-width: 1920px) {
+  :root {
+    font-size: 18px;
+  }
   .split-text-container {
-    font-size: 3rem;
+    font-size: clamp(4rem, 5vw, 8rem);
+  }
+}
+@media (min-width: 2560px) {
+  :root {
+    font-size: 22px;
   }
 }
 
-@media (max-width: 600px) {
-  .split-text-container {
-    font-size: 2rem;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.2em;
-  }
-}
 
 @media (max-width: 600px) {
   .download_button {
@@ -454,4 +456,17 @@ main::-webkit-scrollbar {
 main {
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
+}
+
+@keyframes spin3d {
+  0% {
+    transform: rotateY(0deg);
+  }
+  100% {
+    transform: rotateY(360deg);
+  }
+}
+
+.animate-spin3d {
+  animation: spin3d 20s linear infinite;
 }
