@@ -5,6 +5,7 @@ import Particles from "./common/Particles";
 import Sidebar from "./components/Sidebar";
 import { sidebarItems } from "./const";
 import About from "./sections/About";
+import Services from "./sections/Services";
 import Certification from "./sections/Certification";
 import Contact from "./sections/Contact";
 import Home from "./sections/Home";
@@ -26,6 +27,41 @@ export default function App() {
     activeSectionRef.current = activeSection;
   }, [activeSection]);
 
+  useEffect(() => {
+    const titles = {
+      Home: "Home | Ganapathy N | Senior Software Developer",
+      About: "About Me | Ganapathy N | Senior Full Stack Developer",
+      Services: "My Services | Ganapathy N | Senior Software Developer",
+      Skills: "Skills & Expertise | Ganapathy N | Senior Frontend Developer",
+      Projects: "Featured Portfolio Projects | Ganapathy N",
+      Certification: "Verified Certifications & Achievements | Ganapathy N",
+      Journey: "Professional Journey & Timeline | Ganapathy N",
+      Contact: "Contact & Collaboration | Ganapathy N",
+    };
+    
+    const descriptions = {
+      Home: "Welcome to the professional portfolio of Ganapathy N, a Senior Frontend & Full Stack Developer with 6+ years of experience in React, Next.js, React Native, and AWS cloud architecture.",
+      About: "Learn about Ganapathy N, a Senior Software Developer with 6+ years of experience building high-performance, accessible, and scalable web and mobile applications.",
+      Services: "Explore the professional services offered by Ganapathy N, including web & mobile development, API integration, code deployment, UI/UX, test automation, and cloud architecture.",
+      Skills: "Discover the core technical competencies, frameworks, testing automation tools, and cloud platforms utilized by Ganapathy N.",
+      Projects: "Explore featured full-stack, frontend, and mobile projects delivered by Ganapathy N, including healthcare and maritime platforms.",
+      Certification: "View professional credentials, cloud certifications, and technical program completions achieved by Ganapathy N from IBM, Meta, Google, and Cisco.",
+      Journey: "Track the professional experience timeline, academic background, and milestones in the career of Ganapathy N.",
+      Contact: "Get in touch with Ganapathy N for contract development, consulting, or job opportunities in web and mobile applications.",
+    };
+
+    if (titles[activeSection]) {
+      document.title = titles[activeSection];
+    }
+    
+    if (descriptions[activeSection]) {
+      const metaDesc = document.querySelector('meta[name="description"]');
+      if (metaDesc) {
+        metaDesc.setAttribute("content", descriptions[activeSection]);
+      }
+    }
+  }, [activeSection]);
+
   const transitionToSection = (item) => {
     if (!mainRef.current) return;
     isScrollingRef.current = true;
@@ -35,9 +71,14 @@ export default function App() {
     const id = item.href.replace("#", "");
     const el = document.getElementById(id);
     if (el) {
-      mainRef.current.scrollTo({
-        top: el.offsetTop,
-        behavior: "smooth",
+      const mainEl = mainRef.current;
+      const rect = el.getBoundingClientRect();
+      const mainRect = mainEl.getBoundingClientRect();
+      const targetTop = rect.top - mainRect.top + mainEl.scrollTop;
+      const isMobile = window.innerWidth < 768;
+      mainEl.scrollTo({
+        top: targetTop,
+        behavior: isMobile ? "auto" : "smooth",
       });
     }
 
@@ -219,8 +260,11 @@ export default function App() {
           const targetId = hash.replace("#", "");
           const targetEl = document.getElementById(targetId);
           if (targetEl) {
+            const rect = targetEl.getBoundingClientRect();
+            const mainRect = mainEl.getBoundingClientRect();
+            const targetTop = rect.top - mainRect.top + mainEl.scrollTop;
             mainEl.scrollTo({
-              top: targetEl.offsetTop,
+              top: targetTop,
               behavior: "auto",
             });
             setActiveSection(targetItem.name);
@@ -255,35 +299,35 @@ export default function App() {
   };
 
   return (
-    <div className="relative min-h-screen flex flex-col md:flex-row bg-black overflow-hidden">
+    <div className="relative min-h-screen flex flex-col md:flex-row bg-[#000000] overflow-hidden text-[#FFFFFF]">
       <div
         className="fixed inset-0 w-full h-full -z-10"
         style={{
-          backgroundColor: "black",
+          backgroundColor: "#000000",
         }}
       >
         <Particles
-          particleColors={["#ffffff", "#ffffff"]}
-          particleCount={200}
-          particleSpread={10}
-          speed={0.1}
-          particleBaseSize={100}
+          particleColors={["#00D5D5", "#FFFFFF"]}
+          particleCount={80}
+          particleSpread={12}
+          speed={0.05}
+          particleBaseSize={80}
           moveParticlesOnHover={true}
-          particleHoverFactor={3}
-          alphaParticles={false}
+          particleHoverFactor={2.5}
+          alphaParticles={true}
           disableRotation={false}
-          style={{ width: "100%", height: "100%" }}
+          style={{ width: "100%", height: "100%", opacity: 0.18 }}
         />
       </div>
 
       {/* Tracking Beam - hidden on mobile */}
       <div
-        className="hidden md:block fixed right-3 top-0 h-full w-1 bg-gray-700/30 z-30 rounded-full cursor-pointer"
+        className="hidden md:block fixed right-3 top-0 h-full w-1 bg-[#00D5D5]/20 z-30 rounded-full cursor-pointer"
         onClick={handleBeamClick}
       >
         <div
           ref={beamFillRef}
-          className="absolute left-0 w-full bg-sky-500 rounded-full transition-all duration-200"
+          className="absolute left-0 w-full bg-[#00D5D5] rounded-full transition-all duration-200"
           style={{
             top: 0,
             height: "5%",
@@ -301,7 +345,7 @@ export default function App() {
           damping: 15,
           duration: 0.7,
         }}
-        className="z-20"
+        className="relative z-20"
       >
         <Sidebar
           activeSection={activeSection}
@@ -334,6 +378,7 @@ export default function App() {
         >
           <Home />
           <About />
+          <Services />
           <Skills />
           <Projects />
           <Certification />

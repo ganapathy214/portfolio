@@ -1,4 +1,3 @@
-//eslint-disable-next-line
 import { motion } from "framer-motion";
 import React, { useRef } from "react";
 import { FaLinkedinIn, FaGithub } from "react-icons/fa";
@@ -9,27 +8,38 @@ import ProfileCard from "../common/ProfileCard";
 import { useTypewriter } from "../common/utils/hooks/useTypewriter";
 import { PROFESSIONAL_TITLES, SOCIAL_LINKS } from "../const";
 import SectionLayout from "../layout/SectionLayout";
-import { PrimaryButton, SecondaryButton } from "../common/Buttons";
 
 const ICONS = {
   FaLinkedinIn,
   FaGithub,
 };
 
+const HIGHLIGHTS = [
+  { label: "Specialization", value: "React · Next.js · React Native" },
+  { label: "Cloud", value: "AWS · Serverless · DevOps" },
+  { label: "Location", value: "India · Remote Ready" },
+];
+
 const SocialLinks = () => (
-  <div className="icon_card flex mt-4">
-    {SOCIAL_LINKS.map(({ href, icon, label, containerClass }) => {
+  <div className="flex gap-3 mt-6 flex-wrap select-none">
+    {SOCIAL_LINKS.map(({ href, icon, label }) => {
       const IconComponent = ICONS[icon];
       return (
         <a
           key={label}
-          className={`socialContainer ${containerClass}`}
           href={href}
           target="_blank"
           rel="noopener noreferrer"
           aria-label={label}
+          className="group flex items-center gap-2.5 px-4 py-2.5 rounded-lg transition-all duration-300 cursor-pointer neon-border"
+          style={{ background: "rgba(0,213,213,0.03)" }}
         >
-          <IconComponent className="text-2xl text-white transition-colors duration-300" />
+          {IconComponent && (
+            <IconComponent className="text-lg text-stone-400 group-hover:text-primary transition-colors duration-300" />
+          )}
+          <span className="text-[11px] font-bold uppercase tracking-widest text-stone-500 group-hover:text-primary transition-colors duration-300">
+            {label}
+          </span>
         </a>
       );
     })}
@@ -41,19 +51,42 @@ const About = () => {
   const typewriterText = useTypewriter(PROFESSIONAL_TITLES);
 
   return (
-    <SectionLayout id="about" label="Who am I ?" headerRef={headerRef}>
-      <div className="w-full min-h-[78vh] flex flex-col md:flex-row justify-center items-center gap-8 md:gap-10">
-        {/* ProfileCard (Image) - Show first on mobile */}
-        <motion.div className="flex flex-col items-center order-1 md:order-2 mb-2 md:mb-0 w-full md:w-auto">
-          <ProfileCard
-            name="Ganapathy N"
-            title="Senior Frontend & Full Stack Developer"
-            avatarUrl={avatar}
-            enableTilt={true}
-            onContactClick={() => console.log("Contact clicked")}
-          />
-          <div className="flex gap-4 mt-4 flex-wrap justify-center">
-            <PrimaryButton
+    <SectionLayout
+      id="about"
+      label="Who am I ?"
+      headerRef={headerRef}
+      spotlightColor="rgba(0, 213, 213, 0.06)"
+      textColorClass="text-[#00D5D5]"
+    >
+      <div className="w-full min-h-[78vh] flex flex-col lg:flex-row justify-center items-start gap-10 lg:gap-16 py-4">
+
+        {/* ── RIGHT SIDE — Profile Card ── */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.92 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7 }}
+          className="flex flex-col items-center order-1 lg:order-2 w-full lg:w-auto shrink-0"
+        >
+          {/* Profile Card with neon glow wrapper */}
+          <div
+            className="relative p-1 rounded-[2.5rem]"
+            style={{
+              background: "linear-gradient(135deg, rgba(0,213,213,0.2), transparent, rgba(0,213,213,0.1))",
+              boxShadow: "0 0 40px rgba(0,213,213,0.08)",
+            }}
+          >
+            <ProfileCard
+              name="Ganapathy N"
+              title="Senior Frontend & Full Stack Developer"
+              avatarUrl={avatar}
+              enableTilt={true}
+            />
+          </div>
+
+          {/* Action buttons */}
+          <div className="flex gap-3 mt-6 w-full max-w-sm">
+            <button
               onClick={() => {
                 const link = document.createElement("a");
                 link.href = resumePdf;
@@ -62,42 +95,90 @@ const About = () => {
                 link.click();
                 document.body.removeChild(link);
               }}
+              className="primary_button flex-1 cursor-pointer"
             >
               Download CV
-            </PrimaryButton>
-            <SecondaryButton
+            </button>
+            <button
               onClick={() => {
-                const link = document.createElement("a");
-                link.href = resumePdf;
-                link.download = "Ganapathy_N_Resume.pdf";
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
+                const el = document.getElementById("contact");
+                if (el) el.scrollIntoView({ behavior: "smooth" });
               }}
+              className="secondary_button flex-1 cursor-pointer"
             >
               Hire Me
-            </SecondaryButton>
+            </button>
+          </div>
+
+          {/* Spec table */}
+          <div className="mt-6 w-full max-w-sm corner-card rounded-xl p-4 space-y-2">
+            {HIGHLIGHTS.map((h) => (
+              <div key={h.label} className="flex justify-between items-center text-[11px]">
+                <span className="text-stone-600 font-bold uppercase tracking-wider">{h.label}</span>
+                <span className="text-stone-300 font-semibold">{h.value}</span>
+              </div>
+            ))}
           </div>
         </motion.div>
 
-        {/* About Text */}
-        <motion.div className="w-full md:w-7/12 relative order-2 md:order-1 px-2 sm:px-0">
-          <div className="flex items-center gap-2 mb-4 text-sm tracking-widest">
-            <div className="w-10 sm:w-16 h-[2px] bg-white" />
-            <p className="text-sky-400">ABOUT</p>
+        {/* ── LEFT SIDE — Biography ── */}
+        <motion.div
+          initial={{ opacity: 0, x: -40 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7 }}
+          className="w-full lg:w-7/12 order-2 lg:order-1 text-left"
+        >
+          {/* Section mini-label */}
+          <div className="flex items-center gap-3 mb-5">
+            <div className="w-8 h-[1px]" style={{ background: "#00D5D5", opacity: 0.4 }} />
+            <span className="section-number">Biography</span>
           </div>
 
-          <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-tight mb-4 text-sky-400">
+          {/* Dynamic headline */}
+          <div className="text-3xl sm:text-4xl md:text-5xl font-black leading-tight mb-6 text-white">
             A Passionate <br />
-            <span>
+            <span
+              className="text-transparent bg-clip-text"
+              style={{
+                backgroundImage: "linear-gradient(90deg, #ffffff, #00D5D5)",
+              }}
+            >
               {typewriterText}
-              <span className="blinking-cursor">|</span>
+              <span className="blinking-cursor select-none">|</span>
             </span>
           </div>
 
-          <p className="text-gray-300 mb-6 text-sm md:text-base leading-relaxed max-w-3xl">
-            Senior Frontend & Full Stack Developer with 6+ years of experience specializing in React.js, Next.js, React Native, TypeScript, and modern JavaScript ecosystems. I design and build high-performance, accessible, and scalable enterprise web and mobile applications. With hands-on expertise spanning state management (Redux Toolkit, Zustand, React Query), UI systems, backend APIs (Node.js, Express.js), and AWS cloud DevOps architectures, I collaborate to deliver modern solutions aligned with business goals.
+          {/* Bio paragraph */}
+          <p className="text-stone-400 text-sm md:text-base leading-loose mb-8">
+            Senior Frontend &amp; Full Stack Developer with{" "}
+            <span className="text-white font-semibold">6+ years</span> of experience specializing
+            in React.js, Next.js, React Native, TypeScript, and modern JavaScript ecosystems.
+            I design and build high-performance, accessible, and scalable enterprise web and mobile
+            applications. With hands-on expertise spanning state management, UI systems, backend APIs
+            (Node.js, Express.js), and AWS cloud DevOps architectures, I collaborate to deliver
+            modern solutions aligned with business goals.
           </p>
+
+          {/* Metrics row — corner-card style */}
+          <div className="grid grid-cols-3 gap-3 mb-6 select-none">
+            {[
+              { value: "6+", label: "Years Exp" },
+              { value: "10+", label: "Certificates" },
+              { value: "12+", label: "Projects" },
+            ].map((s, i) => (
+              <div key={i} className="corner-card rounded-xl p-4 text-center">
+                <div
+                  className="text-2xl sm:text-3xl font-black"
+                  style={{ color: "#00D5D5", textShadow: "0 0 12px rgba(0,213,213,0.4)" }}
+                >
+                  {s.value}
+                </div>
+                <div className="text-[9px] text-stone-500 font-bold uppercase tracking-widest mt-1">{s.label}</div>
+              </div>
+            ))}
+          </div>
+
           <SocialLinks />
         </motion.div>
       </div>
@@ -106,4 +187,3 @@ const About = () => {
 };
 
 export default React.memo(About);
-

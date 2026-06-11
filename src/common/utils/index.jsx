@@ -1,9 +1,9 @@
 import VariableProximity from "../VariableProximity";
 
-export const SectionHeader = ({ containerRef, label }) => (
+export const SectionHeader = ({ containerRef, label, textColorClass = "text-sky-400" }) => (
   <div
     ref={containerRef}
-    className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-end mb-4 text-sky-400 border-b-4"
+    className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-end mb-4 ${textColorClass} border-b-4`}
     style={{ position: "relative" }}
   >
     <VariableProximity

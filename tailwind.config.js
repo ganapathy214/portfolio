@@ -20,7 +20,7 @@ export default {
         secondary: "#7affec",
       },
       fontFamily: {
-        sans: ["Inter", "sans-serif"],
+        sans: ["Elms Sans", "Google Sans", "sans-serif"],
       },
     },
   },
