@@ -122,7 +122,7 @@ const Home = () => {
               className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-none text-white glitch-text"
               data-text="GANAPATHY"
             >
-              GANAPATHY
+              Ganapathy N
             </h1>
             {/* <div
               className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-none select-none mt-1"
