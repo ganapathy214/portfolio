@@ -7,40 +7,76 @@ import DecryptedText from "../../common/DecryptedText";
 const Sidebar = ({ activeSection, onItemClick }) => {
   return (
     <>
+      {/* Desktop Sidebar */}
       <motion.div
         className="hidden md:block"
-        initial={{ x: -100, opacity: 0 }}
+        initial={{ x: -80, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
-        transition={{ type: "spring", stiffness: 200, damping: 30 }}
+        transition={{ type: "spring", stiffness: 200, damping: 28, delay: 0.2 }}
       >
-        <nav className="w-20 h-screen text-white fixed left-0 top-0 flex flex-col items-center justify-center z-30 gap-5 bg-transparent">
-          {sidebarItems.map((item) => {
-            const isActive = activeSection === item.name;
-            const linkClasses = `flex flex-col items-center justify-center p-2 transition-all duration-200 ${
-              isActive ? "scale-105" : "hover:text-sky-400 hover:scale-105"
-            }`;
-            const iconClasses = `w-5 h-5 mb-1 ${
-              isActive ? "scale-110 text-sky-400" : "text-gray-400"
-            }`;
-            const textClasses = `text-xs ${
-              isActive ? "text-sky-400" : "text-gray-400"
-            }`;
+        <nav
+          className="w-20 h-screen fixed left-0 top-0 flex flex-col items-center justify-center z-30 gap-2"
+          style={{
+            background: "linear-gradient(to right, rgba(0,0,0,0.9), rgba(0,0,0,0.5))",
+            borderRight: "1px solid rgba(0,213,213,0.08)",
+          }}
+        >
+          {/* Top branding dot */}
+          <div
+            className="absolute top-6 flex flex-col items-center gap-1"
+          >
+            <div
+              className="w-2 h-2 rounded-full"
+              style={{ background: "#00D5D5", boxShadow: "0 0 8px rgba(0,213,213,0.8)" }}
+            />
+            <div className="w-px h-8" style={{ background: "rgba(0,213,213,0.2)" }} />
+          </div>
 
+          {/* Nav items */}
+          {sidebarItems.map((item, i) => {
+            const isActive = activeSection === item.name;
             return (
-              <div key={item.name}>
+              <motion.div
+                key={item.name}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.3 + i * 0.06, duration: 0.4 }}
+              >
                 <a
                   href={item.href}
                   onClick={(e) => {
                     e.preventDefault();
                     onItemClick(item);
                   }}
-                  className={linkClasses}
                   aria-current={isActive ? "page" : undefined}
+                  className="flex flex-col items-center justify-center px-2 py-3 relative group transition-all duration-200"
+                  style={{ minWidth: "64px" }}
                 >
-                  <item.icon className={iconClasses} />
+                  {/* Active left indicator */}
+                  {isActive && (
+                    <motion.div
+                      layoutId="sidebar-indicator"
+                      className="absolute left-0 top-2 bottom-2 w-[2px] rounded-r"
+                      style={{ background: "#00D5D5", boxShadow: "0 0 8px rgba(0,213,213,0.6)" }}
+                    />
+                  )}
+
+                  {/* Icon */}
+                  <item.icon
+                    className="w-5 h-5 mb-1 transition-all duration-200"
+                    style={{
+                      color: isActive ? "#00D5D5" : "rgba(255,255,255,0.45)",
+                      filter: isActive ? "drop-shadow(0 0 6px rgba(0,213,213,0.6))" : "none",
+                      transform: isActive ? "scale(1.1)" : "scale(1)",
+                    }}
+                  />
+
+                  {/* Label */}
                   <DecryptedText
                     text={item.name}
-                    className={textClasses}
+                    className={`text-[9px] font-bold tracking-wider uppercase transition-colors duration-200 ${
+                      isActive ? "text-primary" : "text-stone-600 group-hover:text-stone-300"
+                    }`}
                     parentClassName="flex items-center justify-center"
                     animateOn="hover"
                     speed={40}
@@ -48,16 +84,32 @@ const Sidebar = ({ activeSection, onItemClick }) => {
                     sequential={true}
                   />
                 </a>
-              </div>
+              </motion.div>
             );
           })}
+
+          {/* Bottom accent line */}
+          <div className="absolute bottom-6 flex flex-col items-center gap-1">
+            <div className="w-px h-8" style={{ background: "rgba(0,213,213,0.2)" }} />
+            <div
+              className="w-1.5 h-1.5 rounded-full"
+              style={{ background: "rgba(0,213,213,0.3)" }}
+            />
+          </div>
         </nav>
       </motion.div>
 
+      {/* Mobile Bottom Bar */}
       <motion.nav
-        className="md:hidden fixed bottom-0 left-0 w-full bg-gray-900 border-t border-gray-800 flex justify-around p-3 z-50"
+        className="md:hidden fixed bottom-0 left-0 w-full flex justify-around px-3 py-3 z-50"
+        style={{
+          background: "rgba(0,0,0,0.95)",
+          borderTop: "1px solid rgba(0,213,213,0.15)",
+          backdropFilter: "blur(12px)",
+        }}
         initial={{ y: 100 }}
         animate={{ y: 0 }}
+        transition={{ type: "spring", stiffness: 200, damping: 28 }}
       >
         {sidebarItems.map((item) => {
           const isActive = activeSection === item.name;
@@ -69,12 +121,29 @@ const Sidebar = ({ activeSection, onItemClick }) => {
                 e.preventDefault();
                 onItemClick(item);
               }}
-              className={`flex flex-col items-center gap-1 ${
-                isActive ? "text-sky-400" : "text-gray-400"
-              }`}
+              className="flex flex-col items-center gap-1 relative px-2 py-1"
             >
-              <item.icon className="w-6 h-6" />
-              <span className="text-[10px]">{item.name}</span>
+              {/* Active indicator dot */}
+              {isActive && (
+                <motion.div
+                  layoutId="mobile-indicator"
+                  className="absolute -top-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full"
+                  style={{ background: "#00D5D5", boxShadow: "0 0 6px rgba(0,213,213,0.8)" }}
+                />
+              )}
+              <item.icon
+                className="w-5 h-5 transition-all duration-200"
+                style={{
+                  color: isActive ? "#00D5D5" : "rgba(255,255,255,0.4)",
+                  filter: isActive ? "drop-shadow(0 0 5px rgba(0,213,213,0.6))" : "none",
+                }}
+              />
+              <span
+                className="text-[9px] font-bold uppercase tracking-wider transition-colors duration-200 hidden min-[420px]:block"
+                style={{ color: isActive ? "#00D5D5" : "rgba(255,255,255,0.35)" }}
+              >
+                {item.name}
+              </span>
             </a>
           );
         })}

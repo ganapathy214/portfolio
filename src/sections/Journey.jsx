@@ -2,17 +2,16 @@ import React, { useRef } from "react";
 import ShinyText from "../common/ShinyText";
 import CountUp from "../common/CountUp";
 import VariableProximity from "../common/VariableProximity";
-//eslint-disable-next-line
 import { motion } from "framer-motion";
 import { summaryStats, timelineData } from "../const";
 import SectionLayout from "../layout/SectionLayout";
 
-const timelineVariants = {
-  hidden: { opacity: 0, y: 40 },
+const cardVariants = {
+  hidden: { opacity: 0, y: 30 },
   visible: (i) => ({
     opacity: 1,
     y: 0,
-    transition: { delay: i * 0.2, duration: 0.6, type: "spring" },
+    transition: { delay: i * 0.1, duration: 0.6, type: "spring", stiffness: 80 },
   }),
 };
 
@@ -20,89 +19,141 @@ const Journey = () => {
   const journeyRef = useRef(null);
 
   return (
-    <SectionLayout id="journey" label="What I've done ?" headerRef={journeyRef}>
-      <div className="flex flex-col xl:flex-row justify-center items-center gap-8 xl:gap-10 w-full h-full">
-        {/* Stats */}
-        <div className="flex flex-col justify-center items-center w-full xl:w-auto">
-          <div className="flex flex-row xl:flex-col justify-center items-center gap-4 xl:gap-8 flex-wrap">
-            {summaryStats.map((stat, idx) => (
-              <div
-                key={idx}
-                className="flex flex-col items-center xl:items-end"
-              >
-                <div className="inline-flex gap-0.5 items-center">
-                  <div className="text-3xl sm:text-4xl md:text-5xl xl:text-7xl font-semibold">
-                    <CountUp end={stat.value} duration={2} />
-                  </div>
-                  <h2 className="text-sky-400 text-4xl sm:text-5xl md:text-6xl xl:text-8xl font-extrabold leading-none">
-                    +
-                  </h2>
-                </div>
-                <div>
-                  <ShinyText
-                    text={stat.label}
-                    disabled={false}
-                    speed={5}
-                    className="custom-class"
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Timeline */}
-        <div className="space-y-2 w-full xl:flex-1 max-w-2xl">
-          {timelineData.map((item, i) => (
+    <SectionLayout
+      id="journey"
+      label="What I've done ?"
+      headerRef={journeyRef}
+      spotlightColor="rgba(0, 213, 213, 0.08)"
+      textColorClass="text-[#00D5D5]"
+    >
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start w-full py-4 text-left">
+        {/* Left Side: Summary Counter Cards */}
+        <div className="lg:col-span-4 flex flex-col sm:flex-row lg:flex-col gap-4 select-none w-full">
+          {summaryStats.map((stat, idx) => (
             <motion.div
-              className="flex gap-x-3"
-              key={i}
-              custom={i}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.3 }}
-              variants={timelineVariants}
+              key={idx}
+              initial={{ opacity: 0, scale: 0.92 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: idx * 0.1, duration: 0.5 }}
+              className="flex-1 p-6 sm:p-7 flex flex-col items-center justify-center text-center corner-card"
+              style={{ borderRadius: "16px" }}
             >
-              {/* Left Content */}
-              <div className="min-w-10 sm:min-w-14 text-end w-24 sm:w-40 flex-shrink-0">
-                <time className="text-xs text-sky-400">{item.time}</time>
+              <div className="inline-flex gap-1 items-baseline">
+                <span
+                  className="text-4xl sm:text-5xl font-black tracking-tight"
+                  style={{
+                    color: "#00D5D5",
+                    textShadow: "0 0 20px rgba(0,213,213,0.4)",
+                  }}
+                >
+                  <CountUp end={stat.value} duration={2.5} />
+                </span>
+                <span className="text-3xl sm:text-4xl font-extrabold" style={{ color: "#00D5D5" }}>
+                  +
+                </span>
               </div>
-              {/* Icon */}
-              <div className="relative last:after:hidden after:absolute after:top-7 after:bottom-0 after:start-3.5 after:w-px after:-translate-x-[0.5px] after:bg-neutral-700">
-                <div className="relative z-10 size-7 flex justify-center items-center">
-                  <div className="size-2 rounded-full bg-sky-400"></div>
-                </div>
-              </div>
-              {/* Right Content */}
-              <div className="grow pt-0.5 pb-8">
+              <div className="mt-2 text-[10px] font-bold tracking-widest text-stone-500 uppercase">
                 <ShinyText
-                  text={item.title}
+                  text={stat.label}
                   disabled={false}
                   speed={5}
                   className="custom-class"
                 />
-                {item.percent && (
-                  <h2 className="my-1 text-white">{item.percent}</h2>
-                )}
-                {item.org && (
-                  <h3 className="flex my-1 font-semibold text-sky-400">
-                    <VariableProximity
-                      label={item.org}
-                      className="variable-proximity-demo"
-                      fromFontVariationSettings="'wght' 400, 'opsz' 9"
-                      toFontVariationSettings="'wght' 1000, 'opsz' 40"
-                      containerRef={journeyRef}
-                      radius={100}
-                      falloff="linear"
-                    />
-                  </h3>
-                )}
+              </div>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Right Side: Timeline */}
+        <div className="lg:col-span-8 relative pl-6 sm:pl-8 space-y-5 w-full">
+          {/* Neon vertical line */}
+          <div
+            className="absolute left-0 top-2 bottom-2 pointer-events-none"
+            style={{
+              width: "1px",
+              background: "linear-gradient(to bottom, #00D5D5 0%, rgba(0,213,213,0.3) 50%, transparent 100%)",
+            }}
+          />
+
+          {timelineData.map((item, i) => (
+            <motion.div
+              key={i}
+              custom={i}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.2 }}
+              variants={cardVariants}
+              whileHover={{ x: 5 }}
+              className="relative group p-5 sm:p-6 transition-all duration-300 corner-card"
+              style={{ borderRadius: "14px" }}
+            >
+              {/* Dot node */}
+              <div
+                className="absolute top-7 flex items-center justify-center z-10 transition-transform duration-300 group-hover:scale-125"
+                style={{
+                  left: "-37px",
+                  width: "14px",
+                  height: "14px",
+                  borderRadius: "50%",
+                  background: "#000",
+                  border: "2px solid #00D5D5",
+                  boxShadow: "0 0 8px rgba(0,213,213,0.5)",
+                }}
+              >
+                <div
+                  className="rounded-full animate-pulse"
+                  style={{ width: "5px", height: "5px", background: "#00D5D5" }}
+                />
+              </div>
+
+              {/* Top glow on hover */}
+              <div
+                className="absolute top-0 left-0 right-0 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+                style={{ background: "linear-gradient(to right, #00D5D5, transparent)" }}
+              />
+
+              {/* Time badge & location */}
+              <div className="flex flex-wrap items-center justify-between gap-2 mb-3 select-none">
+                <span className="tag-primary">{item.time}</span>
                 {item.location && (
-                  <p className="my-1 text-sm text-neutral-400">
-                    {item.location}
-                  </p>
+                  <span className="text-[10px] text-stone-500 font-semibold">{item.location}</span>
                 )}
               </div>
+
+              {/* Title */}
+              <h3 className="text-base sm:text-lg font-bold text-white group-hover:text-primary transition-colors duration-300">
+                <ShinyText text={item.title} disabled={false} speed={5} className="custom-class" />
+              </h3>
+
+              {/* Score */}
+              {item.percent && (
+                <div className="mt-1.5 inline-block text-[10px] font-bold px-2 py-0.5 rounded select-none"
+                  style={{
+                    background: "rgba(16,185,129,0.08)",
+                    border: "1px solid rgba(16,185,129,0.2)",
+                    color: "rgb(52,211,153)",
+                  }}
+                >
+                  Score: {item.percent}
+                </div>
+              )}
+
+              {/* Organization */}
+              {item.org && (
+                <div className="mt-2.5 text-xs sm:text-sm font-bold flex items-center gap-1.5" style={{ color: "#00D5D5" }}>
+                  <span className="w-1.5 h-1.5 rounded-full" style={{ background: "#00D5D5" }} />
+                  <VariableProximity
+                    label={item.org}
+                    className="variable-proximity-demo"
+                    fromFontVariationSettings="'wght' 500, 'opsz' 9"
+                    toFontVariationSettings="'wght' 800, 'opsz' 40"
+                    containerRef={journeyRef}
+                    radius={100}
+                    falloff="linear"
+                  />
+                </div>
+              )}
             </motion.div>
           ))}
         </div>
@@ -112,4 +163,3 @@ const Journey = () => {
 };
 
 export default React.memo(Journey);
-

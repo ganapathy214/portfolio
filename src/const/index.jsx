@@ -1,6 +1,7 @@
 // sidebar
 import {
   HiBookOpen,
+  HiBriefcase,
   HiCodeBracket,
   HiCog,
   HiEnvelope,
@@ -154,6 +155,7 @@ export const framerVariants = [
 export const sidebarItems = [
   { name: "Home", href: "#home", icon: HiSquares2X2 },
   { name: "About", href: "#about", icon: HiIdentification },
+  { name: "Services", href: "#services", icon: HiBriefcase },
   { name: "Skills", href: "#skills", icon: HiCog },
   { name: "Projects", href: "#projects", icon: HiCodeBracket },
   { name: "Certification", href: "#certification", icon: GrCertificate },
@@ -213,6 +215,45 @@ export const serviceList = [
     description:
       "Deliver robust, scalable automated testing solutions to ensure software reliability, reduce bugs, and accelerate development cycles.",
     icon: TbSettingsAutomation,
+  },
+];
+
+export const SERVICES_DATA = [
+  {
+    title: "Web & Mobile Development",
+    description:
+      "Building responsive, SEO-optimized web and mobile applications tailored for performance, accessibility, and user engagement using React, Next.js, and React Native.",
+    icon: "code",
+  },
+  {
+    title: "API Integration",
+    description:
+      "Integrating secure, scalable APIs and databases to ensure seamless, reliable data flow and robust application connectivity.",
+    icon: "database",
+  },
+  {
+    title: "Code Deployment",
+    description:
+      "Implementing efficient Git workflows and automated deployment pipelines for faster, safer, and more reliable code delivery via CI/CD.",
+    icon: "cloud",
+  },
+  {
+    title: "UI/UX Implementation",
+    description:
+      "Creating intuitive and visually stunning user interfaces with Storybook, Tailwind CSS, Material UI, Ant Design, and other modern UI systems.",
+    icon: "design",
+  },
+  {
+    title: "Test Automation",
+    description:
+      "Delivering robust, scalable automated testing solutions using Jest and Playwright to ensure software reliability and reduce bugs.",
+    icon: "seo",
+  },
+  {
+    title: "Cloud Architecture",
+    description:
+      "Deploying and managing applications on AWS (EC2, S3, Lambda), Firebase, and DigitalOcean with CloudWatch monitoring and IaC.",
+    icon: "mobile",
   },
 ];
 
@@ -567,34 +608,34 @@ export const timelineData = [
   {
     time: "Oct 2022 - Present",
     title: "Senior Frontend & Full Stack Developer",
-    org: "",
+    org: "Freelance & Consulting Lead",
     location: "Coimbatore, Tamil Nadu.",
   },
   {
     time: "Jan 2020 - Oct 2022",
     title: "Frontend Developer",
-    org: "",
+    org: "Software Solutions Ltd.",
     location: "Coimbatore, Tamil Nadu.",
   },
   {
     time: "Aug 2015 - May 2019",
     title: "BE in Electronics and Communication Engineering",
     percent: "6.9 CGPA",
-    org: "",
+    org: "Anna University",
     location: "Erode, Tamil Nadu.",
   },
   {
     time: "June 2013 - May 2015",
     title: "Higher Secondary Certificate",
     percent: "80.83%",
-    org: "",
+    org: "State Board School",
     location: "Erode, Tamil Nadu.",
   },
   {
     time: "June 2012 - May 2013",
     title: "Secondary School Leaving Certificate",
     percent: "93.2%",
-    org: "",
+    org: "State Board School",
     location: "Erode, Tamil Nadu.",
   },
 ];
