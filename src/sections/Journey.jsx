@@ -1,9 +1,8 @@
 import React, { useRef } from "react";
 import ShinyText from "../common/ShinyText";
 import CountUp from "../common/CountUp";
-import VariableProximity from "../common/VariableProximity";
 import { motion } from "framer-motion";
-import { summaryStats, timelineData } from "../const";
+import { summaryStats, timelineData } from "../constants";
 import SectionLayout from "../layout/SectionLayout";
 
 const cardVariants = {
@@ -139,21 +138,6 @@ const Journey = () => {
                 </div>
               )}
 
-              {/* Organization */}
-              {item.org && (
-                <div className="mt-2.5 text-xs sm:text-sm font-bold flex items-center gap-1.5" style={{ color: "#00D5D5" }}>
-                  <span className="w-1.5 h-1.5 rounded-full" style={{ background: "#00D5D5" }} />
-                  <VariableProximity
-                    label={item.org}
-                    className="variable-proximity-demo"
-                    fromFontVariationSettings="'wght' 500, 'opsz' 9"
-                    toFontVariationSettings="'wght' 800, 'opsz' 40"
-                    containerRef={journeyRef}
-                    radius={100}
-                    falloff="linear"
-                  />
-                </div>
-              )}
             </motion.div>
           ))}
         </div>

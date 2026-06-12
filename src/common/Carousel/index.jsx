@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from "react";
-//eslint-disable-next-line
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function Carousel({ slides }) {

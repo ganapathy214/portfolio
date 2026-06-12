@@ -237,18 +237,12 @@ const ProfileCardComponent = ({
             />
           </div>
           <div className="pc-content">
-            <div className="pc-details">
+            <div className="pc-details-overlay">
+              <div className="pc-details">
+                {name && <h3>{name}</h3>}
+                {title && <p>{title}</p>}
+              </div>
             </div>
-            <img
-              className="avatar"
-              src={avatarUrl}
-              alt={`${name || "User"} avatar`}
-              loading="lazy"
-              onError={(e) => {
-                const target = e.target;
-                target.style.display = "none";
-              }}
-            />
           </div>
         </div>
       </section>

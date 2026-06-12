@@ -3,13 +3,14 @@ import React, { useRef, useState } from "react";
 import { CiLocationOn, CiMail, CiPhone } from "react-icons/ci";
 import ShinyText from "../common/ShinyText";
 import SectionLayout from "../layout/SectionLayout";
-import { CONTACT_INFO } from "../const";
+import { CONTACT_INFO, INPUT_CLASS } from "../constants";
 
 const ContactInfoCard = ({ icon, label, value, delay }) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
       transition={{ duration: 0.5, delay }}
       whileHover={{ y: -4 }}
       className="group relative cursor-pointer overflow-hidden p-5 flex items-center gap-4 text-left corner-card"
@@ -44,10 +45,6 @@ const ContactInfoCard = ({ icon, label, value, delay }) => {
   );
 };
 
-const INPUT_CLASS =
-  "w-full border px-4 py-3 text-xs sm:text-sm text-white placeholder-stone-600 outline-none transition-all duration-300 font-medium"
-  + " focus:border-primary focus:shadow-[0_0_0_1px_rgba(0,213,213,0.2)]";
-
 const Contact = () => {
   const contactRef = useRef(null);
   const [formData, setFormData] = useState({
@@ -75,9 +72,9 @@ const Contact = () => {
       spotlightColor="rgba(0, 213, 213, 0.06)"
       textColorClass="text-[#00D5D5]"
     >
-      <div className="w-full space-y-8 py-2">
+      <div className="w-full min-h-[78vh] flex flex-col gap-6 py-2">
         {/* Info Cards Row */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 select-none">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 select-none shrink-0">
           <ContactInfoCard
             label="Location"
             value={CONTACT_INFO.address}
@@ -99,26 +96,20 @@ const Contact = () => {
         </div>
 
         {/* Map & Form */}
-        <div className="flex flex-col lg:flex-row gap-6 items-stretch">
+        <div className="flex-1 flex flex-col lg:flex-row gap-6 items-stretch min-h-[350px] lg:min-h-0">
           {/* Map */}
           <motion.div
-            className="w-full lg:w-1/2 overflow-hidden min-h-[280px] lg:min-h-0 relative corner-card"
+            className="w-full lg:w-1/2 overflow-hidden min-h-[350px] lg:min-h-0 relative corner-card"
             style={{ borderRadius: "16px" }}
             initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: 1, x: 0 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
             transition={{ duration: 0.7, delay: 0.4 }}
           >
-            {/* Map label */}
-            <div
-              className="absolute top-3 left-3 z-10 tag-primary text-[9px]"
-              style={{ pointerEvents: "none" }}
-            >
-              📍 Location
-            </div>
             <iframe
               title="Google Maps"
               src={CONTACT_INFO.googleMapsUrl}
-              className="w-full h-full min-h-[280px] absolute inset-0 border-none opacity-75 grayscale contrast-125"
+              className="w-full h-full absolute inset-0 border-none"
               allowFullScreen=""
               loading="lazy"
             />
@@ -130,7 +121,8 @@ const Contact = () => {
             className="w-full lg:w-1/2 flex flex-col gap-4 text-left corner-card"
             style={{ borderRadius: "16px", padding: "28px 24px" }}
             initial={{ opacity: 0, x: 30 }}
-            animate={{ opacity: 1, x: 0 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
             transition={{ duration: 0.7, delay: 0.5 }}
           >
             {/* Form header */}
@@ -222,8 +214,8 @@ const Contact = () => {
             </button>
           </motion.form>
         </div>
-      </div>
-    </SectionLayout>
+      </div >
+    </SectionLayout >
   );
 };
 

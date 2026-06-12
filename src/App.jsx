@@ -1,9 +1,11 @@
 import "./App.css";
 
 import { useEffect, useRef, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { HiArrowUp } from "react-icons/hi2";
 import Particles from "./common/Particles";
 import Sidebar from "./components/Sidebar";
-import { sidebarItems } from "./const";
+import { sidebarItems, PAGE_DESCRIPTIONS, PAGE_TITLES } from "./constants";
 import About from "./sections/About";
 import Services from "./sections/Services";
 import Certification from "./sections/Certification";
@@ -12,11 +14,10 @@ import Home from "./sections/Home";
 import Journey from "./sections/Journey";
 import Projects from "./sections/Projects";
 import Skills from "./sections/Skills";
-// eslint-disable-next-line no-unused-vars
-import { motion } from "framer-motion";
 
 export default function App() {
   const [activeSection, setActiveSection] = useState("Home");
+  const [showScrollTop, setShowScrollTop] = useState(false);
   const mainRef = useRef(null);
   const beamFillRef = useRef(null);
   const activeSectionRef = useRef("Home");
@@ -28,36 +29,14 @@ export default function App() {
   }, [activeSection]);
 
   useEffect(() => {
-    const titles = {
-      Home: "Home | Ganapathy N | Senior Software Developer",
-      About: "About Me | Ganapathy N | Senior Full Stack Developer",
-      Services: "My Services | Ganapathy N | Senior Software Developer",
-      Skills: "Skills & Expertise | Ganapathy N | Senior Frontend Developer",
-      Projects: "Featured Portfolio Projects | Ganapathy N",
-      Certification: "Verified Certifications & Achievements | Ganapathy N",
-      Journey: "Professional Journey & Timeline | Ganapathy N",
-      Contact: "Contact & Collaboration | Ganapathy N",
-    };
-    
-    const descriptions = {
-      Home: "Welcome to the professional portfolio of Ganapathy N, a Senior Frontend & Full Stack Developer with 6+ years of experience in React, Next.js, React Native, and AWS cloud architecture.",
-      About: "Learn about Ganapathy N, a Senior Software Developer with 6+ years of experience building high-performance, accessible, and scalable web and mobile applications.",
-      Services: "Explore the professional services offered by Ganapathy N, including web & mobile development, API integration, code deployment, UI/UX, test automation, and cloud architecture.",
-      Skills: "Discover the core technical competencies, frameworks, testing automation tools, and cloud platforms utilized by Ganapathy N.",
-      Projects: "Explore featured full-stack, frontend, and mobile projects delivered by Ganapathy N, including healthcare and maritime platforms.",
-      Certification: "View professional credentials, cloud certifications, and technical program completions achieved by Ganapathy N from IBM, Meta, Google, and Cisco.",
-      Journey: "Track the professional experience timeline, academic background, and milestones in the career of Ganapathy N.",
-      Contact: "Get in touch with Ganapathy N for contract development, consulting, or job opportunities in web and mobile applications.",
-    };
-
-    if (titles[activeSection]) {
-      document.title = titles[activeSection];
+    if (PAGE_TITLES[activeSection]) {
+      document.title = PAGE_TITLES[activeSection];
     }
     
-    if (descriptions[activeSection]) {
+    if (PAGE_DESCRIPTIONS[activeSection]) {
       const metaDesc = document.querySelector('meta[name="description"]');
       if (metaDesc) {
-        metaDesc.setAttribute("content", descriptions[activeSection]);
+        metaDesc.setAttribute("content", PAGE_DESCRIPTIONS[activeSection]);
       }
     }
   }, [activeSection]);
@@ -71,15 +50,24 @@ export default function App() {
     const id = item.href.replace("#", "");
     const el = document.getElementById(id);
     if (el) {
-      const mainEl = mainRef.current;
-      const rect = el.getBoundingClientRect();
-      const mainRect = mainEl.getBoundingClientRect();
-      const targetTop = rect.top - mainRect.top + mainEl.scrollTop;
       const isMobile = window.innerWidth < 768;
-      mainEl.scrollTo({
-        top: targetTop,
-        behavior: isMobile ? "auto" : "smooth",
-      });
+      if (isMobile) {
+        const rect = el.getBoundingClientRect();
+        const targetTop = rect.top + (window.scrollY || document.documentElement.scrollTop);
+        window.scrollTo({
+          top: targetTop,
+          behavior: "smooth",
+        });
+      } else {
+        const mainEl = mainRef.current;
+        const rect = el.getBoundingClientRect();
+        const mainRect = mainEl.getBoundingClientRect();
+        const targetTop = rect.top - mainRect.top + mainEl.scrollTop;
+        mainEl.scrollTo({
+          top: targetTop,
+          behavior: "smooth",
+        });
+      }
     }
 
     setTimeout(() => {
@@ -103,12 +91,22 @@ export default function App() {
     }).filter(item => item.el);
 
     const handleScroll = () => {
-      const scrollTop = mainEl.scrollTop;
+      const isMobile = window.innerWidth < 768;
+      const scrollTop = isMobile
+        ? (window.scrollY || document.documentElement.scrollTop)
+        : mainEl.scrollTop;
 
-      // 1. Mutate tracking beam directly to bypass React render cycle
-      const scrollHeight = mainEl.scrollHeight - mainEl.clientHeight;
-      const progress = scrollHeight > 0 ? scrollTop / scrollHeight : 0;
-      if (beamFillRef.current) {
+      // Show/hide scroll to top button
+      if (scrollTop > 400) {
+        setShowScrollTop(true);
+      } else {
+        setShowScrollTop(false);
+      }
+
+      // 1. Mutate tracking beam directly to bypass React render cycle (only needed/visible on desktop)
+      if (!isMobile && beamFillRef.current) {
+        const scrollHeight = mainEl.scrollHeight - mainEl.clientHeight;
+        const progress = scrollHeight > 0 ? scrollTop / scrollHeight : 0;
         beamFillRef.current.style.height = `${Math.max(progress * 100, 5)}%`;
       }
 
@@ -116,9 +114,11 @@ export default function App() {
 
       if (cachedSections.length === 0) return;
 
-      // 2. Find the active section using cached offsets
+      // 2. Find the active section using viewport-relative bounding rects (extremely robust for both window & container scroll)
       const sectionOffsets = cachedSections.map((sec) => {
-        const offset = Math.abs(sec.el.offsetTop - scrollTop);
+        const rect = sec.el.getBoundingClientRect();
+        // Since rect.top is relative to the viewport, the section closest to viewport top is active
+        const offset = Math.abs(rect.top);
         return { name: sec.name, href: sec.href, offset };
       });
 
@@ -136,119 +136,8 @@ export default function App() {
       });
     };
 
-    const handleWheel = (e) => {
-      if (document.querySelector('[role="dialog"]') || document.querySelector('.modal-open') || document.body.style.overflow === 'hidden') {
-        return;
-      }
-
-      if (isScrollingRef.current) {
-        e.preventDefault();
-        return;
-      }
-
-      const activeName = activeSectionRef.current;
-      const activeItem = sidebarItems.find(item => item.name === activeName);
-      if (!activeItem) return;
-
-      const id = activeItem.href.replace("#", "");
-      const el = document.getElementById(id);
-      if (!el) return;
-
-      const scrollTop = mainEl.scrollTop;
-      const clientHeight = mainEl.clientHeight;
-      const sectionTop = el.offsetTop;
-      const sectionHeight = el.offsetHeight;
-      const sectionBottom = sectionTop + sectionHeight;
-
-      const deltaY = e.deltaY;
-
-      if (deltaY > 0) {
-        const isAtBottom = scrollTop + clientHeight >= sectionBottom - 10;
-        if (isAtBottom) {
-          const currentIndex = sidebarItems.findIndex(item => item.name === activeName);
-          if (currentIndex < sidebarItems.length - 1) {
-            e.preventDefault();
-            const nextItem = sidebarItems[currentIndex + 1];
-            transitionToSection(nextItem);
-          }
-        }
-      } else if (deltaY < 0) {
-        const isAtTop = scrollTop <= sectionTop + 10;
-        if (isAtTop) {
-          const currentIndex = sidebarItems.findIndex(item => item.name === activeName);
-          if (currentIndex > 0) {
-            e.preventDefault();
-            const prevItem = sidebarItems[currentIndex - 1];
-            transitionToSection(prevItem);
-          }
-        }
-      }
-    };
-
-    const handleTouchStart = (e) => {
-      if (e.touches.length > 0) {
-        touchStartYRef.current = e.touches[0].clientY;
-      }
-    };
-
-    const handleTouchMove = (e) => {
-      if (document.querySelector('[role="dialog"]') || document.querySelector('.modal-open') || document.body.style.overflow === 'hidden') {
-        return;
-      }
-
-      if (isScrollingRef.current) {
-        e.preventDefault();
-        return;
-      }
-
-      if (e.touches.length === 0) return;
-
-      const touchEndY = e.touches[0].clientY;
-      const deltaY = touchStartYRef.current - touchEndY;
-
-      if (Math.abs(deltaY) < 30) return;
-
-      const activeName = activeSectionRef.current;
-      const activeItem = sidebarItems.find(item => item.name === activeName);
-      if (!activeItem) return;
-
-      const id = activeItem.href.replace("#", "");
-      const el = document.getElementById(id);
-      if (!el) return;
-
-      const scrollTop = mainEl.scrollTop;
-      const clientHeight = mainEl.clientHeight;
-      const sectionTop = el.offsetTop;
-      const sectionHeight = el.offsetHeight;
-      const sectionBottom = sectionTop + sectionHeight;
-
-      if (deltaY > 0) {
-        const isAtBottom = scrollTop + clientHeight >= sectionBottom - 10;
-        if (isAtBottom) {
-          const currentIndex = sidebarItems.findIndex(item => item.name === activeName);
-          if (currentIndex < sidebarItems.length - 1) {
-            if (e.cancelable) e.preventDefault();
-            const nextItem = sidebarItems[currentIndex + 1];
-            transitionToSection(nextItem);
-          }
-        }
-      } else if (deltaY < 0) {
-        const isAtTop = scrollTop <= sectionTop + 10;
-        if (isAtTop) {
-          const currentIndex = sidebarItems.findIndex(item => item.name === activeName);
-          if (currentIndex > 0) {
-            if (e.cancelable) e.preventDefault();
-            const prevItem = sidebarItems[currentIndex - 1];
-            transitionToSection(prevItem);
-          }
-        }
-      }
-    };
-
     mainEl.addEventListener("scroll", handleScroll, { passive: true });
-    mainEl.addEventListener("wheel", handleWheel, { passive: false });
-    mainEl.addEventListener("touchstart", handleTouchStart, { passive: true });
-    mainEl.addEventListener("touchmove", handleTouchMove, { passive: false });
+    window.addEventListener("scroll", handleScroll, { passive: true });
     
     const initTimeout = setTimeout(() => {
       handleScroll();
@@ -260,13 +149,23 @@ export default function App() {
           const targetId = hash.replace("#", "");
           const targetEl = document.getElementById(targetId);
           if (targetEl) {
-            const rect = targetEl.getBoundingClientRect();
-            const mainRect = mainEl.getBoundingClientRect();
-            const targetTop = rect.top - mainRect.top + mainEl.scrollTop;
-            mainEl.scrollTo({
-              top: targetTop,
-              behavior: "auto",
-            });
+            const isMobile = window.innerWidth < 768;
+            if (isMobile) {
+              const rect = targetEl.getBoundingClientRect();
+              const targetTop = rect.top + (window.scrollY || document.documentElement.scrollTop);
+              window.scrollTo({
+                top: targetTop,
+                behavior: "auto",
+              });
+            } else {
+              const rect = targetEl.getBoundingClientRect();
+              const mainRect = mainEl.getBoundingClientRect();
+              const targetTop = rect.top - mainRect.top + mainEl.scrollTop;
+              mainEl.scrollTo({
+                top: targetTop,
+                behavior: "auto",
+              });
+            }
             setActiveSection(targetItem.name);
           }
         }
@@ -275,9 +174,7 @@ export default function App() {
 
     return () => {
       mainEl.removeEventListener("scroll", handleScroll);
-      mainEl.removeEventListener("wheel", handleWheel);
-      mainEl.removeEventListener("touchstart", handleTouchStart);
-      mainEl.removeEventListener("touchmove", handleTouchMove);
+      window.removeEventListener("scroll", handleScroll);
       clearTimeout(initTimeout);
     };
   }, []);
@@ -359,16 +256,17 @@ export default function App() {
         className="
           flex-1
           md:ml-20
-          h-screen
-          overflow-y-auto
+          h-auto
+          md:h-screen
+          overflow-y-visible
+          md:overflow-y-auto
           scroll-smooth
           relative
           z-10
           p-2
           sm:p-4
           md:p-6
-          pb-20
-          md:pb-6
+          pb-6
         "
       >
         <motion.div
@@ -386,6 +284,29 @@ export default function App() {
           <Contact />
         </motion.div>
       </main>
+
+      {/* Scroll to Top button */}
+      <AnimatePresence>
+        {showScrollTop && (
+          <motion.button
+            initial={{ opacity: 0, scale: 0.8, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.8, y: 20 }}
+            onClick={() => {
+              const isMobile = window.innerWidth < 768;
+              if (isMobile) {
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              } else if (mainRef.current) {
+                mainRef.current.scrollTo({ top: 0, behavior: "smooth" });
+              }
+            }}
+            className="fixed bottom-6 right-6 md:right-10 z-40 w-10 h-10 rounded-full bg-black/60 border border-[#00D5D5]/40 text-[#00D5D5] flex items-center justify-center cursor-pointer shadow-lg backdrop-blur-md transition-all hover:bg-[#00D5D5] hover:text-black hover:border-transparent hover:shadow-[0_0_15px_rgba(0,213,213,0.4)]"
+            aria-label="Scroll to top"
+          >
+            <HiArrowUp className="text-lg" />
+          </motion.button>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

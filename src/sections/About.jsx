@@ -6,7 +6,7 @@ import resumePdf from "../assets/resume.pdf";
 
 import ProfileCard from "../common/ProfileCard";
 import { useTypewriter } from "../common/utils/hooks/useTypewriter";
-import { PROFESSIONAL_TITLES, SOCIAL_LINKS } from "../const";
+import { PROFESSIONAL_TITLES, SOCIAL_LINKS, HIGHLIGHTS } from "../constants";
 import SectionLayout from "../layout/SectionLayout";
 
 const ICONS = {
@@ -14,11 +14,6 @@ const ICONS = {
   FaGithub,
 };
 
-const HIGHLIGHTS = [
-  { label: "Specialization", value: "React · Next.js · React Native" },
-  { label: "Cloud", value: "AWS · Serverless · DevOps" },
-  { label: "Location", value: "India · Remote Ready" },
-];
 
 const SocialLinks = () => (
   <div className="flex gap-3 mt-6 flex-wrap select-none">
