@@ -1,22 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
-const ROLES = [
-  "Senior Software Developer",
-  "Full-Stack Engineer",
-  "Cloud Architect",
-  "Mobile App Developer",
-  "System Designer",
-];
-
-const TypewriterRole = () => {
+const TypewriterRole = ({ roles = [] }) => {
   const [roleIndex, setRoleIndex] = useState(0);
   const [displayed, setDisplayed] = useState("");
   const [deleting, setDeleting] = useState(false);
   const speed = deleting ? 40 : 80;
 
   useEffect(() => {
-    const current = ROLES[roleIndex];
+    if (!roles || roles.length === 0) return;
+    const current = roles[roleIndex] || "";
     const timer = setTimeout(() => {
       if (!deleting) {
         if (displayed.length < current.length) {
@@ -29,12 +22,12 @@ const TypewriterRole = () => {
           setDisplayed(current.slice(0, displayed.length - 1));
         } else {
           setDeleting(false);
-          setRoleIndex((i) => (i + 1) % ROLES.length);
+          setRoleIndex((i) => (i + 1) % roles.length);
         }
       }
     }, speed);
     return () => clearTimeout(timer);
-  }, [displayed, deleting, roleIndex, speed]);
+  }, [displayed, deleting, roleIndex, speed, roles]);
 
   return (
     <span>
@@ -44,7 +37,27 @@ const TypewriterRole = () => {
   );
 };
 
-const Home = () => {
+const Home = ({ roles, description, centerSvg, orbitingStacks }) => {
+  const ORBIT_POSITIONS = [
+    { left: "182.5px", top: "0px" },
+    { left: "340.5px", top: "91.25px" },
+    { left: "340.5px", top: "273.75px" },
+    { left: "182.5px", top: "365px" },
+    { left: "24.5px", top: "273.75px" },
+    { left: "24.5px", top: "91.25px" },
+  ];
+
+  const defaultOrbitingStacks = [
+    { label: "React Native", type: "primary" },
+    { label: "React.js", type: "primary" },
+    { label: "Node.js", type: "outline" },
+    { label: "Next.js", type: "primary" },
+    { label: "AWS Cloud", type: "primary" },
+    { label: "TypeScript", type: "outline" }
+  ];
+
+  const activeStacks = (orbitingStacks && orbitingStacks.length > 0) ? orbitingStacks : defaultOrbitingStacks;
+
   const scrollToSection = (id) => {
     const el = document.getElementById(id);
     if (el) {
@@ -73,7 +86,7 @@ const Home = () => {
       <div
         className="absolute right-0 top-0 w-[55%] h-full pointer-events-none"
         style={{
-          background: "radial-gradient(ellipse 60% 70% at 80% 50%, rgba(0,213,213,0.06) 0%, transparent 70%)",
+          background: "radial-gradient(ellipse 60% 70% at 80% 50%, rgba(var(--primary-rgb),0.06) 0%, transparent 70%)",
         }}
       />
 
@@ -81,7 +94,7 @@ const Home = () => {
       <div
         className="absolute left-0 top-0 h-full w-[3px] pointer-events-none"
         style={{
-          background: "linear-gradient(to bottom, transparent 0%, #00D5D5 40%, #00D5D5 60%, transparent 100%)",
+          background: "linear-gradient(to bottom, transparent 0%, var(--primary) 40%, var(--primary) 60%, transparent 100%)",
           opacity: 0.4,
         }}
       />
@@ -89,7 +102,7 @@ const Home = () => {
       {/* Top horizontal accent line */}
       <div
         className="absolute top-0 left-0 w-full h-[1px] pointer-events-none"
-        style={{ background: "linear-gradient(to right, #00D5D5, transparent 60%)", opacity: 0.2 }}
+        style={{ background: "linear-gradient(to right, var(--primary), transparent 60%)", opacity: 0.2 }}
       />
 
       {/* Main content */}
@@ -122,7 +135,7 @@ const Home = () => {
               className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-none text-white glitch-text"
               data-text="GANAPATHY"
             >
-              Ganapathy N
+              Ganapathy Natarajan
             </h1>
             {/* <div
               className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-none select-none mt-1"
@@ -142,7 +155,7 @@ const Home = () => {
             transition={{ delay: 0.4, duration: 0.6 }}
             className="text-sm sm:text-base md:text-lg font-mono font-bold text-primary tracking-widest uppercase"
           >
-            <TypewriterRole />
+            <TypewriterRole roles={roles} />
           </motion.div>
 
           {/* Description */}
@@ -152,9 +165,7 @@ const Home = () => {
             transition={{ delay: 0.55, duration: 0.8 }}
             className="text-stone-400 text-sm md:text-base max-w-lg leading-relaxed"
           >
-            Designing and engineering high-performance web systems, cross-platform mobile apps,
-            and scalable serverless cloud architectures with{" "}
-            <span className="text-white font-semibold">6+ years</span> of expertise.
+            {description}
           </motion.p>
 
           {/* CTA Buttons */}
@@ -194,7 +205,7 @@ const Home = () => {
             style={{
               width: "380px",
               height: "380px",
-              border: "1px solid rgba(0,213,213,0.15)",
+              border: "1px solid rgba(var(--primary-rgb),0.15)",
               animation: "spin 20s linear infinite",
             }}
           />
@@ -203,7 +214,7 @@ const Home = () => {
             style={{
               width: "440px",
               height: "440px",
-              border: "1px dashed rgba(0,213,213,0.08)",
+              border: "1px dashed rgba(var(--primary-rgb),0.08)",
               animation: "spin 35s linear infinite reverse",
             }}
           />
@@ -215,128 +226,136 @@ const Home = () => {
               width: "300px",
               height: "360px",
               borderRadius: "60% 40% 50% 50% / 40% 40% 60% 60%",
-              background: "linear-gradient(160deg, rgba(0,213,213,0.12) 0%, rgba(0,0,0,0.8) 60%)",
-              border: "1.5px solid rgba(0,213,213,0.25)",
-              boxShadow: "0 0 60px rgba(0,213,213,0.08), inset 0 0 40px rgba(0,213,213,0.04)",
+              background: "linear-gradient(160deg, rgba(var(--primary-rgb),0.12) 0%, rgba(0,0,0,0.8) 60%)",
+              border: "1.5px solid rgba(var(--primary-rgb),0.25)",
+              boxShadow: "0 0 60px rgba(var(--primary-rgb),0.08), inset 0 0 40px rgba(var(--primary-rgb),0.04)",
             }}
           >
             {/* Inner glow overlay */}
             <div
               className="absolute inset-0 pointer-events-none"
               style={{
-                background: "radial-gradient(ellipse at 50% 0%, rgba(0,213,213,0.15) 0%, transparent 60%)",
+                background: "radial-gradient(ellipse at 50% 0%, rgba(var(--primary-rgb),0.15) 0%, transparent 60%)",
                 borderRadius: "inherit",
               }}
             />
 
-            <svg
-              fill="#00D5D5"
-              version="1.1"
-              id="Layer_1"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 491.52 491.52"
-              className="w-[70%] h-[70%] object-contain select-none pointer-events-none relative z-10"
-              style={{ filter: "drop-shadow(0 0 15px rgba(0, 213, 213, 0.45))" }}
-            >
-              <g>
+            {centerSvg ? (
+              <div
+                className="w-[70%] h-[70%] object-contain select-none pointer-events-none relative z-10 flex items-center justify-center"
+                style={{ filter: "drop-shadow(0 0 15px rgba(var(--primary-rgb), 0.45))" }}
+                dangerouslySetInnerHTML={{ __html: centerSvg }}
+              />
+            ) : (
+              <svg
+                fill="var(--primary)"
+                version="1.1"
+                id="Layer_1"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 491.52 491.52"
+                className="w-[70%] h-[70%] object-contain select-none pointer-events-none relative z-10"
+                style={{ filter: "drop-shadow(0 0 15px rgba(var(--primary-rgb), 0.45))" }}
+              >
                 <g>
-                  <rect x="71.68" y="102.4" width="92.16" height="20.48" />
+                  <g>
+                    <rect x="71.68" y="102.4" width="92.16" height="20.48" />
+                  </g>
                 </g>
-              </g>
-              <g>
                 <g>
-                  <rect x="184.32" y="102.4" width="51.2" height="20.48" />
+                  <g>
+                    <rect x="184.32" y="102.4" width="51.2" height="20.48" />
+                  </g>
                 </g>
-              </g>
-              <g>
                 <g>
-                  <rect x="71.68" y="256" width="92.16" height="20.48" />
+                  <g>
+                    <rect x="71.68" y="256" width="92.16" height="20.48" />
+                  </g>
                 </g>
-              </g>
-              <g>
                 <g>
-                  <rect x="184.32" y="256" width="51.2" height="20.48" />
+                  <g>
+                    <rect x="184.32" y="256" width="51.2" height="20.48" />
+                  </g>
                 </g>
-              </g>
-              <g>
                 <g>
-                  <rect x="71.68" y="204.8" width="61.44" height="20.48" />
+                  <g>
+                    <rect x="71.68" y="204.8" width="61.44" height="20.48" />
+                  </g>
                 </g>
-              </g>
-              <g>
                 <g>
-                  <rect x="296.96" y="204.8" width="30.72" height="20.48" />
+                  <g>
+                    <rect x="296.96" y="204.8" width="30.72" height="20.48" />
+                  </g>
                 </g>
-              </g>
-              <g>
                 <g>
-                  <rect x="153.6" y="204.8" width="122.88" height="20.48" />
+                  <g>
+                    <rect x="153.6" y="204.8" width="122.88" height="20.48" />
+                  </g>
                 </g>
-              </g>
-              <g>
                 <g>
-                  <rect x="204.8" y="153.6" width="40.96" height="20.48" />
+                  <g>
+                    <rect x="204.8" y="153.6" width="40.96" height="20.48" />
+                  </g>
                 </g>
-              </g>
-              <g>
                 <g>
-                  <rect x="71.68" y="153.6" width="112.64" height="20.48" />
+                  <g>
+                    <rect x="71.68" y="153.6" width="112.64" height="20.48" />
+                  </g>
                 </g>
-              </g>
-              <g>
                 <g>
-                  <rect x="266.24" y="153.6" width="153.6" height="20.48" />
+                  <g>
+                    <rect x="266.24" y="153.6" width="153.6" height="20.48" />
+                  </g>
                 </g>
-              </g>
-              <g>
                 <g>
-                  <rect x="71.68" y="307.2" width="153.6" height="20.48" />
+                  <g>
+                    <rect x="71.68" y="307.2" width="153.6" height="20.48" />
+                  </g>
                 </g>
-              </g>
-              <g>
                 <g>
-                  <polygon points="391.24,243.64 376.76,258.12 405.36,286.72 376.76,315.32 391.24,329.8 434.32,286.72 		" />
+                  <g>
+                    <polygon points="391.24,243.64 376.76,258.12 405.36,286.72 376.76,315.32 391.24,329.8 434.32,286.72 		" />
+                  </g>
                 </g>
-              </g>
-              <g>
                 <g>
-                  <polygon points="309.32,258.12 294.84,243.64 251.76,286.72 294.84,329.8 309.32,315.32 280.72,286.72 		" />
+                  <g>
+                    <polygon points="309.32,258.12 294.84,243.64 251.76,286.72 294.84,329.8 309.32,315.32 280.72,286.72 		" />
+                  </g>
                 </g>
-              </g>
-              <g>
                 <g>
-                  <rect
-                    x="287.878"
-                    y="276.562"
-                    transform="matrix(0.3711 -0.9286 0.9286 0.3711 -50.5861 498.917)"
-                    width="110.284"
-                    height="20.48"
-                  />
+                  <g>
+                    <rect
+                      x="287.878"
+                      y="276.562"
+                      transform="matrix(0.3711 -0.9286 0.9286 0.3711 -50.5861 498.917)"
+                      width="110.284"
+                      height="20.48"
+                    />
+                  </g>
                 </g>
-              </g>
-              <g>
                 <g>
-                  <path
-                    d="M471.04,358.4V51.2H20.48v307.2H0v44.06l25.24,37.86h441.04l25.24-37.86V358.4H471.04z M40.96,71.68h409.6V358.4H40.96 V71.68z M471.04,396.26l-15.72,23.58H36.2l-15.72-23.58v-17.38h450.56V396.26z"
-                  />
+                  <g>
+                    <path
+                      d="M471.04,358.4V51.2H20.48v307.2H0v44.06l25.24,37.86h441.04l25.24-37.86V358.4H471.04z M40.96,71.68h409.6V358.4H40.96 V71.68z M471.04,396.26l-15.72,23.58H36.2l-15.72-23.58v-17.38h450.56V396.26z"
+                    />
+                  </g>
                 </g>
-              </g>
-              <g>
                 <g>
-                  <rect x="276.48" y="389.12" width="20.48" height="20.48" />
+                  <g>
+                    <rect x="276.48" y="389.12" width="20.48" height="20.48" />
+                  </g>
                 </g>
-              </g>
-              <g>
                 <g>
-                  <rect x="235.52" y="389.12" width="20.48" height="20.48" />
+                  <g>
+                    <rect x="235.52" y="389.12" width="20.48" height="20.48" />
+                  </g>
                 </g>
-              </g>
-              <g>
                 <g>
-                  <rect x="194.56" y="389.12" width="20.48" height="20.48" />
+                  <g>
+                    <rect x="194.56" y="389.12" width="20.48" height="20.48" />
+                  </g>
                 </g>
-              </g>
-            </svg>
+              </svg>
+            )}
           </div>
 
           {/* Orbiting Stacks Container */}
@@ -346,155 +365,39 @@ const Home = () => {
               animation: "orbit-clockwise 25s linear infinite",
             }}
           >
-            {/* React Native Chip */}
-            <div
-              className="absolute"
-              style={{
-                left: "182.5px",
-                top: "0px",
-                transform: "translate(-50%, -50%)",
-              }}
-            >
-              <div
-                style={{
-                  animation: "orbit-counter-clockwise 25s linear infinite",
-                }}
-              >
-                <motion.div
-                  className="tag-primary text-[9px] whitespace-nowrap"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 1.2, duration: 0.5 }}
-                >
-                  React Native
-                </motion.div>
-              </div>
-            </div>
+            {activeStacks.map((stack, index) => {
+              const pos = ORBIT_POSITIONS[index];
+              if (!pos) return null;
+              const isOutline = stack.type === "outline";
+              const tagClass = isOutline ? "tag-outline" : "tag-primary";
 
-            {/* React.js Chip */}
-            <div
-              className="absolute"
-              style={{
-                left: "340.5px",
-                top: "91.25px",
-                transform: "translate(-50%, -50%)",
-              }}
-            >
-              <div
-                style={{
-                  animation: "orbit-counter-clockwise 25s linear infinite",
-                }}
-              >
-                <motion.div
-                  className="tag-primary text-[9px] whitespace-nowrap"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 1.3, duration: 0.5 }}
+              return (
+                <div
+                  key={index}
+                  className="absolute"
+                  style={{
+                    left: pos.left,
+                    top: pos.top,
+                    transform: "translate(-50%, -50%)",
+                  }}
                 >
-                  React.js
-                </motion.div>
-              </div>
-            </div>
-
-            {/* Node.js Chip */}
-            <div
-              className="absolute"
-              style={{
-                left: "340.5px",
-                top: "273.75px",
-                transform: "translate(-50%, -50%)",
-              }}
-            >
-              <div
-                style={{
-                  animation: "orbit-counter-clockwise 25s linear infinite",
-                }}
-              >
-                <motion.div
-                  className="tag-outline text-[9px] whitespace-nowrap"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 1.4, duration: 0.5 }}
-                >
-                  Node.js
-                </motion.div>
-              </div>
-            </div>
-
-            {/* Next.js Chip */}
-            <div
-              className="absolute"
-              style={{
-                left: "182.5px",
-                top: "365px",
-                transform: "translate(-50%, -50%)",
-              }}
-            >
-              <div
-                style={{
-                  animation: "orbit-counter-clockwise 25s linear infinite",
-                }}
-              >
-                <motion.div
-                  className="tag-primary text-[9px] whitespace-nowrap"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 1.5, duration: 0.5 }}
-                >
-                  Next.js
-                </motion.div>
-              </div>
-            </div>
-
-            {/* AWS Cloud Chip */}
-            <div
-              className="absolute"
-              style={{
-                left: "24.5px",
-                top: "273.75px",
-                transform: "translate(-50%, -50%)",
-              }}
-            >
-              <div
-                style={{
-                  animation: "orbit-counter-clockwise 25s linear infinite",
-                }}
-              >
-                <motion.div
-                  className="tag-primary text-[9px] whitespace-nowrap"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 1.6, duration: 0.5 }}
-                >
-                  AWS Cloud
-                </motion.div>
-              </div>
-            </div>
-
-            {/* TypeScript Chip */}
-            <div
-              className="absolute"
-              style={{
-                left: "24.5px",
-                top: "91.25px",
-                transform: "translate(-50%, -50%)",
-              }}
-            >
-              <div
-                style={{
-                  animation: "orbit-counter-clockwise 25s linear infinite",
-                }}
-              >
-                <motion.div
-                  className="tag-outline text-[9px] whitespace-nowrap"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 1.7, duration: 0.5 }}
-                >
-                  TypeScript
-                </motion.div>
-              </div>
-            </div>
+                  <div
+                    style={{
+                      animation: "orbit-counter-clockwise 25s linear infinite",
+                    }}
+                  >
+                    <motion.div
+                      className={`${tagClass} text-[9px] whitespace-nowrap`}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 1.2 + index * 0.1, duration: 0.5 }}
+                    >
+                      {stack.label}
+                    </motion.div>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </motion.div>
       </div>

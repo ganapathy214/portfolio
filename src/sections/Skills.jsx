@@ -20,8 +20,8 @@ const Skills = () => {
       id="skills"
       label="What I Know ?"
       headerRef={headerRef}
-      spotlightColor="rgba(0, 213, 213, 0.06)"
-      textColorClass="text-[#00D5D5]"
+      spotlightColor="rgba(var(--primary-rgb), 0.06)"
+      textColorClass="text-primary"
     >
       <div className="w-full min-h-[78vh] flex flex-col space-y-8 py-4">
 
@@ -37,7 +37,7 @@ const Skills = () => {
                     ? "text-black bg-primary"
                     : "text-stone-500 bg-transparent border border-stone-800 hover:text-primary hover:border-primary/40"
                   }`}
-                style={isActive ? { boxShadow: "0 0 16px rgba(0,213,213,0.3)" } : {}}
+                style={isActive ? { boxShadow: "0 0 16px rgba(var(--primary-rgb),0.3)" } : {}}
               >
                 {/* Active indicator top bar */}
                 {isActive && (
@@ -50,7 +50,7 @@ const Skills = () => {
           {/* Bottom separator */}
           <div
             className="absolute bottom-0 left-0 right-0 h-px"
-            style={{ background: "linear-gradient(to right, rgba(0,213,213,0.3), transparent)" }}
+            style={{ background: "linear-gradient(to right, rgba(var(--primary-rgb),0.3), transparent)" }}
           />
         </div>
 
@@ -72,7 +72,7 @@ const Skills = () => {
                 <h3 className="text-xs font-bold text-stone-500 uppercase tracking-widest mb-3 flex items-center gap-2 select-none">
                   <span
                     className="w-4 h-[1px]"
-                    style={{ background: "#00D5D5", opacity: 0.6 }}
+                    style={{ background: "var(--primary)", opacity: 0.6 }}
                   />
                   Key Expertise
                 </h3>
@@ -88,7 +88,7 @@ const Skills = () => {
                     >
                       <FiCheckCircle
                         className="shrink-0 mt-0.5 text-sm sm:text-base"
-                        style={{ color: "#00D5D5" }}
+                        style={{ color: "var(--primary)" }}
                       />
                       <span dangerouslySetInnerHTML={{ __html: bullet }} />
                     </motion.li>
@@ -129,7 +129,7 @@ const Skills = () => {
                       {/* Top glow line */}
                       <div
                         className="absolute top-0 left-0 right-0 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                        style={{ background: "linear-gradient(to right, transparent, #00D5D5, transparent)" }}
+                        style={{ background: "linear-gradient(to right, transparent, var(--primary), transparent)" }}
                       />
                       <img
                         src={skill.icon}

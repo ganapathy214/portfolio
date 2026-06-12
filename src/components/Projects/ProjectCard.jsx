@@ -27,8 +27,8 @@ const ProjectCard = ({ project, index, onClick }) => (
       className="absolute top-4 left-4 z-20 font-mono font-black text-[10px] px-2 py-0.5 rounded"
       style={{
         background: "rgba(0,0,0,0.75)",
-        border: "1px solid rgba(0,213,213,0.35)",
-        color: "#00D5D5",
+        border: "1px solid rgba(var(--primary-rgb),0.35)",
+        color: "var(--primary)",
       }}
     >
       {String(index + 1).padStart(2, "0")}
@@ -59,12 +59,12 @@ const ProjectCard = ({ project, index, onClick }) => (
       {/* Neon left-edge glow on hover */}
       <div
         className="absolute left-0 top-0 bottom-0 w-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-400 pointer-events-none"
-        style={{ background: "#00D5D5", boxShadow: "0 0 12px rgba(0,213,213,0.8)" }}
+        style={{ background: "var(--primary)", boxShadow: "0 0 12px rgba(var(--primary-rgb),0.8)" }}
       />
       {/* Neon top edge */}
       <div
         className="absolute top-0 left-0 right-0 h-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-400 pointer-events-none"
-        style={{ background: "linear-gradient(to right, #00D5D5, transparent 60%)" }}
+        style={{ background: "linear-gradient(to right, var(--primary), transparent 60%)" }}
       />
     </div>
 
@@ -82,7 +82,7 @@ const ProjectCard = ({ project, index, onClick }) => (
       </h3>
 
       <p className="text-[11px] text-stone-500 flex items-center gap-2 mb-4 select-none font-semibold uppercase tracking-wider">
-        <FiUser className="shrink-0" style={{ color: "#00D5D5" }} />
+        <FiUser className="shrink-0" style={{ color: "var(--primary)" }} />
         {project.role} · {project.client}
       </p>
 
@@ -101,11 +101,11 @@ const ProjectCard = ({ project, index, onClick }) => (
             key={label}
             className="flex flex-col p-2.5 rounded-lg"
             style={{
-              background: "rgba(0,213,213,0.04)",
-              border: "1px solid rgba(0,213,213,0.1)",
+              background: "rgba(var(--primary-rgb),0.04)",
+              border: "1px solid rgba(var(--primary-rgb),0.1)",
             }}
           >
-            <Icon className="mb-1 text-xs" style={{ color: "#00D5D5" }} />
+            <Icon className="mb-1 text-xs" style={{ color: "var(--primary)" }} />
             <span
               className="text-[8px] uppercase tracking-widest font-bold"
               style={{ color: "rgba(255,255,255,0.3)" }}
@@ -124,9 +124,9 @@ const ProjectCard = ({ project, index, onClick }) => (
             key={i}
             className="text-[9px] font-semibold px-2 py-0.5 rounded"
             style={{
-              background: "rgba(0,213,213,0.06)",
-              border: "1px solid rgba(0,213,213,0.15)",
-              color: "rgba(0,213,213,0.85)",
+              background: "rgba(var(--primary-rgb),0.06)",
+              border: "1px solid rgba(var(--primary-rgb),0.15)",
+              color: "rgba(var(--primary-rgb),0.85)",
             }}
           >
             {s}
@@ -142,7 +142,7 @@ const ProjectCard = ({ project, index, onClick }) => (
       {/* CTA */}
       <div
         className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest transition-all duration-300 group-hover:gap-3 self-start"
-        style={{ color: "#00D5D5" }}
+        style={{ color: "var(--primary)" }}
       >
         View Full Details <FiArrowUpRight className="text-sm" />
       </div>

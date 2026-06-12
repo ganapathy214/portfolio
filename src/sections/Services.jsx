@@ -12,8 +12,8 @@ const Services = () => {
       id="services"
       label="What I Offer ?"
       headerRef={headerRef}
-      spotlightColor="rgba(0, 213, 213, 0.06)"
-      textColorClass="text-[#00D5D5]"
+      spotlightColor="rgba(var(--primary-rgb), 0.06)"
+      textColorClass="text-primary"
     >
       <div className="w-full min-h-[78vh] flex flex-col py-4 space-y-10">
         {/* Subtitle */}
@@ -48,7 +48,7 @@ const Services = () => {
                   style={{
                     fontSize: "4.5rem",
                     lineHeight: 1,
-                    color: "rgba(0,213,213,0.05)",
+                    color: "rgba(var(--primary-rgb),0.05)",
                   }}
                 >
                   {num}
@@ -58,7 +58,7 @@ const Services = () => {
                 <div
                   className="absolute top-0 left-0 right-0 h-[1.5px] opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
                   style={{
-                    background: "linear-gradient(to right, transparent, #00D5D5, transparent)",
+                    background: "linear-gradient(to right, transparent, var(--primary), transparent)",
                   }}
                 />
 
@@ -66,13 +66,13 @@ const Services = () => {
                 <div
                   className="w-12 h-12 flex items-center justify-center mb-5 relative z-10 rounded-lg transition-all duration-300 group-hover:scale-110"
                   style={{
-                    background: "rgba(0,213,213,0.08)",
-                    border: "1px solid rgba(0,213,213,0.15)",
+                    background: "rgba(var(--primary-rgb),0.08)",
+                    border: "1px solid rgba(var(--primary-rgb),0.15)",
                   }}
                 >
                   <IconComponent
                     className="w-5 h-5 transition-colors duration-300"
-                    style={{ color: "#00D5D5" }}
+                    style={{ color: "var(--primary)" }}
                   />
                 </div>
 
@@ -92,7 +92,7 @@ const Services = () => {
                 {/* Bottom border accent line */}
                 <div
                   className="mt-5 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-500 relative z-10"
-                  style={{ background: "linear-gradient(to right, #00D5D5, transparent)" }}
+                  style={{ background: "linear-gradient(to right, var(--primary), transparent)" }}
                 />
               </motion.article>
             );

@@ -56,7 +56,7 @@ export default function SectionLayout({
         className="absolute left-0 top-0 h-full pointer-events-none"
         style={{
           width: "2px",
-          background: "linear-gradient(to bottom, transparent 0%, rgba(0,213,213,0.3) 30%, rgba(0,213,213,0.3) 70%, transparent 100%)",
+          background: "linear-gradient(to bottom, transparent 0%, rgba(var(--primary-rgb),0.3) 30%, rgba(var(--primary-rgb),0.3) 70%, transparent 100%)",
         }}
       />
 
@@ -68,7 +68,7 @@ export default function SectionLayout({
         {/* Number */}
         <span
           className="font-mono text-[10px] font-bold tracking-widest select-none"
-          style={{ color: "rgba(0,213,213,0.4)" }}
+          style={{ color: "rgba(var(--primary-rgb),0.4)" }}
         >
           /{sectionNum}
         </span>
@@ -88,7 +88,7 @@ export default function SectionLayout({
         <div
           className="flex-1 ml-4 h-px"
           style={{
-            background: "linear-gradient(to left, transparent, rgba(0,213,213,0.2))",
+            background: "linear-gradient(to left, transparent, rgba(var(--primary-rgb),0.2))",
           }}
         />
       </div>

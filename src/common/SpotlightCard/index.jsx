@@ -4,6 +4,7 @@ const SpotlightCard = ({
   children,
   className = "",
   spotlightColor = "rgba(255, 255, 255, 0.15)",
+  style = {},
 }) => {
   const divRef = useRef(null);
   const [isFocused, setIsFocused] = useState(false);
@@ -43,7 +44,8 @@ const SpotlightCard = ({
       onBlur={handleBlur}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      className={`relative rounded-xl border border-neutral-800 bg-white/10 overflow-hidden  ${className}`}
+      className={`relative rounded-xl border bg-white/10 overflow-hidden  ${className}`}
+      style={{ borderColor: "rgba(var(--primary-rgb), 0.15)", ...style }}
     >
       <div
         className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 ease-in-out"

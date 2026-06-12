@@ -8,7 +8,7 @@ export const ISSUER_THEMES = {
   Udemy: { accent: "#a435f0", badge: "bg-purple-950/30 border-purple-900/40 text-purple-400" },
 };
 
-export const defaultTheme = { accent: "#00D5D5", badge: "bg-primary/5 border-primary/20 text-primary" };
+export const defaultTheme = { accent: "var(--primary)", badge: "bg-primary/5 border-primary/20 text-primary" };
 
 export const getTheme = (issuer = "") => {
   const l = issuer.toLowerCase();

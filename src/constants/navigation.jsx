@@ -152,6 +152,6 @@ export const HIGHLIGHTS = [
 
 export const INPUT_CLASS =
   "w-full border px-4 py-3 text-xs sm:text-sm text-white placeholder-stone-600 outline-none transition-all duration-300 font-medium"
-  + " focus:border-primary focus:shadow-[0_0_0_1px_rgba(0,213,213,0.2)]";
+  + " focus:border-primary focus:shadow-[0_0_0_1px_rgba(var(--primary-rgb),0.2)]";
 
 

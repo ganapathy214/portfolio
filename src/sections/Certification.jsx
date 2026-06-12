@@ -11,6 +11,22 @@ import { certifications, getTheme } from "../constants";
 import SectionLayout from "../layout/SectionLayout";
 import CertModal from "../components/Certification/CertModal";
 
+const resolveAlphaColor = (color, hexOpacity) => {
+  if (color && color.startsWith("var(")) {
+    const opacityMap = {
+      "12": 0.07,
+      "15": 0.08,
+      "20": 0.125,
+      "25": 0.15,
+      "30": 0.18,
+      "40": 0.25,
+    };
+    const decimal = opacityMap[hexOpacity] || 0.2;
+    return `rgba(var(--primary-rgb), ${decimal})`;
+  }
+  return `${color}${hexOpacity}`;
+};
+
 /* ─── Main Certification Section ─── */
 const Certification = () => {
   const headerRef = useRef(null);
@@ -89,8 +105,8 @@ const Certification = () => {
       id="certification"
       label="What I achieved?"
       headerRef={headerRef}
-      spotlightColor="rgba(0, 213, 213, 0.06)"
-      textColorClass="text-[#00D5D5]"
+      spotlightColor="rgba(var(--primary-rgb), 0.06)"
+      textColorClass="text-primary"
     >
       <div className="w-full py-2">
         <div className="w-full min-h-[78vh] flex flex-col md:flex-row gap-8 items-stretch justify-center">
@@ -122,7 +138,7 @@ const Certification = () => {
                 style={{
                   borderColor: "rgba(255,255,255,0.06)",
                   boxShadow: isFlipped
-                    ? `0 20px 40px -12px ${theme.accent}25, 0 0 20px 1px ${theme.accent}15`
+                    ? `0 20px 40px -12px ${resolveAlphaColor(theme.accent, "25")}, 0 0 20px 1px ${resolveAlphaColor(theme.accent, "15")}`
                     : "0 10px 30px rgba(0,0,0,0.6)",
                 }}
               >
@@ -267,8 +283,8 @@ const Certification = () => {
                             key={i}
                             className="rounded-lg text-[9px] font-bold px-2 py-0.5 cursor-default"
                             style={{
-                              background: `${theme.accent}12`,
-                              border: `1px solid ${theme.accent}30`,
+                              background: resolveAlphaColor(theme.accent, "12"),
+                              border: `1px solid ${resolveAlphaColor(theme.accent, "30")}`,
                               color: theme.accent,
                             }}
                           >
@@ -289,7 +305,7 @@ const Certification = () => {
                       className="w-full inline-flex items-center justify-center gap-2 font-bold px-3 py-2 rounded-xl transition cursor-pointer text-[10px] uppercase tracking-wider text-black"
                       style={{
                         background: theme.accent,
-                        boxShadow: `0 0 14px ${theme.accent}30`,
+                        boxShadow: `0 0 14px ${resolveAlphaColor(theme.accent, "30")}`,
                       }}
                     >
                       <FiExternalLink className="text-xs" /> Verify Credential
@@ -331,7 +347,7 @@ const Certification = () => {
                       }`}
                     style={{
                       borderColor: isActive ? cardTheme.accent : "rgba(255,255,255,0.06)",
-                      boxShadow: isActive ? `0 0 18px ${cardTheme.accent}15` : "none",
+                      boxShadow: isActive ? `0 0 18px ${resolveAlphaColor(cardTheme.accent, "15")}` : "none",
                     }}
                   >
                     {/* Tiny thumbnail */}
@@ -345,7 +361,7 @@ const Certification = () => {
                       {isActive && (
                         <div
                           className="absolute inset-0"
-                          style={{ background: `${cardTheme.accent}20` }}
+                          style={{ background: resolveAlphaColor(cardTheme.accent, "20") }}
                         />
                       )}
                     </div>

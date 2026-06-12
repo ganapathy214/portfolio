@@ -19,16 +19,16 @@ const ContactInfoCard = ({ icon, label, value, delay }) => {
       {/* Top glow line */}
       <div
         className="absolute top-0 left-0 right-0 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-400 pointer-events-none"
-        style={{ background: "linear-gradient(to right, transparent, #00D5D5, transparent)" }}
+        style={{ background: "linear-gradient(to right, transparent, var(--primary), transparent)" }}
       />
 
       {/* Icon */}
       <div
         className="w-12 h-12 rounded-lg flex items-center justify-center shrink-0 transition-all duration-300 group-hover:scale-110"
         style={{
-          background: "rgba(0,213,213,0.07)",
-          border: "1px solid rgba(0,213,213,0.15)",
-          color: "#00D5D5",
+          background: "rgba(var(--primary-rgb),0.07)",
+          border: "1px solid rgba(var(--primary-rgb),0.15)",
+          color: "var(--primary)",
         }}
       >
         {icon}
@@ -69,8 +69,8 @@ const Contact = () => {
       id="contact"
       label="Where to find me ?"
       headerRef={contactRef}
-      spotlightColor="rgba(0, 213, 213, 0.06)"
-      textColorClass="text-[#00D5D5]"
+      spotlightColor="rgba(var(--primary-rgb), 0.06)"
+      textColorClass="text-primary"
     >
       <div className="w-full min-h-[78vh] flex flex-col gap-6 py-2">
         {/* Info Cards Row */}
