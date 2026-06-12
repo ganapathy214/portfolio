@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import SectionLayout from "../layout/SectionLayout";
-import { skillCategories, skills } from "../const";
+import { skillCategories, skills } from "../constants";
 import { FiCheckCircle } from "react-icons/fi";
 
 const Skills = () => {
@@ -123,6 +123,7 @@ const Skills = () => {
                       className="aspect-square w-16 sm:w-20 flex items-center justify-center p-4 relative overflow-hidden transition-all duration-300 corner-card"
                       style={{
                         borderRadius: "12px",
+                        background: "#ffffff",
                       }}
                     >
                       {/* Top glow line */}

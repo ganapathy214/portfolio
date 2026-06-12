@@ -6,7 +6,6 @@ import {
   useState,
   useLayoutEffect,
 } from "react";
-// eslint-disable-next-line
 import { motion } from "framer-motion";
 import "./index.css";
 

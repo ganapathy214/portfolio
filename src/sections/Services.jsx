@@ -1,24 +1,8 @@
 import { motion } from "framer-motion";
 import React, { useRef } from "react";
-import {
-  FiCode,
-  FiDatabase,
-  FiCloud,
-  FiLayout,
-  FiCheckSquare,
-  FiServer,
-} from "react-icons/fi";
-import { SERVICES_DATA } from "../const";
+import { FiCode } from "react-icons/fi";
+import { SERVICES_DATA, SERVICE_ICONS } from "../constants";
 import SectionLayout from "../layout/SectionLayout";
-
-const SERVICE_ICONS = {
-  code: FiCode,
-  database: FiDatabase,
-  cloud: FiCloud,
-  design: FiLayout,
-  seo: FiCheckSquare,
-  mobile: FiServer,
-};
 
 const Services = () => {
   const headerRef = useRef(null);

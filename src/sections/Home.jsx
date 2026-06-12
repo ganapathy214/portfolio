@@ -1,5 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
-import heroAvatar from "../assets/hero-avatar.png";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
 const ROLES = [
@@ -179,38 +178,7 @@ const Home = () => {
             </button>
           </motion.div>
 
-          {/* Stats row — terminal card style */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.85, duration: 0.6 }}
-            className="w-full max-w-md mt-2"
-          >
-            <div
-              className="corner-card rounded-lg p-4"
-              style={{ background: "rgba(0,213,213,0.03)" }}
-            >
-              {/* Terminal header bar */}
-              <div className="flex items-center gap-1.5 mb-3 pb-2 border-b border-stone-800">
-                <span className="w-2.5 h-2.5 rounded-full bg-red-500/70" />
-                <span className="w-2.5 h-2.5 rounded-full bg-yellow-500/70" />
-                <span className="w-2.5 h-2.5 rounded-full bg-green-500/70" />
-                <span className="ml-2 text-stone-600 text-[10px] font-mono">stats.sh</span>
-              </div>
-              <div className="grid grid-cols-3 gap-4">
-                {[
-                  { value: "6+", label: "Years Exp" },
-                  { value: "12+", label: "Projects" },
-                  { value: "10+", label: "Credentials" },
-                ].map((s, i) => (
-                  <div key={i} className="text-center">
-                    <div className="text-2xl font-black text-primary neon-text">{s.value}</div>
-                    <div className="text-[9px] text-stone-500 font-bold uppercase tracking-widest mt-0.5">{s.label}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </motion.div>
+
         </motion.div>
 
         {/* ── RIGHT COLUMN — Portrait ── */}
@@ -242,7 +210,7 @@ const Home = () => {
 
           {/* Hexagonal-ish portrait frame */}
           <div
-            className="relative flex items-end justify-center overflow-hidden animate-float"
+            className="relative flex items-center justify-center overflow-hidden animate-float"
             style={{
               width: "300px",
               height: "360px",
@@ -261,42 +229,273 @@ const Home = () => {
               }}
             />
 
-            <motion.img
-              src={heroAvatar}
-              alt="Ganapathy N"
-              className="w-[92%] h-[92%] object-contain select-none pointer-events-none relative z-10"
-              style={{ filter: "drop-shadow(0 10px 30px rgba(0,0,0,0.8))" }}
-              initial={{ y: 30, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.4, duration: 1, ease: "easeOut" }}
-            />
+            <svg
+              fill="#00D5D5"
+              version="1.1"
+              id="Layer_1"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 491.52 491.52"
+              className="w-[70%] h-[70%] object-contain select-none pointer-events-none relative z-10"
+              style={{ filter: "drop-shadow(0 0 15px rgba(0, 213, 213, 0.45))" }}
+            >
+              <g>
+                <g>
+                  <rect x="71.68" y="102.4" width="92.16" height="20.48" />
+                </g>
+              </g>
+              <g>
+                <g>
+                  <rect x="184.32" y="102.4" width="51.2" height="20.48" />
+                </g>
+              </g>
+              <g>
+                <g>
+                  <rect x="71.68" y="256" width="92.16" height="20.48" />
+                </g>
+              </g>
+              <g>
+                <g>
+                  <rect x="184.32" y="256" width="51.2" height="20.48" />
+                </g>
+              </g>
+              <g>
+                <g>
+                  <rect x="71.68" y="204.8" width="61.44" height="20.48" />
+                </g>
+              </g>
+              <g>
+                <g>
+                  <rect x="296.96" y="204.8" width="30.72" height="20.48" />
+                </g>
+              </g>
+              <g>
+                <g>
+                  <rect x="153.6" y="204.8" width="122.88" height="20.48" />
+                </g>
+              </g>
+              <g>
+                <g>
+                  <rect x="204.8" y="153.6" width="40.96" height="20.48" />
+                </g>
+              </g>
+              <g>
+                <g>
+                  <rect x="71.68" y="153.6" width="112.64" height="20.48" />
+                </g>
+              </g>
+              <g>
+                <g>
+                  <rect x="266.24" y="153.6" width="153.6" height="20.48" />
+                </g>
+              </g>
+              <g>
+                <g>
+                  <rect x="71.68" y="307.2" width="153.6" height="20.48" />
+                </g>
+              </g>
+              <g>
+                <g>
+                  <polygon points="391.24,243.64 376.76,258.12 405.36,286.72 376.76,315.32 391.24,329.8 434.32,286.72 		" />
+                </g>
+              </g>
+              <g>
+                <g>
+                  <polygon points="309.32,258.12 294.84,243.64 251.76,286.72 294.84,329.8 309.32,315.32 280.72,286.72 		" />
+                </g>
+              </g>
+              <g>
+                <g>
+                  <rect
+                    x="287.878"
+                    y="276.562"
+                    transform="matrix(0.3711 -0.9286 0.9286 0.3711 -50.5861 498.917)"
+                    width="110.284"
+                    height="20.48"
+                  />
+                </g>
+              </g>
+              <g>
+                <g>
+                  <path
+                    d="M471.04,358.4V51.2H20.48v307.2H0v44.06l25.24,37.86h441.04l25.24-37.86V358.4H471.04z M40.96,71.68h409.6V358.4H40.96 V71.68z M471.04,396.26l-15.72,23.58H36.2l-15.72-23.58v-17.38h450.56V396.26z"
+                  />
+                </g>
+              </g>
+              <g>
+                <g>
+                  <rect x="276.48" y="389.12" width="20.48" height="20.48" />
+                </g>
+              </g>
+              <g>
+                <g>
+                  <rect x="235.52" y="389.12" width="20.48" height="20.48" />
+                </g>
+              </g>
+              <g>
+                <g>
+                  <rect x="194.56" y="389.12" width="20.48" height="20.48" />
+                </g>
+              </g>
+            </svg>
           </div>
 
-          {/* Floating label chips around portrait */}
-          <motion.div
-            className="absolute top-4 -right-2 tag-primary text-[9px]"
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 1.2, duration: 0.5 }}
+          {/* Orbiting Stacks Container */}
+          <div
+            className="absolute w-[365px] h-[365px] pointer-events-none z-20"
+            style={{
+              animation: "orbit-clockwise 25s linear infinite",
+            }}
           >
-            React Native
-          </motion.div>
-          <motion.div
-            className="absolute bottom-8 -left-4 tag-primary text-[9px]"
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 1.4, duration: 0.5 }}
-          >
-            AWS Cloud
-          </motion.div>
-          <motion.div
-            className="absolute top-1/3 -right-6 tag-outline text-[9px]"
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 1.6, duration: 0.5 }}
-          >
-            Node.js
-          </motion.div>
+            {/* React Native Chip */}
+            <div
+              className="absolute"
+              style={{
+                left: "182.5px",
+                top: "0px",
+                transform: "translate(-50%, -50%)",
+              }}
+            >
+              <div
+                style={{
+                  animation: "orbit-counter-clockwise 25s linear infinite",
+                }}
+              >
+                <motion.div
+                  className="tag-primary text-[9px] whitespace-nowrap"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 1.2, duration: 0.5 }}
+                >
+                  React Native
+                </motion.div>
+              </div>
+            </div>
+
+            {/* React.js Chip */}
+            <div
+              className="absolute"
+              style={{
+                left: "340.5px",
+                top: "91.25px",
+                transform: "translate(-50%, -50%)",
+              }}
+            >
+              <div
+                style={{
+                  animation: "orbit-counter-clockwise 25s linear infinite",
+                }}
+              >
+                <motion.div
+                  className="tag-primary text-[9px] whitespace-nowrap"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 1.3, duration: 0.5 }}
+                >
+                  React.js
+                </motion.div>
+              </div>
+            </div>
+
+            {/* Node.js Chip */}
+            <div
+              className="absolute"
+              style={{
+                left: "340.5px",
+                top: "273.75px",
+                transform: "translate(-50%, -50%)",
+              }}
+            >
+              <div
+                style={{
+                  animation: "orbit-counter-clockwise 25s linear infinite",
+                }}
+              >
+                <motion.div
+                  className="tag-outline text-[9px] whitespace-nowrap"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 1.4, duration: 0.5 }}
+                >
+                  Node.js
+                </motion.div>
+              </div>
+            </div>
+
+            {/* Next.js Chip */}
+            <div
+              className="absolute"
+              style={{
+                left: "182.5px",
+                top: "365px",
+                transform: "translate(-50%, -50%)",
+              }}
+            >
+              <div
+                style={{
+                  animation: "orbit-counter-clockwise 25s linear infinite",
+                }}
+              >
+                <motion.div
+                  className="tag-primary text-[9px] whitespace-nowrap"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 1.5, duration: 0.5 }}
+                >
+                  Next.js
+                </motion.div>
+              </div>
+            </div>
+
+            {/* AWS Cloud Chip */}
+            <div
+              className="absolute"
+              style={{
+                left: "24.5px",
+                top: "273.75px",
+                transform: "translate(-50%, -50%)",
+              }}
+            >
+              <div
+                style={{
+                  animation: "orbit-counter-clockwise 25s linear infinite",
+                }}
+              >
+                <motion.div
+                  className="tag-primary text-[9px] whitespace-nowrap"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 1.6, duration: 0.5 }}
+                >
+                  AWS Cloud
+                </motion.div>
+              </div>
+            </div>
+
+            {/* TypeScript Chip */}
+            <div
+              className="absolute"
+              style={{
+                left: "24.5px",
+                top: "91.25px",
+                transform: "translate(-50%, -50%)",
+              }}
+            >
+              <div
+                style={{
+                  animation: "orbit-counter-clockwise 25s linear infinite",
+                }}
+              >
+                <motion.div
+                  className="tag-outline text-[9px] whitespace-nowrap"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 1.7, duration: 0.5 }}
+                >
+                  TypeScript
+                </motion.div>
+              </div>
+            </div>
+          </div>
         </motion.div>
       </div>
 
@@ -316,6 +515,14 @@ const Home = () => {
         @keyframes spin {
           from { transform: rotate(0deg); }
           to { transform: rotate(360deg); }
+        }
+        @keyframes orbit-clockwise {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+        @keyframes orbit-counter-clockwise {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(-360deg); }
         }
       `}</style>
     </section>

@@ -1,22 +1,11 @@
-//eslint-disable-next-line
 import { motion } from "framer-motion";
 import React, { useEffect, useRef, useState } from "react";
 import SpotlightCard from "../common/SpotlightCard";
 import { SectionHeader } from "../common/utils";
-import { framerVariants } from "../const";
+import { framerVariants, SECTION_NUMBERS } from "../constants";
 
 const getVariant = (key) => framerVariants.find((v) => v.key === key)?.value;
 
-// Section number counter (purely visual, indexed from sections array)
-const SECTION_NUMBERS = {
-  about: "01",
-  skills: "02",
-  services: "03",
-  projects: "04",
-  journey: "05",
-  certifications: "06",
-  contact: "07",
-};
 
 export default function SectionLayout({
   id,

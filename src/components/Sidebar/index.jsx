@@ -1,7 +1,6 @@
-//eslint-disable-next-line
 import { motion } from "framer-motion";
 import React from "react";
-import { sidebarItems } from "../../const";
+import { sidebarItems } from "../../constants";
 import DecryptedText from "../../common/DecryptedText";
 
 const Sidebar = ({ activeSection, onItemClick }) => {
@@ -99,55 +98,6 @@ const Sidebar = ({ activeSection, onItemClick }) => {
         </nav>
       </motion.div>
 
-      {/* Mobile Bottom Bar */}
-      <motion.nav
-        className="md:hidden fixed bottom-0 left-0 w-full flex justify-around px-3 py-3 z-50"
-        style={{
-          background: "rgba(0,0,0,0.95)",
-          borderTop: "1px solid rgba(0,213,213,0.15)",
-          backdropFilter: "blur(12px)",
-        }}
-        initial={{ y: 100 }}
-        animate={{ y: 0 }}
-        transition={{ type: "spring", stiffness: 200, damping: 28 }}
-      >
-        {sidebarItems.map((item) => {
-          const isActive = activeSection === item.name;
-          return (
-            <a
-              key={item.name}
-              href={item.href}
-              onClick={(e) => {
-                e.preventDefault();
-                onItemClick(item);
-              }}
-              className="flex flex-col items-center gap-1 relative px-2 py-1"
-            >
-              {/* Active indicator dot */}
-              {isActive && (
-                <motion.div
-                  layoutId="mobile-indicator"
-                  className="absolute -top-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full"
-                  style={{ background: "#00D5D5", boxShadow: "0 0 6px rgba(0,213,213,0.8)" }}
-                />
-              )}
-              <item.icon
-                className="w-5 h-5 transition-all duration-200"
-                style={{
-                  color: isActive ? "#00D5D5" : "rgba(255,255,255,0.4)",
-                  filter: isActive ? "drop-shadow(0 0 5px rgba(0,213,213,0.6))" : "none",
-                }}
-              />
-              <span
-                className="text-[9px] font-bold uppercase tracking-wider transition-colors duration-200 hidden min-[420px]:block"
-                style={{ color: isActive ? "#00D5D5" : "rgba(255,255,255,0.35)" }}
-              >
-                {item.name}
-              </span>
-            </a>
-          );
-        })}
-      </motion.nav>
     </>
   );
 };

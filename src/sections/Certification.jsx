@@ -1,224 +1,41 @@
 import { motion, AnimatePresence } from "framer-motion";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useState, useMemo, useEffect, useRef } from "react";
 import {
-  FiExternalLink,
-  FiX,
-  FiAward,
   FiCalendar,
   FiBriefcase,
-  FiChevronLeft,
-  FiChevronRight,
+  FiEye,
+  FiRefreshCw,
+  FiExternalLink,
 } from "react-icons/fi";
-import { certifications } from "../const";
+import { certifications, getTheme } from "../constants";
 import SectionLayout from "../layout/SectionLayout";
-
-/* ─── Issuer theme map ─── */
-const ISSUER_THEMES = {
-  IBM: { accent: "#0f62fe", badge: "bg-blue-950/30 border-blue-900/40 text-blue-400" },
-  Cisco: { accent: "#00b4d8", badge: "bg-cyan-950/30 border-cyan-900/40 text-cyan-400" },
-  Meta: { accent: "#0668e1", badge: "bg-blue-950/30 border-blue-900/40 text-blue-400" },
-  Google: { accent: "#ea4335", badge: "bg-red-950/30 border-red-900/40 text-red-400" },
-  Udemy: { accent: "#a435f0", badge: "bg-purple-950/30 border-purple-900/40 text-purple-400" },
-};
-const defaultTheme = { accent: "#00D5D5", badge: "bg-primary/5 border-primary/20 text-primary" };
-
-const getTheme = (issuer = "") => {
-  const l = issuer.toLowerCase();
-  if (l.includes("ibm")) return ISSUER_THEMES.IBM;
-  if (l.includes("cisco")) return ISSUER_THEMES.Cisco;
-  if (l.includes("meta")) return ISSUER_THEMES.Meta;
-  if (l.includes("google")) return ISSUER_THEMES.Google;
-  if (l.includes("udemy")) return ISSUER_THEMES.Udemy;
-  return defaultTheme;
-};
-
-/* ─── Coverflow computation ─── */
-// Returns transform style for each card based on distance from active index
-const getCardStyle = (index, active, total) => {
-  const distance = index - active;
-  const absDistance = Math.abs(distance);
-
-  // Only render cards within range of ±3
-  const maxVisible = 3;
-  if (absDistance > maxVisible) return null;
-
-  const direction = distance > 0 ? 1 : distance < 0 ? -1 : 0;
-
-  // Position offsets (spread cards out)
-  const translateX = distance * 220;
-  // Cards fan out with perspective — push them back on Z axis
-  const translateZ = absDistance === 0 ? 0 : -120 - absDistance * 60;
-  // Slight Y drop for non-center cards
-  const translateY = absDistance === 0 ? 0 : absDistance * 18;
-  // Rotate inward
-  const rotateY = distance * -22;
-  // Scale down cards away from center
-  const scale = absDistance === 0 ? 1 : Math.max(0.55, 1 - absDistance * 0.16);
-  // Fade out distant cards
-  const opacity = absDistance === 0 ? 1 : Math.max(0.15, 1 - absDistance * 0.28);
-  // zIndex so center card is always on top
-  const zIndex = maxVisible - absDistance;
-
-  return {
-    transform: `perspective(1200px) translateX(${translateX}px) translateY(${translateY}px) translateZ(${translateZ}px) rotateY(${rotateY}deg) scale(${scale})`,
-    opacity,
-    zIndex,
-    pointerEvents: absDistance === 0 ? "auto" : "auto",
-    filter: absDistance === 0 ? "none" : `brightness(${0.45 - absDistance * 0.05})`,
-  };
-};
-
-/* ─── Lightbox Modal ─── */
-const CertModal = ({ cert, onClose }) => {
-  const theme = getTheme(cert.issuer);
-
-  useEffect(() => {
-    const handler = (e) => e.key === "Escape" && onClose();
-    window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
-  }, [onClose]);
-
-  const handleVerify = () => {
-    if (!cert.pdfFile) return;
-    const baseUrl = import.meta.env.BASE_URL || "/";
-    const cleanBase = baseUrl.endsWith("/") ? baseUrl : `${baseUrl}/`;
-    const url = `${cleanBase}files/certification/${encodeURIComponent(cert.pdfFile)}`;
-    window.open(url, "_blank");
-  };
-
-  return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-6">
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        onClick={onClose}
-        className="fixed inset-0 cursor-zoom-out"
-        style={{ background: "rgba(0,0,0,0.92)", backdropFilter: "blur(14px)" }}
-      />
-      <motion.div
-        initial={{ opacity: 0, scale: 0.9, y: 30 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.9, y: 30 }}
-        transition={{ type: "spring", duration: 0.45, bounce: 0.1 }}
-        className="relative w-full max-w-4xl flex flex-col md:flex-row overflow-hidden corner-card max-h-[90vh]"
-        style={{ borderRadius: "20px" }}
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Close */}
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 z-20 w-9 h-9 rounded-full flex items-center justify-center cursor-pointer transition-all duration-200"
-          style={{ background: "rgba(0,0,0,0.7)", border: "1px solid rgba(0,213,213,0.3)" }}
-        >
-          <FiX className="text-white text-base" />
-        </button>
-
-        {/* Certificate image */}
-        <div
-          className="w-full md:w-[58%] shrink-0 flex items-center justify-center p-4"
-          style={{ background: "#0d0d0d" }}
-        >
-          <img
-            src={cert.image}
-            alt={cert.title}
-            className="w-full h-auto object-contain rounded-xl max-h-[70vh]"
-            style={{ boxShadow: `0 0 40px ${theme.accent}25` }}
-          />
-        </div>
-
-        {/* Details panel */}
-        <div
-          className="w-full md:w-[42%] flex flex-col justify-between p-6 sm:p-8 text-left overflow-y-auto"
-          style={{ background: "#121212" }}
-        >
-          <div className="space-y-5">
-            <div>
-              <span className={`text-[9px] font-bold uppercase tracking-widest px-2.5 py-0.5 rounded-lg border select-none inline-block ${theme.badge}`}>
-                {cert.issuer}
-              </span>
-              <h2 className="text-lg sm:text-xl font-black text-white mt-3 leading-snug">
-                {cert.title}
-              </h2>
-              <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-xs text-stone-500 mt-2 font-semibold select-none">
-                <span>Offered by: <span className="text-white">{cert.offeredBy}</span></span>
-                <span>·</span>
-                <span className="flex items-center gap-1">
-                  <FiCalendar className="text-[11px]" /> {cert.lastUpdated}
-                </span>
-              </div>
-            </div>
-
-            <div
-              className="pt-4 space-y-2 border-t"
-              style={{ borderColor: "rgba(255,255,255,0.06)" }}
-            >
-              <h4
-                className="text-[10px] font-bold uppercase tracking-widest flex items-center gap-1.5 select-none"
-                style={{ color: theme.accent }}
-              >
-                <FiAward className="text-xs shrink-0" /> Course Outline
-              </h4>
-              <p className="text-sm text-stone-300 leading-relaxed">{cert.description}</p>
-            </div>
-
-            <div
-              className="pt-4 space-y-2 border-t"
-              style={{ borderColor: "rgba(255,255,255,0.06)" }}
-            >
-              <h4
-                className="text-[10px] font-bold uppercase tracking-widest select-none"
-                style={{ color: theme.accent }}
-              >
-                Skills Verified
-              </h4>
-              <div className="flex flex-wrap gap-1.5">
-                {cert.description
-                  .split(/[,;.-]/)
-                  .map((t) => t.trim())
-                  .filter((t) => t.length > 2 && t.length < 28)
-                  .slice(0, 6)
-                  .map((skill, i) => (
-                    <span
-                      key={i}
-                      className="rounded-lg text-[10px] font-semibold px-2.5 py-1 cursor-default"
-                      style={{
-                        background: `${theme.accent}12`,
-                        border: `1px solid ${theme.accent}30`,
-                        color: theme.accent,
-                      }}
-                    >
-                      {skill}
-                    </span>
-                  ))}
-              </div>
-            </div>
-          </div>
-
-          {cert.pdfFile && (
-            <button
-              onClick={handleVerify}
-              className="mt-6 w-full inline-flex items-center justify-center gap-2 font-bold px-4 py-3 rounded-xl transition cursor-pointer text-xs uppercase tracking-wider text-black"
-              style={{
-                background: theme.accent,
-                boxShadow: `0 0 18px ${theme.accent}40`,
-              }}
-            >
-              <FiExternalLink className="text-sm" /> Verify Credential
-            </button>
-          )}
-        </div>
-      </motion.div>
-    </div>
-  );
-};
+import CertModal from "../components/Certification/CertModal";
 
 /* ─── Main Certification Section ─── */
 const Certification = () => {
   const headerRef = useRef(null);
+  const scrollContainerRef = useRef(null);
+  const cardBackRef = useRef(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [activeCert, setActiveCert] = useState(null);
-  const total = certifications.length;
+  const [isFlipped, setIsFlipped] = useState(false);
+
+  // Parallax mouse tilt coordinates
+  const [rotateX, setRotateX] = useState(0);
+  const [rotateY, setRotateY] = useState(0);
+
+  const activeCertData = certifications[activeIndex];
+  const theme = getTheme(activeCertData?.issuer);
+
+  // Split description dynamically for skills preview
+  const skillsList = useMemo(() => {
+    if (!activeCertData?.description) return [];
+    return activeCertData.description
+      .split(/[,;.-]/)
+      .map((t) => t.trim())
+      .filter((t) => t.length > 2 && t.length < 28)
+      .slice(0, 6);
+  }, [activeCertData?.description]);
 
   // Lock scroll when modal open
   useEffect(() => {
@@ -235,36 +52,37 @@ const Certification = () => {
       document.body.style.overflow = "";
     };
   }, [activeCert]);
-
-  const prev = useCallback(() => setActiveIndex((i) => (i - 1 + total) % total), [total]);
-  const next = useCallback(() => setActiveIndex((i) => (i + 1) % total), [total]);
-
-  // Keyboard navigation
+  // Reset flip state when card selection changes
   useEffect(() => {
-    const handler = (e) => {
-      if (activeCert) return;
-      if (e.key === "ArrowLeft") prev();
-      if (e.key === "ArrowRight") next();
-    };
-    window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
-  }, [prev, next, activeCert]);
+    setIsFlipped(false);
+    setRotateX(0);
+    setRotateY(0);
+  }, [activeIndex]);
 
-  // Drag / swipe support
-  const dragStartX = useRef(null);
-  const handleDragStart = (e) => {
-    dragStartX.current = e.touches ? e.touches[0].clientX : e.clientX;
-  };
-  const handleDragEnd = (e) => {
-    if (dragStartX.current === null) return;
-    const endX = e.changedTouches ? e.changedTouches[0].clientX : e.clientX;
-    const diff = dragStartX.current - endX;
-    if (Math.abs(diff) > 40) diff > 0 ? next() : prev();
-    dragStartX.current = null;
+  const handleMouseMove = (e) => {
+    if (isFlipped) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    // max 12 deg tilt
+    setRotateX(((y - centerY) / centerY) * -12);
+    setRotateY(((x - centerX) / centerX) * 12);
   };
 
-  const activeCertData = certifications[activeIndex];
-  const theme = getTheme(activeCertData?.issuer);
+  const handleMouseLeave = () => {
+    setRotateX(0);
+    setRotateY(0);
+  };
+
+  const handleVerify = () => {
+    if (!activeCertData?.pdfFile) return;
+    const baseUrl = import.meta.env.BASE_URL || "/";
+    const cleanBase = baseUrl.endsWith("/") ? baseUrl : `${baseUrl}/`;
+    const url = `${cleanBase}files/certification/${encodeURIComponent(activeCertData.pdfFile)}`;
+    window.open(url, "_blank");
+  };
 
   return (
     <SectionLayout
@@ -274,215 +92,298 @@ const Certification = () => {
       spotlightColor="rgba(0, 213, 213, 0.06)"
       textColorClass="text-[#00D5D5]"
     >
-      <div className="w-full flex flex-col items-center gap-8 py-4 select-none">
+      <div className="w-full py-2">
+        <div className="w-full min-h-[78vh] flex flex-col md:flex-row gap-8 items-stretch justify-center">
 
-        {/* ── Coverflow Stage ── */}
-        <div
-          className="relative w-full flex items-center justify-center"
-          style={{ height: "340px" }}
-          onMouseDown={handleDragStart}
-          onMouseUp={handleDragEnd}
-          onTouchStart={handleDragStart}
-          onTouchEnd={handleDragEnd}
-        >
-          {certifications.map((cert, index) => {
-            const style = getCardStyle(index, activeIndex, total);
-            if (!style) return null;
-            const isActive = index === activeIndex;
-            const cardTheme = getTheme(cert.issuer);
-
-            return (
-              <div
-                key={cert.id}
-                className="absolute cursor-pointer"
-                style={{
-                  ...style,
-                  width: "280px",
-                  transition: "transform 0.45s cubic-bezier(0.4,0,0.2,1), opacity 0.45s ease, filter 0.45s ease",
+          {/* ── Left Pane: Active 3D Parallax Tilt & Flip Card ── */}
+          <div className="w-full md:w-[55%] flex flex-col items-center justify-center gap-4">
+            {/* 3D Frame Wrapper */}
+            <div
+              className="relative  aspect-[4/3] max-w-md cursor-pointer perspective"
+              style={{ minHeight: "100%", minWidth: "100%" }}
+              onMouseMove={handleMouseMove}
+              onMouseEnter={() => window.innerWidth >= 768 && setIsFlipped(true)}
+              onMouseLeave={() => {
+                handleMouseLeave();
+                if (window.innerWidth >= 768) {
+                  setIsFlipped(false);
+                }
+              }}
+              onClick={() => setIsFlipped((prev) => !prev)}
+            >
+              {/* Inner card containing Front & Back faces */}
+              <motion.div
+                animate={{
+                  rotateX: isFlipped ? 0 : rotateX,
+                  rotateY: isFlipped ? 180 : rotateY,
                 }}
-                onClick={() => {
-                  if (isActive) {
-                    setActiveCert(cert);
-                  } else {
-                    setActiveIndex(index);
-                  }
+                transition={{ type: "spring", stiffness: 260, damping: 22 }}
+                className="w-full h-full transform-style-preserve-3d relative rounded-2xl border"
+                style={{
+                  borderColor: "rgba(255,255,255,0.06)",
+                  boxShadow: isFlipped
+                    ? `0 20px 40px -12px ${theme.accent}25, 0 0 20px 1px ${theme.accent}15`
+                    : "0 10px 30px rgba(0,0,0,0.6)",
                 }}
               >
-                {/* Card */}
+                {/* ── Front Face ── */}
                 <div
-                  className="relative overflow-hidden flex flex-col"
-                  style={{
-                    borderRadius: "16px",
-                    background: "#121212",
-                    border: isActive
-                      ? `1px solid ${cardTheme.accent}60`
-                      : "1px solid rgba(255,255,255,0.06)",
-                    boxShadow: isActive
-                      ? `0 20px 60px -10px ${cardTheme.accent}40, 0 0 0 1px ${cardTheme.accent}20`
-                      : "0 8px 24px rgba(0,0,0,0.6)",
-                    transform: "none",
-                  }}
+                  className="absolute inset-0 w-full h-full backface-hidden rounded-2xl overflow-hidden flex flex-col bg-[#121212]"
                 >
-                  {/* Active top glow */}
-                  {isActive && (
-                    <div
-                      className="absolute top-0 left-0 right-0 h-[2px]"
-                      style={{ background: cardTheme.accent, boxShadow: `0 0 12px ${cardTheme.accent}` }}
-                    />
-                  )}
+                  {/* Top brand header strip */}
+                  <div
+                    className="absolute top-0 left-0 right-0 h-[2px] z-10"
+                    style={{ background: theme.accent, boxShadow: `0 0 10px ${theme.accent}` }}
+                  />
 
-                  {/* Certificate image */}
-                  <div className="relative overflow-hidden" style={{ aspectRatio: "4/3" }}>
+                  {/* Image */}
+                  <div className="relative w-full flex-1 overflow-hidden bg-[#080808] flex items-center justify-center">
                     <img
-                      src={cert.image}
-                      alt={cert.title}
-                      className="w-full h-full object-cover transition-transform duration-500"
-                      style={{ transform: isActive ? "scale(1.04)" : "scale(1)" }}
+                      src={activeCertData?.image}
+                      alt={activeCertData?.title}
+                      className="w-full h-full object-cover"
                       loading="lazy"
+                      decoding="async"
                     />
                     <div
                       className="absolute inset-0"
                       style={{
-                        background: "linear-gradient(to top, rgba(18,18,18,0.85) 0%, transparent 60%)",
+                        background: "linear-gradient(to top, rgba(18,18,18,0.92) 0%, transparent 60%)",
                       }}
                     />
-                    {/* Expand hint on active card */}
-                    {isActive && (
-                      <div
-                        className="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity duration-300"
-                        style={{ background: "rgba(0,0,0,0.4)" }}
+
+                    {/* Interactive indicators */}
+                    <div className="absolute top-4 right-4 flex gap-2">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setActiveCert(activeCertData);
+                        }}
+                        className="w-8 h-8 rounded-full flex items-center justify-center border transition-all duration-300 z-10"
+                        style={{
+                          background: "rgba(0,0,0,0.75)",
+                          borderColor: "rgba(255,255,255,0.15)",
+                          color: "#FFF",
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.borderColor = theme.accent;
+                          e.currentTarget.style.color = theme.accent;
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.borderColor = "rgba(255,255,255,0.15)";
+                          e.currentTarget.style.color = "#FFF";
+                        }}
                       >
-                        <span
-                          className="text-[10px] font-bold px-3 py-1.5 rounded-lg flex items-center gap-1.5 text-black"
-                          style={{ background: cardTheme.accent }}
-                        >
-                          Expand <FiExternalLink />
-                        </span>
-                      </div>
-                    )}
+                        <FiEye className="text-sm" />
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setIsFlipped(true);
+                        }}
+                        className="w-8 h-8 rounded-full flex items-center justify-center border transition-all duration-300 z-10"
+                        style={{
+                          background: "rgba(0,0,0,0.75)",
+                          borderColor: "rgba(255,255,255,0.15)",
+                          color: "#FFF",
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.borderColor = theme.accent;
+                          e.currentTarget.style.color = theme.accent;
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.borderColor = "rgba(255,255,255,0.15)";
+                          e.currentTarget.style.color = "#FFF";
+                        }}
+                      >
+                        <FiRefreshCw className="text-sm" />
+                      </button>
+                    </div>
                   </div>
 
-                  {/* Card info */}
-                  <div className="p-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <span
-                        className={`text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded border ${cardTheme.badge}`}
-                      >
-                        {cert.issuer}
+                  {/* Metadata bottom bar */}
+                  <div className="p-4 sm:p-5 text-left border-t border-white/5">
+                    <div className="flex items-center justify-between mb-2 select-none">
+                      <span className={`text-[8px] font-bold uppercase tracking-widest px-2 py-0.5 rounded border ${theme.badge}`}>
+                        {activeCertData?.issuer}
                       </span>
-                      <span className="text-[9px] text-stone-600 font-mono">{cert.lastUpdated}</span>
+                      <span className="text-[9px] text-stone-500 font-mono flex items-center gap-1">
+                        <FiCalendar /> {activeCertData?.lastUpdated}
+                      </span>
                     </div>
-                    <h3
-                      className="text-sm font-bold leading-snug line-clamp-2 transition-colors duration-300"
-                      style={{ color: isActive ? cardTheme.accent : "rgba(255,255,255,0.75)" }}
-                    >
-                      {cert.title}
+                    <h3 className="text-sm sm:text-base font-black text-white leading-snug line-clamp-1">
+                      {activeCertData?.title}
                     </h3>
                   </div>
                 </div>
-              </div>
-            );
-          })}
-        </div>
 
-        {/* ── Active Cert Info Strip ── */}
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={activeIndex}
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -12 }}
-            transition={{ duration: 0.28 }}
-            className="text-center max-w-md px-4"
-          >
-            <span
-              className={`text-[9px] font-bold uppercase tracking-widest px-2.5 py-0.5 rounded border inline-block mb-2 ${theme.badge}`}
-            >
-              {activeCertData?.issuer}
-            </span>
-            <h3 className="text-base sm:text-lg font-black text-white mb-1 leading-snug">
-              {activeCertData?.title}
-            </h3>
-            <p className="text-[11px] text-stone-500 flex items-center justify-center gap-2">
-              <FiBriefcase style={{ color: "#00D5D5" }} />
-              {activeCertData?.offeredBy}
-              <span style={{ color: "rgba(255,255,255,0.15)" }}>·</span>
-              <FiCalendar style={{ color: "#00D5D5" }} />
-              {activeCertData?.lastUpdated}
+                {/* ── Back Face ── */}
+                <div
+                  ref={cardBackRef}
+                  className="absolute inset-0 w-full h-full backface-hidden rounded-2xl bg-[#121212] p-5 sm:p-6 flex flex-col justify-between overflow-y-auto text-left"
+                  style={{ transform: "rotateY(180deg)", overscrollBehavior: "contain" }}
+                >
+                  <div className="space-y-4">
+                    {/* Header */}
+                    <div className="flex items-center justify-between border-b border-white/5 pb-2">
+                      <div>
+                        <span className={`text-[8px] font-bold uppercase tracking-widest px-2 py-0.5 rounded border select-none ${theme.badge}`}>
+                          {activeCertData?.issuer}
+                        </span>
+                        <h4 className="text-xs text-stone-400 font-semibold mt-1 flex items-center gap-1.5 select-none">
+                          <FiBriefcase className="text-[10px]" style={{ color: theme.accent }} /> Offered: {activeCertData?.offeredBy}
+                        </h4>
+                      </div>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setIsFlipped(false);
+                        }}
+                        className="w-7 h-7 rounded-full flex items-center justify-center border border-white/5 text-stone-400 transition-colors hover:text-white"
+                        style={{ background: "rgba(255,255,255,0.03)" }}
+                      >
+                        <FiRefreshCw className="text-[11px]" />
+                      </button>
+                    </div>
+
+                    {/* Course Outline */}
+                    <div className="space-y-1">
+                      <span className="text-[8px] font-bold uppercase tracking-widest block font-mono" style={{ color: theme.accent }}>
+                        Outline / Description
+                      </span>
+                      <p className="text-xs text-stone-300 leading-relaxed font-medium">
+                        {activeCertData?.description}
+                      </p>
+                    </div>
+
+                    {/* Verified Skills */}
+                    <div className="space-y-1.5">
+                      <span className="text-[8px] font-bold uppercase tracking-widest block font-mono" style={{ color: theme.accent }}>
+                        Verified Skills
+                      </span>
+                      <div className="flex flex-wrap gap-1">
+                        {skillsList.map((skill, i) => (
+                          <span
+                            key={i}
+                            className="rounded-lg text-[9px] font-bold px-2 py-0.5 cursor-default"
+                            style={{
+                              background: `${theme.accent}12`,
+                              border: `1px solid ${theme.accent}30`,
+                              color: theme.accent,
+                            }}
+                          >
+                            {skill}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Verification link */}
+                  {activeCertData?.pdfFile && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleVerify();
+                      }}
+                      className="w-full inline-flex items-center justify-center gap-2 font-bold px-3 py-2 rounded-xl transition cursor-pointer text-[10px] uppercase tracking-wider text-black"
+                      style={{
+                        background: theme.accent,
+                        boxShadow: `0 0 14px ${theme.accent}30`,
+                      }}
+                    >
+                      <FiExternalLink className="text-xs" /> Verify Credential
+                    </button>
+                  )}
+                </div>
+              </motion.div>
+            </div>
+
+            {/* Interaction Help Hint */}
+            <p className="text-[9px] font-bold font-mono uppercase tracking-widest text-stone-500 select-none">
+              Hover to Flip <span className="text-stone-700">|</span> Tap Card to toggle back <span className="text-stone-700">|</span> Click expand icon to zoom
             </p>
-          </motion.div>
-        </AnimatePresence>
-
-        {/* ── Navigation Controls ── */}
-        <div className="flex items-center gap-5">
-          {/* Prev */}
-          <button
-            onClick={prev}
-            className="w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer"
-            style={{
-              background: "rgba(0,213,213,0.06)",
-              border: "1px solid rgba(0,213,213,0.2)",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = "rgba(0,213,213,0.15)";
-              e.currentTarget.style.boxShadow = "0 0 14px rgba(0,213,213,0.3)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = "rgba(0,213,213,0.06)";
-              e.currentTarget.style.boxShadow = "none";
-            }}
-          >
-            <FiChevronLeft style={{ color: "#00D5D5" }} className="text-lg" />
-          </button>
-
-          {/* Dot indicators */}
-          <div className="flex items-center gap-1.5">
-            {certifications.map((_, i) => (
-              <button
-                key={i}
-                onClick={() => setActiveIndex(i)}
-                className="transition-all duration-300 cursor-pointer rounded-full"
-                style={{
-                  width: i === activeIndex ? "24px" : "6px",
-                  height: "6px",
-                  background: i === activeIndex ? "#00D5D5" : "rgba(255,255,255,0.15)",
-                  boxShadow: i === activeIndex ? "0 0 8px rgba(0,213,213,0.7)" : "none",
-                }}
-              />
-            ))}
           </div>
 
-          {/* Next */}
-          <button
-            onClick={next}
-            className="w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer"
-            style={{
-              background: "rgba(0,213,213,0.06)",
-              border: "1px solid rgba(0,213,213,0.2)",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = "rgba(0,213,213,0.15)";
-              e.currentTarget.style.boxShadow = "0 0 14px rgba(0,213,213,0.3)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = "rgba(0,213,213,0.06)";
-              e.currentTarget.style.boxShadow = "none";
-            }}
-          >
-            <FiChevronRight style={{ color: "#00D5D5" }} className="text-lg" />
-          </button>
-        </div>
+          {/* ── Right Pane: Scrolling Selector Sidebar/Belt ── */}
+          <div className="w-full md:w-[45%] flex flex-col relative">
+            {/* Top and Bottom Scroll Indicator Fades (Only visible on desktop) */}
+            <div className="hidden md:block absolute top-0 left-0 right-0 h-8 bg-gradient-to-b from-black to-transparent pointer-events-none z-10" />
+            <div className="hidden md:block absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-black to-transparent pointer-events-none z-10" />
 
-        {/* Counter */}
-        <p
-          className="text-[10px] font-bold font-mono tracking-widest"
-          style={{ color: "rgba(0,213,213,0.4)" }}
-        >
-          {String(activeIndex + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
-        </p>
+            {/* Dial Selector List container (horizontal scrolling on mobile, vertical scrolling on desktop) */}
+            <div
+              ref={scrollContainerRef}
+              className="flex md:flex-col overflow-x-auto md:overflow-y-auto gap-3.5 w-full pr-2 pb-4 md:pb-6 scrollbar-thin max-h-none md:max-h-[500px] lg:max-h-[720px] pt-1"
+              style={{ overscrollBehavior: "contain" }}
+            >
+              {certifications.map((cert, index) => {
+                const isActive = index === activeIndex;
+                const cardTheme = getTheme(cert.issuer);
+
+                return (
+                  <button
+                    key={cert.id}
+                    onClick={() => setActiveIndex(index)}
+                    className={`flex-shrink-0 w-[260px] md:w-full flex items-center gap-3.5 p-3 rounded-xl border text-left transition-all duration-300 cursor-pointer ${isActive
+                      ? "bg-white/5 shadow-2xl scale-[1.01]"
+                      : "bg-white/[0.01] border-white/5 hover:border-white/10 hover:bg-white/[0.03]"
+                      }`}
+                    style={{
+                      borderColor: isActive ? cardTheme.accent : "rgba(255,255,255,0.06)",
+                      boxShadow: isActive ? `0 0 18px ${cardTheme.accent}15` : "none",
+                    }}
+                  >
+                    {/* Tiny thumbnail */}
+                    <div className="w-12 h-9 rounded-lg overflow-hidden bg-black flex-shrink-0 border border-white/10 relative">
+                      <img
+                        src={cert.image}
+                        alt=""
+                        className="w-full h-full object-cover"
+                        loading="lazy"
+                      />
+                      {isActive && (
+                        <div
+                          className="absolute inset-0"
+                          style={{ background: `${cardTheme.accent}20` }}
+                        />
+                      )}
+                    </div>
+
+                    {/* Metadata summary */}
+                    <div className="flex-1 min-w-0 flex flex-col justify-center">
+                      <div className="flex items-center justify-between gap-2 mb-1">
+                        <span className={`text-[7.5px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded border inline-block leading-none ${cardTheme.badge}`}>
+                          {cert.issuer}
+                        </span>
+                        <span className="text-[8px] text-stone-600 font-mono font-bold leading-none">{cert.lastUpdated}</span>
+                      </div>
+                      <h4
+                        className={`text-xs font-black truncate transition-colors duration-300 ${isActive ? "" : "text-stone-300"
+                          }`}
+                        style={{ color: isActive ? cardTheme.accent : "" }}
+                      >
+                        {cert.title}
+                      </h4>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Total Counter Indicator */}
+            <div className="hidden md:flex justify-between items-center text-[10px] font-bold font-mono tracking-widest text-stone-500 pt-2 border-t border-white/5 mt-1">
+              <span>ACTIVE CREDENTIAL:</span>
+              <span style={{ color: theme.accent }}>
+                {String(activeIndex + 1).padStart(2, "0")} / {String(certifications.length).padStart(2, "0")}
+              </span>
+            </div>
+          </div>
+
+        </div>
       </div>
 
-      {/* ── Detail Modal ── */}
+      {/* ── Detail Lightbox Modal ── */}
       <AnimatePresence>
         {activeCert && (
           <CertModal cert={activeCert} onClose={() => setActiveCert(null)} />
@@ -493,3 +394,5 @@ const Certification = () => {
 };
 
 export default React.memo(Certification);
+
+

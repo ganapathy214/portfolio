@@ -39,7 +39,7 @@ export default function CustomCursor() {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseover", handleMouseOver);
     };
-  }, []);
+  }, [isTouch]);
 
   useEffect(() => {
     if (isTouch) return;
