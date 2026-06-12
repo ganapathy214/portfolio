@@ -17,7 +17,7 @@ const Sidebar = ({ activeSection, onItemClick }) => {
           className="w-20 h-screen fixed left-0 top-0 flex flex-col items-center justify-center z-30 gap-2"
           style={{
             background: "linear-gradient(to right, rgba(0,0,0,0.9), rgba(0,0,0,0.5))",
-            borderRight: "1px solid rgba(0,213,213,0.08)",
+            borderRight: "1px solid rgba(var(--primary-rgb),0.08)",
           }}
         >
           {/* Top branding dot */}
@@ -26,9 +26,9 @@ const Sidebar = ({ activeSection, onItemClick }) => {
           >
             <div
               className="w-2 h-2 rounded-full"
-              style={{ background: "#00D5D5", boxShadow: "0 0 8px rgba(0,213,213,0.8)" }}
+              style={{ background: "var(--primary)", boxShadow: "0 0 8px rgba(var(--primary-rgb),0.8)" }}
             />
-            <div className="w-px h-8" style={{ background: "rgba(0,213,213,0.2)" }} />
+            <div className="w-px h-8" style={{ background: "rgba(var(--primary-rgb),0.2)" }} />
           </div>
 
           {/* Nav items */}
@@ -56,7 +56,7 @@ const Sidebar = ({ activeSection, onItemClick }) => {
                     <motion.div
                       layoutId="sidebar-indicator"
                       className="absolute left-0 top-2 bottom-2 w-[2px] rounded-r"
-                      style={{ background: "#00D5D5", boxShadow: "0 0 8px rgba(0,213,213,0.6)" }}
+                      style={{ background: "var(--primary)", boxShadow: "0 0 8px rgba(var(--primary-rgb),0.6)" }}
                     />
                   )}
 
@@ -64,8 +64,8 @@ const Sidebar = ({ activeSection, onItemClick }) => {
                   <item.icon
                     className="w-5 h-5 mb-1 transition-all duration-200"
                     style={{
-                      color: isActive ? "#00D5D5" : "rgba(255,255,255,0.45)",
-                      filter: isActive ? "drop-shadow(0 0 6px rgba(0,213,213,0.6))" : "none",
+                      color: isActive ? "var(--primary)" : "rgba(255,255,255,0.45)",
+                      filter: isActive ? "drop-shadow(0 0 6px rgba(var(--primary-rgb),0.6))" : "none",
                       transform: isActive ? "scale(1.1)" : "scale(1)",
                     }}
                   />
@@ -89,10 +89,10 @@ const Sidebar = ({ activeSection, onItemClick }) => {
 
           {/* Bottom accent line */}
           <div className="absolute bottom-6 flex flex-col items-center gap-1">
-            <div className="w-px h-8" style={{ background: "rgba(0,213,213,0.2)" }} />
+            <div className="w-px h-8" style={{ background: "rgba(var(--primary-rgb),0.2)" }} />
             <div
               className="w-1.5 h-1.5 rounded-full"
-              style={{ background: "rgba(0,213,213,0.3)" }}
+              style={{ background: "rgba(var(--primary-rgb),0.3)" }}
             />
           </div>
         </nav>

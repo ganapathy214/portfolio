@@ -22,8 +22,8 @@ const Journey = () => {
       id="journey"
       label="What I've done ?"
       headerRef={journeyRef}
-      spotlightColor="rgba(0, 213, 213, 0.08)"
-      textColorClass="text-[#00D5D5]"
+      spotlightColor="rgba(var(--primary-rgb), 0.08)"
+      textColorClass="text-primary"
     >
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start w-full py-4 text-left">
         {/* Left Side: Summary Counter Cards */}
@@ -42,13 +42,13 @@ const Journey = () => {
                 <span
                   className="text-4xl sm:text-5xl font-black tracking-tight"
                   style={{
-                    color: "#00D5D5",
-                    textShadow: "0 0 20px rgba(0,213,213,0.4)",
+                    color: "var(--primary)",
+                    textShadow: "0 0 20px rgba(var(--primary-rgb),0.4)",
                   }}
                 >
                   <CountUp end={stat.value} duration={2.5} />
                 </span>
-                <span className="text-3xl sm:text-4xl font-extrabold" style={{ color: "#00D5D5" }}>
+                <span className="text-3xl sm:text-4xl font-extrabold" style={{ color: "var(--primary)" }}>
                   +
                 </span>
               </div>
@@ -71,7 +71,7 @@ const Journey = () => {
             className="absolute left-0 top-2 bottom-2 pointer-events-none"
             style={{
               width: "1px",
-              background: "linear-gradient(to bottom, #00D5D5 0%, rgba(0,213,213,0.3) 50%, transparent 100%)",
+              background: "linear-gradient(to bottom, var(--primary) 0%, rgba(var(--primary-rgb),0.3) 50%, transparent 100%)",
             }}
           />
 
@@ -96,20 +96,20 @@ const Journey = () => {
                   height: "14px",
                   borderRadius: "50%",
                   background: "#000",
-                  border: "2px solid #00D5D5",
-                  boxShadow: "0 0 8px rgba(0,213,213,0.5)",
+                  border: "2px solid var(--primary)",
+                  boxShadow: "0 0 8px rgba(var(--primary-rgb),0.5)",
                 }}
               >
                 <div
                   className="rounded-full animate-pulse"
-                  style={{ width: "5px", height: "5px", background: "#00D5D5" }}
+                  style={{ width: "5px", height: "5px", background: "var(--primary)" }}
                 />
               </div>
 
               {/* Top glow on hover */}
               <div
                 className="absolute top-0 left-0 right-0 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
-                style={{ background: "linear-gradient(to right, #00D5D5, transparent)" }}
+                style={{ background: "linear-gradient(to right, var(--primary), transparent)" }}
               />
 
               {/* Time badge & location */}

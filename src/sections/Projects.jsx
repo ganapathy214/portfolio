@@ -40,8 +40,8 @@ const Projects = () => {
       id="projects"
       label="What I did ?"
       headerRef={headerRef}
-      spotlightColor="rgba(0, 213, 213, 0.06)"
-      textColorClass="text-[#00D5D5]"
+      spotlightColor="rgba(var(--primary-rgb), 0.06)"
+      textColorClass="text-primary"
     >
       <div className="w-full space-y-6 py-2">
 
@@ -56,11 +56,11 @@ const Projects = () => {
                   onClick={() => setActiveFilter(f.id)}
                   className="relative px-4 py-1.5 text-[10px] font-bold uppercase tracking-widest transition-all duration-250 cursor-pointer"
                   style={{
-                    background: isActive ? "#00D5D5" : "transparent",
+                    background: isActive ? "var(--primary)" : "transparent",
                     color: isActive ? "#000" : "rgba(255,255,255,0.4)",
                     border: "1px solid",
-                    borderColor: isActive ? "#00D5D5" : "rgba(255,255,255,0.1)",
-                    boxShadow: isActive ? "0 0 14px rgba(0,213,213,0.35)" : "none",
+                    borderColor: isActive ? "var(--primary)" : "rgba(255,255,255,0.1)",
+                    boxShadow: isActive ? "0 0 14px rgba(var(--primary-rgb),0.35)" : "none",
                   }}
                 >
                   {f.label}
@@ -70,7 +70,7 @@ const Projects = () => {
           </div>
           <span
             className="text-[10px] font-bold font-mono tracking-widest"
-            style={{ color: "rgba(0,213,213,0.5)" }}
+            style={{ color: "rgba(var(--primary-rgb),0.5)" }}
           >
             {filteredProjects.length} project{filteredProjects.length !== 1 ? "s" : ""}
           </span>

@@ -3,6 +3,22 @@ import React, { useEffect } from "react";
 import { FiExternalLink, FiX, FiAward, FiCalendar } from "react-icons/fi";
 import { getTheme } from "../../constants";
 
+const resolveAlphaColor = (color, hexOpacity) => {
+  if (color && color.startsWith("var(")) {
+    const opacityMap = {
+      "12": 0.07,
+      "15": 0.08,
+      "20": 0.125,
+      "25": 0.15,
+      "30": 0.18,
+      "40": 0.25,
+    };
+    const decimal = opacityMap[hexOpacity] || 0.2;
+    return `rgba(var(--primary-rgb), ${decimal})`;
+  }
+  return `${color}${hexOpacity}`;
+};
+
 const CertModal = ({ cert, onClose }) => {
   const theme = getTheme(cert.issuer);
 
@@ -43,7 +59,7 @@ const CertModal = ({ cert, onClose }) => {
         <button
           onClick={onClose}
           className="absolute top-4 right-4 z-20 w-9 h-9 rounded-full flex items-center justify-center cursor-pointer transition-all duration-200"
-          style={{ background: "rgba(0,0,0,0.7)", border: "1px solid rgba(0,213,213,0.3)" }}
+          style={{ background: "rgba(0,0,0,0.7)", border: "1px solid rgba(var(--primary-rgb),0.3)" }}
         >
           <FiX className="text-white text-base" />
         </button>
@@ -63,7 +79,7 @@ const CertModal = ({ cert, onClose }) => {
             src={cert.image}
             alt={cert.title}
             className="w-full h-auto object-contain rounded-xl max-h-[50vh] md:max-h-[70vh] shadow-2xl relative z-10"
-            style={{ boxShadow: `0 10px 40px ${theme.accent}20` }}
+            style={{ boxShadow: `0 10px 40px ${resolveAlphaColor(theme.accent, "20")}` }}
             loading="lazy"
             decoding="async"
           />
@@ -125,8 +141,8 @@ const CertModal = ({ cert, onClose }) => {
                       key={i}
                       className="rounded-lg text-[10px] font-semibold px-2.5 py-1 cursor-default"
                       style={{
-                        background: `${theme.accent}12`,
-                        border: `1px solid ${theme.accent}30`,
+                        background: resolveAlphaColor(theme.accent, "12"),
+                        border: `1px solid ${resolveAlphaColor(theme.accent, "30")}`,
                         color: theme.accent,
                       }}
                     >
@@ -143,7 +159,7 @@ const CertModal = ({ cert, onClose }) => {
               className="mt-6 w-full inline-flex items-center justify-center gap-2 font-bold px-4 py-3 rounded-xl transition cursor-pointer text-xs uppercase tracking-wider text-black"
               style={{
                 background: theme.accent,
-                boxShadow: `0 0 18px ${theme.accent}40`,
+                boxShadow: `0 0 18px ${resolveAlphaColor(theme.accent, "40")}`,
               }}
             >
               <FiExternalLink className="text-sm" /> Verify Credential

@@ -1,0 +1,89 @@
+{
+  "primaryColor": "#f59e0b",
+  "roles": [
+    "Lead Developer",
+    "System Engineer",
+    "Front end Lead",
+    "Mobile App Developer",
+    "System Designer"
+  ],
+  "description": "Designing and engineering high-performance web systems, cross-platform mobile apps, and scalable serverless cloud  (Updated via Admin Panel)architectures with 7+ years of expertise.",
+  "centerSvg": "<?xml version=\"1.0\" encoding=\"utf-8\"?><!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->\n<svg version=\"1.1\" id=\"Uploaded to svgrepo.com\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" \n\t width=\"800px\" height=\"800px\" viewBox=\"0 0 32 32\" xml:space=\"preserve\">\n<style type=\"text/css\">\n\t.sharpcorners_een{fill:#111918;}\n\t.st0{fill:#0B1719;}\n</style>\n<path class=\"sharpcorners_een\" d=\"M20,28h2v1H10v-1h2l1-3h6L20,28z M31,3v21H1V3H31z M29,5H3v17h26V5z M28,21H4V6h24V21z M7,10h8V9\n\tH7V10z M11,17H7v1h4V17z M19,15h-9v1h9V15z M19,13h-9v1h9V13z M20,11H10v1h10V11z\"/>\n</svg>",
+  "orbitingStacks": [
+    {
+      "label": "Vite.js",
+      "type": "primary"
+    },
+    {
+      "label": "React 19",
+      "type": "primary"
+    },
+    {
+      "label": "Node.js",
+      "type": "outline"
+    },
+    {
+      "label": "Next.js",
+      "type": "primary"
+    },
+    {
+      "label": "AWS Cloud",
+      "type": "primary"
+    },
+    {
+      "label": "TypeScript",
+      "type": "outline"
+    }
+  ],
+  "about": {
+    "name": "Ganapathy N",
+    "title": "Senior Frontend & Full Stack Developer",
+    "bio": "Senior Frontend & Full Stack Developer with 6+ years of experience specializing in React.js, Next.js, React Native, TypeScript, and modern JavaScript ecosystems. I design and build high-performance, accessible, and scalable enterprise web and mobile applications. With hands-on expertise spanning state management, UI systems, backend APIs (Node.js, Express.js), and AWS cloud DevOps architectures, I collaborate to deliver modern solutions aligned with business goals.",
+    "professionalTitles": [
+      "Senior Backend Developer",
+      "Senior Full Stack Developer",
+      "Web and Mobile apps Specialist"
+    ],
+    "stats": [
+      {
+        "value": "6+",
+        "label": "Years Exp"
+      },
+      {
+        "value": "10+",
+        "label": "Certificates"
+      },
+      {
+        "value": "12+",
+        "label": "Projects"
+      }
+    ],
+    "highlights": [
+      {
+        "label": "Specialization",
+        "value": "React · Next.js · React Native"
+      },
+      {
+        "label": "Cloud",
+        "value": "AWS · Serverless · DevOps"
+      },
+      {
+        "label": "Location",
+        "value": "India · Remote Ready"
+      }
+    ],
+    "socialLinks": [
+      {
+        "href": "https://www.linkedin.com/in/gananata/",
+        "icon": "FaLinkedinIn",
+        "label": "LinkedIn"
+      },
+      {
+        "href": "https://github.com/ganapathy214",
+        "icon": "FaGithub",
+        "label": "Github"
+      }
+    ],
+    "resumeFileName": "Ganapathy_N_Resume.pdf"
+  }
+}

@@ -64,7 +64,7 @@ const ProjectModal = ({ project, onClose }) => {
             className="absolute top-4 right-4 z-10 w-9 h-9 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer"
             style={{
               background: "rgba(0,0,0,0.75)",
-              border: "1px solid rgba(0,213,213,0.3)",
+              border: "1px solid rgba(var(--primary-rgb),0.3)",
             }}
           >
             <FiX className="text-white text-base" />
@@ -74,7 +74,7 @@ const ProjectModal = ({ project, onClose }) => {
             <h2 className="text-lg sm:text-2xl font-black text-white leading-tight mt-1.5">
               {project.title}
             </h2>
-            <p className="text-xs font-semibold mt-0.5" style={{ color: "#00D5D5" }}>
+            <p className="text-xs font-semibold mt-0.5" style={{ color: "var(--primary)" }}>
               {project.role}
             </p>
           </div>
@@ -91,7 +91,7 @@ const ProjectModal = ({ project, onClose }) => {
               onClick={() => setActiveTab(tab)}
               className="flex-1 py-3 text-[10px] sm:text-xs font-bold uppercase tracking-widest transition-all duration-200 cursor-pointer relative"
               style={{
-                color: activeTab === tab ? "#00D5D5" : "rgba(255,255,255,0.3)",
+                color: activeTab === tab ? "var(--primary)" : "rgba(255,255,255,0.3)",
                 background: "transparent",
               }}
             >
@@ -100,7 +100,7 @@ const ProjectModal = ({ project, onClose }) => {
                 <motion.div
                   layoutId="modal-tab-indicator"
                   className="absolute bottom-0 left-0 right-0 h-[2px]"
-                  style={{ background: "#00D5D5" }}
+                  style={{ background: "var(--primary)" }}
                 />
               )}
             </button>
@@ -125,8 +125,8 @@ const ProjectModal = ({ project, onClose }) => {
                 <div
                   className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-4 rounded-xl"
                   style={{
-                    background: "rgba(0,213,213,0.03)",
-                    border: "1px solid rgba(0,213,213,0.1)",
+                    background: "rgba(var(--primary-rgb),0.03)",
+                    border: "1px solid rgba(var(--primary-rgb),0.1)",
                   }}
                 >
                   {[
@@ -140,7 +140,7 @@ const ProjectModal = ({ project, onClose }) => {
                         className="text-[9px] uppercase tracking-widest font-bold flex items-center gap-1.5"
                         style={{ color: "rgba(255,255,255,0.3)" }}
                       >
-                        <Icon style={{ color: "#00D5D5" }} /> {label}
+                        <Icon style={{ color: "var(--primary)" }} /> {label}
                       </span>
                       <span className="text-xs text-white font-semibold">{value}</span>
                     </div>
@@ -148,7 +148,7 @@ const ProjectModal = ({ project, onClose }) => {
                 </div>
                 <div>
                   <div className="flex items-center gap-2 mb-3">
-                    <FiCpu className="text-xs" style={{ color: "#00D5D5" }} />
+                    <FiCpu className="text-xs" style={{ color: "var(--primary)" }} />
                     <span className="section-number">Project Synopsis</span>
                   </div>
                   <p
@@ -174,7 +174,7 @@ const ProjectModal = ({ project, onClose }) => {
                 className="space-y-4"
               >
                 <div className="flex items-center gap-2 mb-3">
-                  <FiCode className="text-xs" style={{ color: "#00D5D5" }} />
+                  <FiCode className="text-xs" style={{ color: "var(--primary)" }} />
                   <span className="section-number">Full Technology Stack</span>
                 </div>
                 <div className="flex flex-wrap gap-2">
@@ -186,9 +186,9 @@ const ProjectModal = ({ project, onClose }) => {
                       transition={{ delay: i * 0.03, duration: 0.2 }}
                       className="px-3 py-1.5 rounded-lg text-xs font-semibold cursor-default transition-all duration-200 hover:scale-105"
                       style={{
-                        background: "rgba(0,213,213,0.07)",
-                        border: "1px solid rgba(0,213,213,0.2)",
-                        color: "#00D5D5",
+                        background: "rgba(var(--primary-rgb),0.07)",
+                        border: "1px solid rgba(var(--primary-rgb),0.2)",
+                        color: "var(--primary)",
                       }}
                     >
                       {tech}
@@ -211,7 +211,7 @@ const ProjectModal = ({ project, onClose }) => {
                 className="space-y-4"
               >
                 <div className="flex items-center gap-2 mb-3">
-                  <FiCheck className="text-xs" style={{ color: "#00D5D5" }} />
+                  <FiCheck className="text-xs" style={{ color: "var(--primary)" }} />
                   <span className="section-number">Key Responsibilities</span>
                 </div>
                 {project.responsibilities && project.responsibilities.length > 0 ? (
@@ -228,7 +228,7 @@ const ProjectModal = ({ project, onClose }) => {
                           border: "1px solid rgba(255,255,255,0.05)",
                         }}
                       >
-                        <FiCheckCircle className="shrink-0 mt-0.5" style={{ color: "#00D5D5" }} />
+                        <FiCheckCircle className="shrink-0 mt-0.5" style={{ color: "var(--primary)" }} />
                         <span>{resp}</span>
                       </motion.li>
                     ))}
