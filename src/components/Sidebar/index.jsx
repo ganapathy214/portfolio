@@ -3,7 +3,11 @@ import React from "react";
 import { sidebarItems } from "../../constants";
 import DecryptedText from "../../common/DecryptedText";
 
-const Sidebar = ({ activeSection, onItemClick }) => {
+const Sidebar = ({ activeSection, onItemClick, sectionVisibility }) => {
+  const visibleItems = sidebarItems.filter(
+    (item) => !sectionVisibility || sectionVisibility[item.name] !== false
+  );
+
   return (
     <>
       {/* Desktop Sidebar */}
@@ -32,7 +36,7 @@ const Sidebar = ({ activeSection, onItemClick }) => {
           </div>
 
           {/* Nav items */}
-          {sidebarItems.map((item, i) => {
+          {visibleItems.map((item, i) => {
             const isActive = activeSection === item.name;
             return (
               <motion.div

@@ -56,7 +56,7 @@ const ProjectModal = ({ project, onClose }) => {
             className="absolute inset-0"
             style={{
               background:
-                "linear-gradient(to top, #121212 0%, rgba(18,18,18,0.6) 40%, transparent 100%)",
+                "linear-gradient(to top, var(--card-bg, #121212) 0%, rgba(var(--card-bg-rgb, 18,18,18),0.6) 40%, transparent 100%)",
             }}
           />
           <button
@@ -67,7 +67,7 @@ const ProjectModal = ({ project, onClose }) => {
               border: "1px solid rgba(var(--primary-rgb),0.3)",
             }}
           >
-            <FiX className="text-white text-base" />
+            <FiX className="text-[#ffffff] text-base" />
           </button>
           <div className="absolute bottom-4 left-5 right-16 text-left">
             <span className="tag-primary text-[9px] mb-2 inline-flex">{project.category}</span>
@@ -83,7 +83,7 @@ const ProjectModal = ({ project, onClose }) => {
         {/* Tab nav */}
         <div
           className="flex shrink-0 border-b"
-          style={{ background: "#121212", borderColor: "rgba(255,255,255,0.06)" }}
+          style={{ background: "var(--card-bg, #121212)", borderColor: "var(--border-color, rgba(255,255,255,0.06))" }}
         >
           {PROJECT_MODAL_TABS.map((tab) => (
             <button
@@ -91,7 +91,7 @@ const ProjectModal = ({ project, onClose }) => {
               onClick={() => setActiveTab(tab)}
               className="flex-1 py-3 text-[10px] sm:text-xs font-bold uppercase tracking-widest transition-all duration-200 cursor-pointer relative"
               style={{
-                color: activeTab === tab ? "var(--primary)" : "rgba(255,255,255,0.3)",
+                color: activeTab === tab ? "var(--primary)" : "var(--text-muted, rgba(255,255,255,0.3))",
                 background: "transparent",
               }}
             >
@@ -110,7 +110,7 @@ const ProjectModal = ({ project, onClose }) => {
         {/* Scrollable content */}
         <div
           className="flex-1 overflow-y-auto p-5 sm:p-7 space-y-5 text-left"
-          style={{ background: "#0d0d0d" }}
+          style={{ background: "var(--card-bg-darker, #0d0d0d)" }}
         >
           <AnimatePresence mode="wait">
             {activeTab === "Overview" && (
@@ -138,7 +138,7 @@ const ProjectModal = ({ project, onClose }) => {
                     <div key={label} className="flex flex-col gap-1">
                       <span
                         className="text-[9px] uppercase tracking-widest font-bold flex items-center gap-1.5"
-                        style={{ color: "rgba(255,255,255,0.3)" }}
+                        style={{ color: "var(--text-muted, rgba(255,255,255,0.3))" }}
                       >
                         <Icon style={{ color: "var(--primary)" }} /> {label}
                       </span>
@@ -154,8 +154,8 @@ const ProjectModal = ({ project, onClose }) => {
                   <p
                     className="text-sm text-stone-300 leading-loose p-4 rounded-xl"
                     style={{
-                      background: "rgba(255,255,255,0.02)",
-                      border: "1px solid rgba(255,255,255,0.05)",
+                      background: "rgba(var(--text-muted-rgb, 255,255,255), 0.02)",
+                      border: "1px solid rgba(var(--text-muted-rgb, 255,255,255), 0.05)",
                     }}
                   >
                     {project.synopsis}
@@ -224,8 +224,8 @@ const ProjectModal = ({ project, onClose }) => {
                         transition={{ delay: i * 0.06, duration: 0.3 }}
                         className="flex items-start gap-3 text-sm text-stone-300 leading-relaxed p-4 rounded-xl"
                         style={{
-                          background: "rgba(255,255,255,0.02)",
-                          border: "1px solid rgba(255,255,255,0.05)",
+                          background: "rgba(var(--text-muted-rgb, 255,255,255), 0.02)",
+                          border: "1px solid rgba(var(--text-muted-rgb, 255,255,255), 0.05)",
                         }}
                       >
                         <FiCheckCircle className="shrink-0 mt-0.5" style={{ color: "var(--primary)" }} />

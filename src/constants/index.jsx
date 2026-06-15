@@ -6,3 +6,5 @@ export * from "./services";
 export * from "./certifications";
 export * from "./contact";
 export * from "./navigation";
+export * from "./about";
+

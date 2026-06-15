@@ -14,21 +14,25 @@ const cardVariants = {
   }),
 };
 
-const Journey = () => {
+const Journey = ({ timelineData: timelineDataProp, summaryStats: summaryStatsProp, title, sectionNum }) => {
   const journeyRef = useRef(null);
+
+  const allTimelineData = timelineDataProp && timelineDataProp.length > 0 ? timelineDataProp : timelineData;
+  const allSummaryStats = summaryStatsProp && summaryStatsProp.length > 0 ? summaryStatsProp : summaryStats;
 
   return (
     <SectionLayout
       id="journey"
-      label="What I've done ?"
+      label={title || "What I've done ?"}
       headerRef={journeyRef}
       spotlightColor="rgba(var(--primary-rgb), 0.08)"
       textColorClass="text-primary"
+      sectionNum={sectionNum}
     >
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start w-full py-4 text-left">
         {/* Left Side: Summary Counter Cards */}
         <div className="lg:col-span-4 flex flex-col sm:flex-row lg:flex-col gap-4 select-none w-full">
-          {summaryStats.map((stat, idx) => (
+          {allSummaryStats.map((stat, idx) => (
             <motion.div
               key={idx}
               initial={{ opacity: 0, scale: 0.92 }}
@@ -75,7 +79,7 @@ const Journey = () => {
             }}
           />
 
-          {timelineData.map((item, i) => (
+          {allTimelineData.map((item, i) => (
             <motion.div
               key={i}
               custom={i}
@@ -124,6 +128,13 @@ const Journey = () => {
               <h3 className="text-base sm:text-lg font-bold text-white group-hover:text-primary transition-colors duration-300">
                 <ShinyText text={item.title} disabled={false} speed={5} className="custom-class" />
               </h3>
+
+              {/* Organization/Institution Name */}
+              {item.org && (
+                <div className="text-[11px] text-stone-400 font-bold uppercase tracking-wider mt-1 select-none">
+                  {item.org}
+                </div>
+              )}
 
               {/* Score */}
               {item.percent && (

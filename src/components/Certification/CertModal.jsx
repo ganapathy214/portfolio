@@ -61,13 +61,13 @@ const CertModal = ({ cert, onClose }) => {
           className="absolute top-4 right-4 z-20 w-9 h-9 rounded-full flex items-center justify-center cursor-pointer transition-all duration-200"
           style={{ background: "rgba(0,0,0,0.7)", border: "1px solid rgba(var(--primary-rgb),0.3)" }}
         >
-          <FiX className="text-white text-base" />
+          <FiX className="text-[#ffffff] text-base" />
         </button>
 
         {/* Certificate image pane with glowing aura */}
         <div
           className="w-full md:w-[58%] shrink-0 flex items-center justify-center p-6 relative"
-          style={{ background: "#080808" }}
+          style={{ background: "var(--card-bg-darker, #080808)" }}
         >
           <div
             className="absolute inset-0 opacity-15 pointer-events-none filter blur-3xl"
@@ -88,7 +88,7 @@ const CertModal = ({ cert, onClose }) => {
         {/* Details panel */}
         <div
           className="w-full md:w-[42%] flex flex-col justify-between p-6 sm:p-8 text-left overflow-y-auto"
-          style={{ background: "#121212" }}
+          style={{ background: "var(--card-bg, #121212)" }}
         >
           <div className="space-y-5">
             <div>
@@ -99,7 +99,7 @@ const CertModal = ({ cert, onClose }) => {
                 {cert.title}
               </h2>
               <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-xs text-stone-500 mt-2 font-semibold select-none">
-                <span>Offered by: <span className="text-white">{cert.offeredBy}</span></span>
+                <span>Offered by: <span className="text-[var(--text-white-or-dark,#ffffff)]">{cert.offeredBy}</span></span>
                 <span>·</span>
                 <span className="flex items-center gap-1">
                   <FiCalendar className="text-[11px]" /> {cert.lastUpdated}
@@ -109,7 +109,7 @@ const CertModal = ({ cert, onClose }) => {
 
             <div
               className="pt-4 space-y-2 border-t"
-              style={{ borderColor: "rgba(255,255,255,0.06)" }}
+              style={{ borderColor: "var(--border-color, rgba(255,255,255,0.06))" }}
             >
               <h4
                 className="text-[10px] font-bold uppercase tracking-widest flex items-center gap-1.5 select-none"
@@ -122,7 +122,7 @@ const CertModal = ({ cert, onClose }) => {
 
             <div
               className="pt-4 space-y-2 border-t"
-              style={{ borderColor: "rgba(255,255,255,0.06)" }}
+              style={{ borderColor: "var(--border-color, rgba(255,255,255,0.06))" }}
             >
               <h4
                 className="text-[10px] font-bold uppercase tracking-widest select-none"
@@ -156,7 +156,7 @@ const CertModal = ({ cert, onClose }) => {
           {cert.pdfFile && (
             <button
               onClick={handleVerify}
-              className="mt-6 w-full inline-flex items-center justify-center gap-2 font-bold px-4 py-3 rounded-xl transition cursor-pointer text-xs uppercase tracking-wider text-black"
+              className="mt-6 w-full inline-flex items-center justify-center gap-2 font-bold px-4 py-3 rounded-xl transition cursor-pointer text-xs uppercase tracking-wider text-[var(--primary-contrast)]"
               style={{
                 background: theme.accent,
                 boxShadow: `0 0 18px ${resolveAlphaColor(theme.accent, "40")}`,

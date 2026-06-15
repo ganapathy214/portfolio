@@ -48,12 +48,11 @@ const ProjectCard = ({ project, index, onClick }) => (
         loading="lazy"
         decoding="async"
       />
-      {/* Gradient fade right into content area */}
       <div
         className="absolute inset-0"
         style={{
           background:
-            "linear-gradient(to right, transparent 55%, #121212 100%), linear-gradient(to top, rgba(0,0,0,0.55), transparent 60%)",
+            "linear-gradient(to right, transparent 55%, var(--card-bg, #121212) 100%), linear-gradient(to top, rgba(var(--bg-main-rgb, 0,0,0), 0.55), transparent 60%)",
         }}
       />
       {/* Neon left-edge glow on hover */}
@@ -68,10 +67,9 @@ const ProjectCard = ({ project, index, onClick }) => (
       />
     </div>
 
-    {/* Content — right half */}
     <div
       className="flex flex-col justify-center p-6 sm:p-8 text-left flex-1"
-      style={{ background: "#121212" }}
+      style={{ background: "var(--card-bg, #121212)" }}
     >
       <span className="section-number mb-3">
         {String(index + 1).padStart(2, "0")} — {project.category}
@@ -108,11 +106,11 @@ const ProjectCard = ({ project, index, onClick }) => (
             <Icon className="mb-1 text-xs" style={{ color: "var(--primary)" }} />
             <span
               className="text-[8px] uppercase tracking-widest font-bold"
-              style={{ color: "rgba(255,255,255,0.3)" }}
+              style={{ color: "var(--text-muted, rgba(255,255,255,0.3))" }}
             >
               {label}
             </span>
-            <span className="text-[11px] text-white font-bold mt-0.5">{value}</span>
+            <span className="text-[11px] text-[var(--text-white-or-dark,#ffffff)] font-bold mt-0.5">{value}</span>
           </div>
         ))}
       </div>

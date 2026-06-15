@@ -4,12 +4,24 @@
 :root {
   --primary: #00D5D5;
   --primary-rgb: 0, 213, 213;
+  --primary-contrast: #000000;
+  
+  --card-bg: #121212;
+  --card-bg-rgb: 18, 18, 18;
+  --card-bg-darker: #0d0d0d;
+  --modal-bg: #0d0d0d;
+  --text-muted: rgba(255, 255, 255, 0.4);
+  --text-muted-rgb: 255, 255, 255;
+  --border-color: rgba(255, 255, 255, 0.06);
+  --text-white-or-dark: #ffffff;
+  --bg-main: #000000;
+  --bg-main-rgb: 0, 0, 0;
 }
 
 @theme {
   --color-primary: var(--primary);
-  --color-card-bg: #121212;
-  --color-card-hover: #1c1c1c;
+  --color-card-bg: var(--card-bg);
+  --color-card-hover: var(--card-bg-darker);
 }
 
 
@@ -248,7 +260,7 @@ button {
 
 .primary_button {
   background: var(--primary);
-  color: #000000;
+  color: var(--primary-contrast, #000000);
   border-color: transparent;
 }
 
@@ -267,7 +279,7 @@ button {
 
 .secondary_button:hover {
   background: var(--primary);
-  color: #000000;
+  color: var(--primary-contrast, #000000);
   border-color: transparent;
   box-shadow: 0 0 15px rgba(var(--primary-rgb), 0.3);
   transform: translateY(-1px);
@@ -316,4 +328,354 @@ button {
 }
 .rotate-y-180 {
   transform: rotateY(180deg);
+}
+
+/* === ADMIN CONSOLE PREMIUM STYLING === */
+.admin-console-page {
+  --sidebar-width: 280px;
+}
+
+.admin-console-page input[type="text"],
+.admin-console-page input[type="number"],
+.admin-console-page input[type="email"],
+.admin-console-page select {
+  background-color: #070709 !important;
+  border: 1px solid #1a1a1e !important;
+  border-radius: 12px !important;
+  color: #ffffff !important;
+  outline: none !important;
+  font-family: inherit !important;
+  font-size: 11.5px !important;
+  font-weight: 550 !important;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.6) !important;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  padding: 10px 14px !important;
+}
+
+.admin-console-page textarea {
+  background-color: #070709 !important;
+  border: 1px solid #1a1a1e !important;
+  border-radius: 12px !important;
+  color: #ffffff !important;
+  outline: none !important;
+  font-family: inherit !important;
+  font-size: 11.5px !important;
+  font-weight: 550 !important;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.6) !important;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  padding: 12px 14px !important;
+}
+
+.admin-console-page input[type="text"]:hover,
+.admin-console-page input[type="number"]:hover,
+.admin-console-page input[type="email"]:hover,
+.admin-console-page textarea:hover,
+.admin-console-page select:hover {
+  border-color: #2b2b35 !important;
+}
+
+.admin-console-page input[type="text"]:focus,
+.admin-console-page input[type="number"]:focus,
+.admin-console-page input[type="email"]:focus,
+.admin-console-page textarea:focus,
+.admin-console-page select:focus {
+  border-color: var(--primary) !important;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.6), 0 0 0 2px rgba(var(--primary-rgb), 0.15) !important;
+}
+
+.admin-console-page label {
+  color: #71717a !important; /* zinc-500 */
+  font-size: 8.5px !important;
+  font-weight: 800 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.08em !important;
+  margin-bottom: 4px !important;
+  transition: color 0.2s ease !important;
+}
+
+.admin-console-page div:focus-within > label {
+  color: var(--primary) !important;
+}
+
+/* Glass card styling inside the form */
+.admin-console-page .bg-stone-950\/40,
+.admin-console-page .bg-stone-950 {
+  background: rgba(8, 8, 10, 0.5) !important;
+  border: 1px solid #141418 !important;
+  border-radius: 20px !important;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.45) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  transition: all 0.3s ease !important;
+}
+
+/* Selected list items in selector sidebars */
+.admin-console-page .lg\:col-span-4 > div > div {
+  transition: all 0.2s ease !important;
+}
+
+.admin-console-page .lg\:col-span-4 > div > div:hover {
+  background-color: rgba(255, 255, 255, 0.02) !important;
+  border-color: #22222a !important;
+}
+
+/* === LIGHT THEME ACCENT OVERRIDES === */
+html.light {
+  color-scheme: light !important;
+  color: #17171a !important;
+  background-color: #f6f6f9 !important;
+  
+  --card-bg: #ffffff;
+  --card-bg-rgb: 255, 255, 255;
+  --card-bg-darker: #f3f4f6;
+  --modal-bg: #ffffff;
+  --text-muted: rgba(0, 0, 0, 0.5);
+  --text-muted-rgb: 0, 0, 0;
+  --border-color: rgba(0, 0, 0, 0.08);
+  --text-white-or-dark: #111113;
+  --bg-main: #f6f6f9;
+  --bg-main-rgb: 246, 246, 249;
+}
+
+html.light body {
+  background-color: #f6f6f9 !important;
+  color: #17171a !important;
+}
+
+/* Typography Overrides */
+html.light .text-white,
+html.light h1,
+html.light h2,
+html.light h3,
+html.light h4,
+html.light h5,
+html.light h6 {
+  color: #111113 !important;
+}
+
+html.light .text-stone-200 {
+  color: #374151 !important;
+}
+
+html.light .text-stone-300,
+html.light .text-stone-400 {
+  color: #4b5563 !important;
+}
+
+html.light .text-stone-500 {
+  color: #6b7280 !important;
+}
+
+html.light .text-stone-600 {
+  color: #4b5563 !important;
+}
+
+/* Fix typewriter title on About Page starting color */
+html.light #about .text-transparent {
+  background-image: linear-gradient(90deg, #111113, var(--primary)) !important;
+}
+
+/* Home Page style updates in Light Mode */
+html.light #home {
+  background-color: #f6f6f9 !important;
+  color: #17171a !important;
+}
+
+/* Portrait frame custom light styling */
+html.light #home div.animate-float {
+  background: linear-gradient(160deg, rgba(var(--primary-rgb),0.08) 0%, rgba(255,255,255,0.9) 60%) !important;
+  border-color: rgba(var(--primary-rgb), 0.2) !important;
+  box-shadow: 0 10px 40px rgba(var(--primary-rgb),0.06), inset 0 0 20px rgba(var(--primary-rgb),0.02) !important;
+}
+
+/* User Page: Sidebar Nav Override in Light Mode */
+html.light nav {
+  background: linear-gradient(to right, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.85)) !important;
+  border-right-color: rgba(0, 0, 0, 0.06) !important;
+}
+html.light nav svg {
+  color: rgba(23, 23, 26, 0.45) !important;
+}
+html.light nav a[aria-current="page"] svg {
+  color: var(--primary) !important;
+}
+html.light nav a:hover span {
+  color: #111113 !important;
+}
+
+/* Button overrides in Light Mode */
+html.light .secondary_button {
+  color: #111113 !important;
+  border-color: rgba(0, 0, 0, 0.15) !important;
+}
+html.light .secondary_button:hover {
+  background: var(--primary) !important;
+  color: var(--primary-contrast, #000000) !important;
+  border-color: transparent !important;
+}
+html.light .primary_button:hover {
+  background: #111113 !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 15px rgba(var(--primary-rgb), 0.2) !important;
+}
+
+/* Admin Console Overrides in Light Mode */
+html.light .admin-console-page {
+  background-color: var(--bg-main) !important;
+}
+
+html.light .admin-console-page .glass-panel {
+  background: rgba(255, 255, 255, 0.75) !important;
+  border-color: rgba(0, 0, 0, 0.06) !important;
+  box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.1) !important;
+}
+
+html.light .admin-console-page .bg-stone-950\/95,
+html.light .admin-console-page .bg-stone-950\/45 {
+  background-color: rgba(245, 245, 248, 0.8) !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+html.light .admin-console-page .border-stone-900\/60,
+html.light .admin-console-page .border-stone-900,
+html.light .admin-console-page .border-stone-800 {
+  border-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+html.light .admin-console-page input[type="text"],
+html.light .admin-console-page input[type="number"],
+html.light .admin-console-page input[type="email"],
+html.light .admin-console-page textarea,
+html.light .admin-console-page select {
+  background-color: #ffffff !important;
+  border-color: #d1d5db !important;
+  color: #111113 !important;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+}
+
+html.light .admin-console-page select option {
+  background-color: #ffffff !important;
+  color: #111113 !important;
+}
+
+html.light .admin-console-page input[type="text"]:hover,
+html.light .admin-console-page input[type="number"]:hover,
+html.light .admin-console-page input[type="email"]:hover,
+html.light .admin-console-page textarea:hover,
+html.light .admin-console-page select:hover {
+  border-color: #c0c4cc !important;
+}
+
+html.light .admin-console-page input[type="text"]:focus,
+html.light .admin-console-page input[type="number"]:focus,
+html.light .admin-console-page input[type="email"]:focus,
+html.light .admin-console-page textarea:focus,
+html.light .admin-console-page select:focus {
+  border-color: var(--primary) !important;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05), 0 0 0 2px rgba(var(--primary-rgb), 0.15) !important;
+}
+
+html.light .admin-console-page .bg-stone-950\/40,
+html.light .admin-console-page .bg-stone-950 {
+  background: rgba(255, 255, 255, 0.6) !important;
+  border-color: rgba(0, 0, 0, 0.06) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04) !important;
+}
+
+/* Stats inner blocks, shortcuts, and custom dropdowns override */
+html.light .admin-console-page .bg-stone-900\/50,
+html.light .admin-console-page .bg-stone-900\/30,
+html.light .admin-console-page .bg-stone-900\/35,
+html.light .admin-console-page .bg-stone-950\/30 {
+  background-color: rgba(0, 0, 0, 0.03) !important;
+  border-color: rgba(0, 0, 0, 0.06) !important;
+}
+
+html.light .admin-console-page button.bg-stone-900\/30:hover {
+  background-color: rgba(0, 0, 0, 0.06) !important;
+}
+
+html.light .admin-console-page .bg-stone-950\/20 {
+  background-color: rgba(0, 0, 0, 0.02) !important;
+  border-top-color: rgba(0, 0, 0, 0.06) !important;
+}
+
+html.light .admin-console-page button.bg-white\/5 {
+  background-color: rgba(0, 0, 0, 0.04) !important;
+  color: #111113 !important;
+}
+
+html.light .admin-console-page nav button:hover {
+  background-color: rgba(0, 0, 0, 0.04) !important;
+  color: #111113 !important;
+}
+
+html.light .admin-console-page .text-stone-400 {
+  color: #4b5563 !important;
+}
+
+/* Welcome Card in light mode admin console */
+html.light .admin-console-page div.rounded-3xl.border.flex {
+  background: linear-gradient(135deg, rgba(var(--primary-rgb), 0.08), rgba(255,255,255,0.75)) !important;
+  border-color: rgba(var(--primary-rgb), 0.2) !important;
+}
+
+/* Landing Page Overrides in Light mode */
+html.light .corner-card {
+  background: rgba(255, 255, 255, 0.7) !important;
+  border: 1px solid rgba(0, 0, 0, 0.06) !important;
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.05) !important;
+}
+
+html.light .bg-black\/60 {
+  background-color: rgba(255, 255, 255, 0.8) !important;
+}
+
+html.light .bg-stone-900\/40 {
+  background-color: rgba(245, 245, 247, 0.5) !important;
+  border-color: rgba(0, 0, 0, 0.05) !important;
+}
+
+html.light .border-stone-850 {
+  border-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+html.light .border-stone-900 {
+  border-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+html.light .bg-[#000000] {
+  background-color: #f6f6f9 !important;
+}
+
+html.light main {
+  background-color: #f6f6f9 !important;
+}
+
+/* General bg-stone / border-stone card overrides for user sections */
+html.light .bg-stone-950,
+html.light .bg-stone-900,
+html.light .bg-stone-900\/50,
+html.light .bg-stone-950\/40,
+html.light .bg-stone-950\/30 {
+  background-color: rgba(255, 255, 255, 0.85) !important;
+  border-color: rgba(0, 0, 0, 0.06) !important;
+}
+
+html.light .border-stone-900\/60,
+html.light .border-stone-900,
+html.light .border-stone-850,
+html.light .border-stone-800 {
+  border-color: rgba(0, 0, 0, 0.06) !important;
+}
+
+/* Tag overrides in Light mode */
+html.light .tag-outline {
+  border-color: rgba(0, 0, 0, 0.12) !important;
+  color: rgba(0, 0, 0, 0.6) !important;
+}
+
+html.light .tag-outline:hover {
+  border-color: var(--primary) !important;
+  color: var(--primary) !important;
 }

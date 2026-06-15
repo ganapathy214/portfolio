@@ -4,27 +4,30 @@ import { FiCode } from "react-icons/fi";
 import { SERVICES_DATA, SERVICE_ICONS } from "../constants";
 import SectionLayout from "../layout/SectionLayout";
 
-const Services = () => {
+const Services = ({ servicesSubtitle, servicesData, title, sectionNum }) => {
   const headerRef = useRef(null);
+  
+  const items = servicesData && servicesData.length > 0 ? servicesData : SERVICES_DATA;
+  const subtitle = servicesSubtitle !== undefined ? servicesSubtitle : "High-performance, scalable, and secure software development solutions tailored to meet business objectives and deliver outstanding user experiences.";
 
   return (
     <SectionLayout
       id="services"
-      label="What I Offer ?"
+      label={title || "What I Offer ?"}
       headerRef={headerRef}
       spotlightColor="rgba(var(--primary-rgb), 0.06)"
       textColorClass="text-primary"
+      sectionNum={sectionNum}
     >
       <div className="w-full min-h-[78vh] flex flex-col py-4 space-y-10">
         {/* Subtitle */}
         <p className="text-stone-500 text-center text-xs sm:text-sm max-w-2xl mx-auto leading-relaxed">
-          High-performance, scalable, and secure software development solutions tailored to meet
-          business objectives and deliver outstanding user experiences.
+          {subtitle}
         </p>
 
         {/* Service Cards Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {SERVICES_DATA.map((service, index) => {
+          {items.map((service, index) => {
             const IconComponent = SERVICE_ICONS[service.icon] || FiCode;
             const num = String(index + 1).padStart(2, "0");
             return (

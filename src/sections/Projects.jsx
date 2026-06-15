@@ -1,24 +1,55 @@
 import { motion, AnimatePresence } from "framer-motion";
 import React, { useRef, useState, useMemo, useEffect } from "react";
-import { projects, PROJECT_FILTERS } from "../constants";
+import { projects as defaultProjects } from "../constants";
 import SectionLayout from "../layout/SectionLayout";
 import ProjectCard from "../components/Projects/ProjectCard";
 import ProjectModal from "../components/Projects/ProjectModal";
 
 /* ─── Main Projects Section ─── */
-const Projects = () => {
+const Projects = ({ projects: propProjects, title, sectionNum }) => {
   const headerRef = useRef(null);
   const [activeFilter, setActiveFilter] = useState("all");
   const [selectedProject, setSelectedProject] = useState(null);
 
+  const allProjects = propProjects && propProjects.length > 0 ? propProjects : defaultProjects;
+
+  // Dynamically compute the categories list from the active projects list
+  const projectFilters = useMemo(() => {
+    const cats = new Set();
+    allProjects.forEach((p) => {
+      if (p.category) {
+        cats.add(p.category.trim());
+      }
+    });
+    return [
+      { id: "all", label: "All" },
+      ...Array.from(cats).map((c) => ({
+        id: c.toLowerCase().replace(/\s+/g, ""),
+        label: c,
+        original: c
+      }))
+    ];
+  }, [allProjects]);
+
   const filteredProjects = useMemo(() => {
-    if (activeFilter === "all") return projects;
-    if (activeFilter === "fullstack")
-      return projects.filter((p) => p.category.toLowerCase().includes("full stack"));
-    if (activeFilter === "frontend")
-      return projects.filter((p) => p.category.toLowerCase().includes("frontend"));
-    return projects;
-  }, [activeFilter]);
+    if (activeFilter === "all") return allProjects;
+    const activeFilterObj = projectFilters.find((f) => f.id === activeFilter);
+    if (!activeFilterObj) return allProjects;
+    return allProjects.filter(
+      (p) => p.category && p.category.trim().toLowerCase() === activeFilterObj.original.toLowerCase()
+    );
+  }, [activeFilter, allProjects, projectFilters]);
+
+  const resolvedFilteredProjects = useMemo(() => {
+    return filteredProjects.map(project => {
+      let resolvedImage = project.image;
+      if (!resolvedImage || !resolvedImage.startsWith("data:")) {
+        const match = defaultProjects.find(p => p.title.toLowerCase() === project.title.toLowerCase());
+        if (match) resolvedImage = match.image;
+      }
+      return { ...project, image: resolvedImage };
+    });
+  }, [filteredProjects]);
 
   useEffect(() => {
     const main = document.querySelector("main");
@@ -38,17 +69,18 @@ const Projects = () => {
   return (
     <SectionLayout
       id="projects"
-      label="What I did ?"
+      label={title || "What I did ?"}
       headerRef={headerRef}
       spotlightColor="rgba(var(--primary-rgb), 0.06)"
       textColorClass="text-primary"
+      sectionNum={sectionNum}
     >
       <div className="w-full space-y-6 py-2">
 
         {/* ── Filters ── */}
         <div className="flex items-center justify-between flex-wrap gap-3 select-none">
           <div className="flex gap-1">
-            {PROJECT_FILTERS.map((f) => {
+            {projectFilters.map((f) => {
               const isActive = activeFilter === f.id;
               return (
                 <button
@@ -57,9 +89,9 @@ const Projects = () => {
                   className="relative px-4 py-1.5 text-[10px] font-bold uppercase tracking-widest transition-all duration-250 cursor-pointer"
                   style={{
                     background: isActive ? "var(--primary)" : "transparent",
-                    color: isActive ? "#000" : "rgba(255,255,255,0.4)",
+                    color: isActive ? "var(--primary-contrast, #000)" : "var(--text-muted, rgba(255,255,255,0.4))",
                     border: "1px solid",
-                    borderColor: isActive ? "var(--primary)" : "rgba(255,255,255,0.1)",
+                    borderColor: isActive ? "var(--primary)" : "var(--border-color, rgba(255,255,255,0.1))",
                     boxShadow: isActive ? "0 0 14px rgba(var(--primary-rgb),0.35)" : "none",
                   }}
                 >
@@ -79,7 +111,7 @@ const Projects = () => {
         {/* ── All cards — same horizontal layout ── */}
         <motion.div layout className="flex flex-col gap-5">
           <AnimatePresence mode="popLayout">
-            {filteredProjects.map((project, i) => (
+            {resolvedFilteredProjects.map((project, i) => (
               <ProjectCard
                 key={project.title}
                 project={project}

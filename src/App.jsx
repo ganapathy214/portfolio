@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Portfolio from "./Portfolio";
-import Admin from "./Admin";
+import { SERVICES_DATA, skills as defaultSkills, skillCategories as defaultSkillCategories, projects as defaultProjects, certifications as defaultCertifications, timelineData as defaultTimelineData, summaryStats as defaultSummaryStats, CONTACT_INFO as defaultContactInfo, PAGE_TITLES as defaultPageTitles, PAGE_DESCRIPTIONS as defaultPageDescriptions, DEFAULT_ABOUT, DEFAULT_PRIMARY_COLOR, DEFAULT_ROLES, DEFAULT_DESCRIPTION, DEFAULT_ORBITING_STACKS } from "./constants";
+import { getContrastColor } from "./utils/color";
+import PageLoader from "./common/PageLoader";
+
+const Portfolio = React.lazy(() => import("./Portfolio"));
+const Admin = React.lazy(() => import("./Admin"));
 
 // Apply dynamic theme color to documentElement style variables
 const applyThemeColor = (color) => {
@@ -15,56 +19,52 @@ const applyThemeColor = (color) => {
   if (!isNaN(r) && !isNaN(g) && !isNaN(b)) {
     document.documentElement.style.setProperty("--primary-rgb", `${r}, ${g}, ${b}`);
   }
-};
-
-const DEFAULT_ABOUT = {
-  name: "Ganapathy N",
-  title: "Senior Frontend & Full Stack Developer",
-  bio: "Senior Frontend & Full Stack Developer with 6+ years of experience specializing in React.js, Next.js, React Native, TypeScript, and modern JavaScript ecosystems. I design and build high-performance, accessible, and scalable enterprise web and mobile applications.",
-  professionalTitles: [
-    "Senior Frontend Developer",
-    "Senior Full Stack Developer",
-    "React & Next.js Specialist",
-  ],
-  stats: [
-    { value: "6+", label: "Years Exp" },
-    { value: "10+", label: "Certificates" },
-    { value: "12+", label: "Projects" },
-  ],
-  highlights: [
-    { label: "Specialization", value: "React · Next.js · React Native" },
-    { label: "Cloud", value: "AWS · Serverless · DevOps" },
-    { label: "Location", value: "India · Remote Ready" },
-  ],
-  socialLinks: [
-    { href: "https://www.linkedin.com/in/gananata/", icon: "FaLinkedinIn", label: "LinkedIn" },
-    { href: "https://github.com/ganapathy214", icon: "FaGithub", label: "Github" },
-  ],
-  resumeFileName: "Ganapathy_N_Resume.pdf",
+  
+  // Apply dynamic button contrast color
+  const contrast = getContrastColor(color);
+  document.documentElement.style.setProperty("--primary-contrast", contrast);
 };
 
 export default function App() {
-  const [primaryColor, setPrimaryColor] = useState("#00D5D5");
-  const [roles, setRoles] = useState([
-    "Senior Software Developer",
-    "Full-Stack Engineer",
-    "Cloud Architect",
-    "Mobile App Developer",
-    "System Designer"
-  ]);
-  const [description, setDescription] = useState(
-    "Designing and engineering high-performance web systems, cross-platform mobile apps, and scalable serverless cloud architectures with 6+ years of expertise."
-  );
+  const [primaryColor, setPrimaryColor] = useState(DEFAULT_PRIMARY_COLOR);
+  const [roles, setRoles] = useState(DEFAULT_ROLES);
+  const [description, setDescription] = useState(DEFAULT_DESCRIPTION);
   const [centerSvg, setCenterSvg] = useState("");
-  const [orbitingStacks, setOrbitingStacks] = useState([
-    { label: "React Native", type: "primary" },
-    { label: "React.js", type: "primary" },
-    { label: "Node.js", type: "outline" },
-    { label: "Next.js", type: "primary" },
-    { label: "AWS Cloud", type: "primary" },
-    { label: "TypeScript", type: "outline" }
-  ]);
+  const [orbitingStacks, setOrbitingStacks] = useState(DEFAULT_ORBITING_STACKS);
   const [about, setAbout] = useState(DEFAULT_ABOUT);
+  const [servicesSubtitle, setServicesSubtitle] = useState(
+    "High-performance, scalable, and secure software development solutions tailored to meet business objectives and deliver outstanding user experiences."
+  );
+  const [servicesData, setServicesData] = useState(SERVICES_DATA);
+  const [skills, setSkills] = useState(defaultSkills);
+  const [skillCategories, setSkillCategories] = useState(defaultSkillCategories);
+  const [projects, setProjects] = useState(defaultProjects);
+  const [certifications, setCertifications] = useState(defaultCertifications);
+  const [timelineData, setTimelineData] = useState(defaultTimelineData);
+  const [summaryStats, setSummaryStats] = useState(defaultSummaryStats);
+  const [contactInfo, setContactInfo] = useState(defaultContactInfo);
+  const [themeMode, setThemeMode] = useState("dark");
+  const [pageTitles, setPageTitles] = useState(defaultPageTitles);
+  const [pageDescriptions, setPageDescriptions] = useState(defaultPageDescriptions);
+  const [sectionVisibility, setSectionVisibility] = useState({
+    Home: true,
+    About: true,
+    Services: true,
+    Skills: true,
+    Projects: true,
+    Certification: true,
+    Journey: true,
+    Contact: true
+  });
+  const [sectionTitles, setSectionTitles] = useState({
+    About: "Who am I ?",
+    Services: "What I Offer ?",
+    Skills: "What I Know ?",
+    Projects: "What I did ?",
+    Certification: "What I achieved?",
+    Journey: "What I've done ?",
+    Contact: "Where to find me ?"
+  });
   
   const basename = import.meta.env.BASE_URL.replace(/\/$/, "");
 
@@ -78,7 +78,11 @@ export default function App() {
       }
       const localRoles = localStorage.getItem("portfolio_roles");
       if (localRoles) {
-        try { setRoles(JSON.parse(localRoles)); } catch (e) {}
+        try {
+          setRoles(JSON.parse(localRoles));
+        } catch (e) {
+          console.warn("Failed to parse localRoles:", e);
+        }
       }
       const localDescription = localStorage.getItem("portfolio_description");
       if (localDescription) {
@@ -90,11 +94,123 @@ export default function App() {
       }
       const localStacks = localStorage.getItem("portfolio_orbiting_stacks");
       if (localStacks) {
-        try { setOrbitingStacks(JSON.parse(localStacks)); } catch (e) {}
+        try {
+          setOrbitingStacks(JSON.parse(localStacks));
+        } catch (e) {
+          console.warn("Failed to parse localStacks:", e);
+        }
       }
       const localAbout = localStorage.getItem("portfolio_about");
       if (localAbout) {
-        try { setAbout(JSON.parse(localAbout)); } catch (e) {}
+        try {
+          setAbout(JSON.parse(localAbout));
+        } catch (e) {
+          console.warn("Failed to parse localAbout:", e);
+        }
+      }
+      const localServicesSubtitle = localStorage.getItem("portfolio_services_subtitle");
+      if (localServicesSubtitle) {
+        setServicesSubtitle(localServicesSubtitle);
+      }
+      const localServicesData = localStorage.getItem("portfolio_services_data");
+      if (localServicesData) {
+        try {
+          setServicesData(JSON.parse(localServicesData));
+        } catch (e) {
+          console.warn("Failed to parse localServicesData:", e);
+        }
+      }
+      const localSkills = localStorage.getItem("portfolio_skills");
+      if (localSkills) {
+        try {
+          setSkills(JSON.parse(localSkills));
+        } catch (e) {
+          console.warn("Failed to parse localSkills:", e);
+        }
+      }
+      const localSkillCategories = localStorage.getItem("portfolio_skill_categories");
+      if (localSkillCategories) {
+        try {
+          setSkillCategories(JSON.parse(localSkillCategories));
+        } catch (e) {
+          console.warn("Failed to parse localSkillCategories:", e);
+        }
+      }
+      const localProjects = localStorage.getItem("portfolio_projects");
+      if (localProjects) {
+        try {
+          setProjects(JSON.parse(localProjects));
+        } catch (e) {
+          console.warn("Failed to parse localProjects:", e);
+        }
+      }
+      const localCertifications = localStorage.getItem("portfolio_certifications");
+      if (localCertifications) {
+        try {
+          setCertifications(JSON.parse(localCertifications));
+        } catch (e) {
+          console.warn("Failed to parse localCertifications:", e);
+        }
+      }
+      const localTimelineData = localStorage.getItem("portfolio_timeline_data");
+      if (localTimelineData) {
+        try {
+          setTimelineData(JSON.parse(localTimelineData));
+        } catch (e) {
+          console.warn("Failed to parse localTimelineData:", e);
+        }
+      }
+      const localSummaryStats = localStorage.getItem("portfolio_summary_stats");
+      if (localSummaryStats) {
+        try {
+          setSummaryStats(JSON.parse(localSummaryStats));
+        } catch (e) {
+          console.warn("Failed to parse localSummaryStats:", e);
+        }
+      }
+      const localContactInfo = localStorage.getItem("portfolio_contact_info");
+      if (localContactInfo) {
+        try {
+          setContactInfo(JSON.parse(localContactInfo));
+        } catch (e) {
+          console.warn("Failed to parse localContactInfo:", e);
+        }
+      }
+      const localThemeMode = localStorage.getItem("portfolio_theme_mode");
+      if (localThemeMode) {
+        setThemeMode(localThemeMode);
+      }
+      const localPageTitles = localStorage.getItem("portfolio_page_titles");
+      if (localPageTitles) {
+        try {
+          setPageTitles(JSON.parse(localPageTitles));
+        } catch (e) {
+          console.warn("Failed to parse localPageTitles:", e);
+        }
+      }
+      const localPageDescriptions = localStorage.getItem("portfolio_page_descriptions");
+      if (localPageDescriptions) {
+        try {
+          setPageDescriptions(JSON.parse(localPageDescriptions));
+        } catch (e) {
+          console.warn("Failed to parse localPageDescriptions:", e);
+        }
+      }
+      const localVisibility = localStorage.getItem("portfolio_section_visibility");
+      if (localVisibility) {
+        try {
+          setSectionVisibility(JSON.parse(localVisibility));
+        } catch (e) {
+          console.warn("Failed to parse localVisibility:", e);
+        }
+      }
+      const localTitles = localStorage.getItem("portfolio_section_titles");
+      if (localTitles) {
+        try {
+          setSectionTitles(JSON.parse(localTitles));
+        } catch (e) {
+          console.warn("Failed to parse localTitles:", e);
+        }
       }
 
       // 2. Fetch from DB
@@ -130,6 +246,62 @@ export default function App() {
             setAbout({ ...DEFAULT_ABOUT, ...data.about });
             localStorage.setItem("portfolio_about", JSON.stringify(data.about));
           }
+          if (data.servicesSubtitle) {
+            setServicesSubtitle(data.servicesSubtitle);
+            localStorage.setItem("portfolio_services_subtitle", data.servicesSubtitle);
+          }
+          if (data.servicesData) {
+            setServicesData(data.servicesData);
+            localStorage.setItem("portfolio_services_data", JSON.stringify(data.servicesData));
+          }
+          if (data.skills) {
+            setSkills(data.skills);
+            localStorage.setItem("portfolio_skills", JSON.stringify(data.skills));
+          }
+          if (data.skillCategories) {
+            setSkillCategories(data.skillCategories);
+            localStorage.setItem("portfolio_skill_categories", JSON.stringify(data.skillCategories));
+          }
+          if (data.projects) {
+            setProjects(data.projects);
+            localStorage.setItem("portfolio_projects", JSON.stringify(data.projects));
+          }
+           if (data.certifications) {
+            setCertifications(data.certifications);
+            localStorage.setItem("portfolio_certifications", JSON.stringify(data.certifications));
+          }
+          if (data.timelineData) {
+            setTimelineData(data.timelineData);
+            localStorage.setItem("portfolio_timeline_data", JSON.stringify(data.timelineData));
+          }
+          if (data.summaryStats) {
+            setSummaryStats(data.summaryStats);
+            localStorage.setItem("portfolio_summary_stats", JSON.stringify(data.summaryStats));
+          }
+          if (data.contactInfo) {
+            setContactInfo(data.contactInfo);
+            localStorage.setItem("portfolio_contact_info", JSON.stringify(data.contactInfo));
+          }
+          if (data.themeMode) {
+            setThemeMode(data.themeMode);
+            localStorage.setItem("portfolio_theme_mode", data.themeMode);
+          }
+          if (data.pageTitles) {
+            setPageTitles(data.pageTitles);
+            localStorage.setItem("portfolio_page_titles", JSON.stringify(data.pageTitles));
+          }
+          if (data.pageDescriptions) {
+            setPageDescriptions(data.pageDescriptions);
+            localStorage.setItem("portfolio_page_descriptions", JSON.stringify(data.pageDescriptions));
+          }
+          if (data.sectionVisibility) {
+            setSectionVisibility(data.sectionVisibility);
+            localStorage.setItem("portfolio_section_visibility", JSON.stringify(data.sectionVisibility));
+          }
+          if (data.sectionTitles) {
+            setSectionTitles(data.sectionTitles);
+            localStorage.setItem("portfolio_section_titles", JSON.stringify(data.sectionTitles));
+          }
         }
       } catch (err) {
         console.warn("Theme DB fetch failed, using local fallback:", err);
@@ -144,42 +316,124 @@ export default function App() {
     applyThemeColor(primaryColor);
   }, [primaryColor]);
 
+  // Generate dynamic favicon matching primary color and developer's first initial
+  useEffect(() => {
+    const firstInitial = (about?.name || "G").charAt(0).toUpperCase();
+    const fillCol = primaryColor || "#00D5D5";
+    const contrast = getContrastColor(fillCol);
+    
+    const svgString = `
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+        <circle cx="16" cy="16" r="14" fill="${fillCol}" />
+        <text x="16" y="22" font-family="'Google Sans', 'Segoe UI', Arial, sans-serif" font-size="16" font-weight="900" fill="${contrast}" text-anchor="middle">${firstInitial}</text>
+      </svg>
+    `.trim();
+    
+    const blob = new Blob([svgString], { type: "image/svg+xml" });
+    const url = URL.createObjectURL(blob);
+    
+    let link = document.querySelector("link[rel~='icon']");
+    if (!link) {
+      link = document.createElement("link");
+      link.rel = "icon";
+      link.type = "image/svg+xml";
+      document.head.appendChild(link);
+    }
+    link.href = url;
+    
+    return () => {
+      URL.revokeObjectURL(url);
+    };
+  }, [primaryColor, about?.name]);
+
+  useEffect(() => {
+    if (themeMode === "light") {
+      document.documentElement.classList.add("light");
+    } else {
+      document.documentElement.classList.remove("light");
+    }
+  }, [themeMode]);
+
   return (
     <BrowserRouter basename={basename}>
-      <Routes>
-        <Route
-          path="/"
-          element={
-            <Portfolio
-              primaryColor={primaryColor}
-              roles={roles}
-              description={description}
-              centerSvg={centerSvg}
-              orbitingStacks={orbitingStacks}
-              about={about}
-            />
-          }
-        />
-        <Route
-          path="/admin"
-          element={
-            <Admin
-              primaryColor={primaryColor}
-              setPrimaryColor={setPrimaryColor}
-              roles={roles}
-              setRoles={setRoles}
-              description={description}
-              setDescription={setDescription}
-              centerSvg={centerSvg}
-              setCenterSvg={setCenterSvg}
-              orbitingStacks={orbitingStacks}
-              setOrbitingStacks={setOrbitingStacks}
-              about={about}
-              setAbout={setAbout}
-            />
-          }
-        />
-      </Routes>
+      <React.Suspense fallback={<PageLoader />}>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <Portfolio
+                primaryColor={primaryColor}
+                roles={roles}
+                description={description}
+                centerSvg={centerSvg}
+                orbitingStacks={orbitingStacks}
+                about={about}
+                servicesSubtitle={servicesSubtitle}
+                servicesData={servicesData}
+                skills={skills}
+                skillCategories={skillCategories}
+                projects={projects}
+                certifications={certifications}
+                timelineData={timelineData}
+                summaryStats={summaryStats}
+                contactInfo={contactInfo}
+                themeMode={themeMode}
+                pageTitles={pageTitles}
+                pageDescriptions={pageDescriptions}
+                sectionVisibility={sectionVisibility}
+                sectionTitles={sectionTitles}
+              />
+            }
+          />
+          <Route
+            path="/admin"
+            element={
+              <Admin
+                primaryColor={primaryColor}
+                setPrimaryColor={setPrimaryColor}
+                roles={roles}
+                setRoles={setRoles}
+                description={description}
+                setDescription={setDescription}
+                centerSvg={centerSvg}
+                setCenterSvg={setCenterSvg}
+                orbitingStacks={orbitingStacks}
+                setOrbitingStacks={setOrbitingStacks}
+                about={about}
+                setAbout={setAbout}
+                servicesSubtitle={servicesSubtitle}
+                setServicesSubtitle={setServicesSubtitle}
+                servicesData={servicesData}
+                setServicesData={setServicesData}
+                skills={skills}
+                setSkills={setSkills}
+                skillCategories={skillCategories}
+                setSkillCategories={setSkillCategories}
+                projects={projects}
+                setProjects={setProjects}
+                certifications={certifications}
+                setCertifications={setCertifications}
+                timelineData={timelineData}
+                setTimelineData={setTimelineData}
+                summaryStats={summaryStats}
+                setSummaryStats={setSummaryStats}
+                contactInfo={contactInfo}
+                setContactInfo={setContactInfo}
+                themeMode={themeMode}
+                setThemeMode={setThemeMode}
+                pageTitles={pageTitles}
+                setPageTitles={setPageTitles}
+                pageDescriptions={pageDescriptions}
+                setPageDescriptions={setPageDescriptions}
+                sectionVisibility={sectionVisibility}
+                setSectionVisibility={setSectionVisibility}
+                sectionTitles={sectionTitles}
+                setSectionTitles={setSectionTitles}
+              />
+            }
+          />
+        </Routes>
+      </React.Suspense>
     </BrowserRouter>
   );
 }
