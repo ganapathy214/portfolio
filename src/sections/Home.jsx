@@ -37,7 +37,8 @@ const TypewriterRole = ({ roles = [] }) => {
   );
 };
 
-const Home = ({ roles, description, centerSvg, orbitingStacks }) => {
+const Home = ({ name, roles, description, centerSvg, orbitingStacks, statusBadgeText }) => {
+  const displayName = name || "Ganapathy Natarajan";
   const ORBIT_POSITIONS = [
     { left: "182.5px", top: "0px" },
     { left: "340.5px", top: "91.25px" },
@@ -77,7 +78,6 @@ const Home = ({ roles, description, centerSvg, orbitingStacks }) => {
     <section
       id="home"
       className="min-h-[98vh] flex items-center justify-center relative overflow-hidden"
-      style={{ background: "#000" }}
     >
       {/* Grid pattern background */}
       <div className="absolute inset-0 grid-pattern opacity-60 pointer-events-none" />
@@ -123,7 +123,7 @@ const Home = ({ roles, description, centerSvg, orbitingStacks }) => {
             className="tag-primary"
           >
             <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-            Available for Work
+            {statusBadgeText || "Available for Work"}
           </motion.div>
 
           {/* Giant name — editorial style */}
@@ -133,9 +133,9 @@ const Home = ({ roles, description, centerSvg, orbitingStacks }) => {
 
             <h1
               className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-none text-white glitch-text"
-              data-text="GANAPATHY"
+              data-text={displayName.split(" ")[0].toUpperCase()}
             >
-              Ganapathy Natarajan
+              {displayName}
             </h1>
             {/* <div
               className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-none select-none mt-1"

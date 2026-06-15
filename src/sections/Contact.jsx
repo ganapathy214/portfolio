@@ -45,8 +45,9 @@ const ContactInfoCard = ({ icon, label, value, delay }) => {
   );
 };
 
-const Contact = () => {
+const Contact = ({ contactInfo, title, sectionNum }) => {
   const contactRef = useRef(null);
+  const info = contactInfo || CONTACT_INFO;
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -56,10 +57,10 @@ const Contact = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const mailtoLink = `mailto:${CONTACT_INFO.email}?subject=${encodeURIComponent(
+    const mailtoLink = `mailto:${info.email}?subject=${encodeURIComponent(
       formData.subject
     )}&body=${encodeURIComponent(
-      `Name: ${formData.name}\nEmail: ${formData.email}\n\n${formData.message}`
+      `Name: ${formData.name}\nEmail: ${formData.email}\n\nMessage:\n${formData.message}`
     )}`;
     window.location.href = mailtoLink;
   };
@@ -67,29 +68,30 @@ const Contact = () => {
   return (
     <SectionLayout
       id="contact"
-      label="Where to find me ?"
+      label={title || "Where to find me ?"}
       headerRef={contactRef}
       spotlightColor="rgba(var(--primary-rgb), 0.06)"
       textColorClass="text-primary"
+      sectionNum={sectionNum}
     >
       <div className="w-full min-h-[78vh] flex flex-col gap-6 py-2">
         {/* Info Cards Row */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 select-none shrink-0">
           <ContactInfoCard
             label="Location"
-            value={CONTACT_INFO.address}
+            value={info.address}
             delay={0.1}
             icon={<CiLocationOn className="text-2xl sm:text-3xl" />}
           />
           <ContactInfoCard
             label="Phone"
-            value={CONTACT_INFO.phone}
+            value={info.phone}
             delay={0.2}
             icon={<CiPhone className="text-2xl sm:text-3xl" />}
           />
           <ContactInfoCard
             label="Email"
-            value={CONTACT_INFO.email}
+            value={info.email}
             delay={0.3}
             icon={<CiMail className="text-2xl sm:text-3xl" />}
           />
@@ -108,7 +110,7 @@ const Contact = () => {
           >
             <iframe
               title="Google Maps"
-              src={CONTACT_INFO.googleMapsUrl}
+              src={info.googleMapsUrl}
               className="w-full h-full absolute inset-0 border-none"
               allowFullScreen=""
               loading="lazy"

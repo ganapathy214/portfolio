@@ -15,6 +15,7 @@ export default function SectionLayout({
   headerRef,
   spotlightColor,
   textColorClass,
+  sectionNum,
   children,
 }) {
   const sectionRef = useRef(null);
@@ -23,7 +24,7 @@ export default function SectionLayout({
 
   const containerVariant = getVariant(containerVariantKey);
   const itemVariant = getVariant(itemVariantKey);
-  const sectionNum = SECTION_NUMBERS[id] || "00";
+  const finalSectionNum = sectionNum || SECTION_NUMBERS[id] || "00";
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -70,7 +71,7 @@ export default function SectionLayout({
           className="font-mono text-[10px] font-bold tracking-widest select-none"
           style={{ color: "rgba(var(--primary-rgb),0.4)" }}
         >
-          /{sectionNum}
+          /{finalSectionNum}
         </span>
 
         {/* Section title with VariableProximity */}

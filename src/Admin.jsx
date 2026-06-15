@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useState, useEffect, Suspense } from "react";
+import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { injectPrimaryColor, looksLikeSvg } from "./utils/svg";
 import {
@@ -19,9 +19,45 @@ import {
   FiPlusCircle,
   FiTrash2,
   FiBarChart2,
+  FiBriefcase,
+  FiCpu,
+  FiChevronUp,
+  FiChevronDown,
+  FiFolder,
+  FiAward,
+  FiActivity,
+  FiMail,
+  FiDownload,
 } from "react-icons/fi";
+import {
+  SERVICES_DATA as DEFAULT_SERVICES_DATA,
+  skills as DEFAULT_SKILLS,
+  skillCategories as DEFAULT_SKILL_CATEGORIES,
+  projects as DEFAULT_PROJECTS,
+  certifications as DEFAULT_CERTIFICATIONS,
+  timelineData as DEFAULT_TIMELINE_DATA,
+  summaryStats as DEFAULT_SUMMARY_STATS,
+  CONTACT_INFO as DEFAULT_CONTACT_INFO,
+  PAGE_TITLES as defaultPageTitles,
+  PAGE_DESCRIPTIONS as defaultPageDescriptions,
+  DEFAULT_ABOUT
+} from "./constants";
 import Particles from "./common/Particles";
 import DecryptedText from "./common/DecryptedText";
+import { getContrastColor } from "./utils/color";
+const DashboardTab = React.lazy(() => import("./components/Admin/tabs/DashboardTab"));
+const ThemeTab = React.lazy(() => import("./components/Admin/tabs/ThemeTab"));
+const HomeTab = React.lazy(() => import("./components/Admin/tabs/HomeTab"));
+const AboutTab = React.lazy(() => import("./components/Admin/tabs/AboutTab"));
+const ServicesTab = React.lazy(() => import("./components/Admin/tabs/ServicesTab"));
+const SkillsTab = React.lazy(() => import("./components/Admin/tabs/SkillsTab"));
+const ProjectsTab = React.lazy(() => import("./components/Admin/tabs/ProjectsTab"));
+const CertificationsTab = React.lazy(() => import("./components/Admin/tabs/CertificationsTab"));
+const JourneyTab = React.lazy(() => import("./components/Admin/tabs/JourneyTab"));
+const ContactTab = React.lazy(() => import("./components/Admin/tabs/ContactTab"));
+const SeoTab = React.lazy(() => import("./components/Admin/tabs/SeoTab"));
+
+
 
 const COLOR_SWATCHES = [
   { name: "Cyan Spark", value: "#00D5D5" },
@@ -31,31 +67,7 @@ const COLOR_SWATCHES = [
   { name: "Amber Fusion", value: "#f59e0b" },
 ];
 
-const DEFAULT_ABOUT = {
-  name: "Ganapathy N",
-  title: "Senior Frontend & Full Stack Developer",
-  bio: "Senior Frontend & Full Stack Developer with 6+ years of experience specializing in React.js, Next.js, React Native, TypeScript, and modern JavaScript ecosystems.",
-  professionalTitles: [
-    "Senior Frontend Developer",
-    "Senior Full Stack Developer",
-    "React & Next.js Specialist",
-  ],
-  stats: [
-    { value: "6+", label: "Years Exp" },
-    { value: "10+", label: "Certificates" },
-    { value: "12+", label: "Projects" },
-  ],
-  highlights: [
-    { label: "Specialization", value: "React · Next.js · React Native" },
-    { label: "Cloud", value: "AWS · Serverless · DevOps" },
-    { label: "Location", value: "India · Remote Ready" },
-  ],
-  socialLinks: [
-    { href: "https://www.linkedin.com/in/gananata/", icon: "FaLinkedinIn", label: "LinkedIn" },
-    { href: "https://github.com/ganapathy214", icon: "FaGithub", label: "Github" },
-  ],
-  resumeFileName: "Ganapathy_N_Resume.pdf",
-};
+
 
 export default function Admin({
   primaryColor,
@@ -70,6 +82,34 @@ export default function Admin({
   setOrbitingStacks,
   about,
   setAbout,
+  servicesSubtitle,
+  setServicesSubtitle,
+  servicesData,
+  setServicesData,
+  skills,
+  setSkills,
+  skillCategories,
+  setSkillCategories,
+  projects,
+  setProjects,
+  certifications,
+  setCertifications,
+  timelineData,
+  setTimelineData,
+  summaryStats,
+  setSummaryStats,
+  contactInfo,
+  setContactInfo,
+  themeMode,
+  setThemeMode,
+  pageTitles,
+  setPageTitles,
+  pageDescriptions,
+  setPageDescriptions,
+  sectionVisibility,
+  setSectionVisibility,
+  sectionTitles,
+  setSectionTitles,
 }) {
   const [pickedColor, setPickedColor] = useState(primaryColor || "#00D5D5");
   const [localRoles, setLocalRoles] = useState(roles || []);
@@ -77,12 +117,73 @@ export default function Admin({
   const [localCenterSvg, setLocalCenterSvg] = useState(centerSvg || "");
   const [localOrbitingStacks, setLocalOrbitingStacks] = useState(orbitingStacks || []);
   const [localAbout, setLocalAbout] = useState({ ...DEFAULT_ABOUT, ...(about || {}) });
+  const [localServicesSubtitle, setLocalServicesSubtitle] = useState(servicesSubtitle || "");
+  const [localServicesData, setLocalServicesData] = useState(servicesData || []);
+  const [localSkills, setLocalSkills] = useState(skills || []);
+  const [localSkillCategories, setLocalSkillCategories] = useState(skillCategories || []);
+  const [activeSkillCategoryTab, setActiveSkillCategoryTab] = useState(skillCategories?.[0]?.id || "frontend");
+  const [newSkillCategoryName, setNewSkillCategoryName] = useState("");
+  const [newSkillName, setNewSkillName] = useState("");
+  const [newSkillIcon, setNewSkillIcon] = useState("");
 
-  const [activeTab, setActiveTab] = useState("theme");
+  const [localProjects, setLocalProjects] = useState(projects || []);
+  const [activeProjectIdx, setActiveProjectIdx] = useState(0);
+  const [newProjectStack, setNewProjectStack] = useState("");
+  const [newProjectResponsibility, setNewProjectResponsibility] = useState("");
+
+  const [localCertifications, setLocalCertifications] = useState(certifications || []);
+  const [activeCertIdx, setActiveCertIdx] = useState(0);
+
+  const [localTimelineData, setLocalTimelineData] = useState(timelineData || []);
+  const [localSummaryStats, setLocalSummaryStats] = useState(summaryStats || []);
+  const [localContactInfo, setLocalContactInfo] = useState(contactInfo || {});
+  const [activeTimelineIdx, setActiveTimelineIdx] = useState(0);
+  const [localThemeMode, setLocalThemeMode] = useState(themeMode || "dark");
+  const [localPageTitles, setLocalPageTitles] = useState(pageTitles || {});
+  const [localPageDescriptions, setLocalPageDescriptions] = useState(pageDescriptions || {});
+  const [localSectionVisibility, setLocalSectionVisibility] = useState(
+    sectionVisibility || {
+      Home: true,
+      About: true,
+      Services: true,
+      Skills: true,
+      Projects: true,
+      Certification: true,
+      Journey: true,
+      Contact: true
+    }
+  );
+  const [localSectionTitles, setLocalSectionTitles] = useState(
+    sectionTitles || {
+      About: "Who am I ?",
+      Services: "What I Offer ?",
+      Skills: "What I Know ?",
+      Projects: "What I did ?",
+      Certification: "What I achieved?",
+      Journey: "What I've done ?",
+      Contact: "Where to find me ?"
+    }
+  );
+
+  const [activeTab, setActiveTab] = useState("dashboard");
   const [isSaving, setIsSaving] = useState(false);
-  const [saveStatus, setSaveStatus] = useState(null); // 'success' | 'error'
+  const [saveStatus, setSaveStatus] = useState(null); // 'success' | 'error' | 'prod'
   const [svgColorInjected, setSvgColorInjected] = useState(false);
-  const navigate = useNavigate();
+  const isProd = !import.meta.env.DEV;
+
+  // In production, trigger a db.json download so the admin can commit + redeploy
+  const downloadDbJson = (payload) => {
+    const jsonStr = JSON.stringify(payload, null, 2);
+    const blob = new Blob([jsonStr], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "db.json";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
 
   useEffect(() => {
     if (primaryColor) setPickedColor(primaryColor);
@@ -91,7 +192,48 @@ export default function Admin({
     if (centerSvg) setLocalCenterSvg(centerSvg);
     if (orbitingStacks) setLocalOrbitingStacks(orbitingStacks);
     if (about) setLocalAbout({ ...DEFAULT_ABOUT, ...about });
-  }, [primaryColor, roles, description, centerSvg, orbitingStacks, about]);
+    if (servicesSubtitle) setLocalServicesSubtitle(servicesSubtitle);
+    if (servicesData) setLocalServicesData(servicesData);
+    if (skills) setLocalSkills(skills);
+    if (skillCategories) {
+      setLocalSkillCategories(skillCategories);
+      if (!activeSkillCategoryTab && skillCategories.length > 0) {
+        setActiveSkillCategoryTab(skillCategories[0].id);
+      }
+    }
+    if (projects) setLocalProjects(projects);
+    if (certifications) setLocalCertifications(certifications);
+    if (timelineData) setLocalTimelineData(timelineData);
+    if (summaryStats) setLocalSummaryStats(summaryStats);
+    if (contactInfo) setLocalContactInfo(contactInfo);
+    if (themeMode) setLocalThemeMode(themeMode);
+    if (pageTitles) setLocalPageTitles(pageTitles);
+    if (pageDescriptions) setLocalPageDescriptions(pageDescriptions);
+    if (sectionVisibility) setLocalSectionVisibility(sectionVisibility);
+    if (sectionTitles) setLocalSectionTitles(sectionTitles);
+  }, [primaryColor, roles, description, centerSvg, orbitingStacks, about, servicesSubtitle, servicesData, skills, skillCategories, activeSkillCategoryTab, projects, certifications, timelineData, summaryStats, contactInfo, themeMode, pageTitles, pageDescriptions, sectionVisibility, sectionTitles]);
+
+  // Restore preview changes on unmount
+  useEffect(() => {
+    return () => {
+      if (themeMode === "light") {
+        document.documentElement.classList.add("light");
+      } else {
+        document.documentElement.classList.remove("light");
+      }
+      if (primaryColor) {
+        document.documentElement.style.setProperty("--primary", primaryColor);
+        const r = parseInt(primaryColor.slice(1, 3), 16);
+        const g = parseInt(primaryColor.slice(3, 5), 16);
+        const b = parseInt(primaryColor.slice(5, 7), 16);
+        if (!isNaN(r) && !isNaN(g) && !isNaN(b)) {
+          document.documentElement.style.setProperty("--primary-rgb", `${r}, ${g}, ${b}`);
+        }
+        const contrast = getContrastColor(primaryColor);
+        document.documentElement.style.setProperty("--primary-contrast", contrast);
+      }
+    };
+  }, [themeMode, primaryColor]);
 
   // Handle local preview
   const handleColorChange = (color) => {
@@ -103,6 +245,17 @@ export default function Admin({
     const b = parseInt(color.slice(5, 7), 16);
     if (!isNaN(r) && !isNaN(g) && !isNaN(b)) {
       document.documentElement.style.setProperty("--primary-rgb", `${r}, ${g}, ${b}`);
+    }
+    const contrast = getContrastColor(color);
+    document.documentElement.style.setProperty("--primary-contrast", contrast);
+  };
+
+  const handleThemeModeChange = (mode) => {
+    setLocalThemeMode(mode);
+    if (mode === "light") {
+      document.documentElement.classList.add("light");
+    } else {
+      document.documentElement.classList.remove("light");
     }
   };
 
@@ -131,6 +284,362 @@ export default function Admin({
     updateAbout("professionalTitles", copy);
   };
 
+  // Helper: Services Data
+  const updateService = (idx, field, value) => {
+    const copy = [...localServicesData];
+    copy[idx] = { ...copy[idx], [field]: value };
+    setLocalServicesData(copy);
+  };
+  const addService = () => {
+    const copy = [...localServicesData];
+    copy.push({ title: "New Service", description: "Service description text", icon: "code" });
+    setLocalServicesData(copy);
+  };
+  const deleteService = (idx) => {
+    const copy = localServicesData.filter((_, i) => i !== idx);
+    setLocalServicesData(copy);
+  };
+  const moveService = (idx, direction) => {
+    const newIdx = idx + direction;
+    if (newIdx < 0 || newIdx >= localServicesData.length) return;
+    const copy = [...localServicesData];
+    const temp = copy[idx];
+    copy[idx] = copy[newIdx];
+    copy[newIdx] = temp;
+    setLocalServicesData(copy);
+  };
+
+  // Helper: Skill Categories & Skills
+  const addSkillCategory = () => {
+    if (!newSkillCategoryName.trim()) return;
+    const id = newSkillCategoryName.toLowerCase().replace(/\s+/g, "-");
+    if (localSkillCategories.some(cat => cat.id === id)) {
+      alert("A category with this name already exists.");
+      return;
+    }
+    const newCat = {
+      id,
+      label: newSkillCategoryName.trim(),
+      skillNames: [],
+      bullets: []
+    };
+    const copy = [...localSkillCategories, newCat];
+    setLocalSkillCategories(copy);
+    setActiveSkillCategoryTab(id);
+    setNewSkillCategoryName("");
+  };
+
+  const deleteSkillCategory = (id) => {
+    const copy = localSkillCategories.filter(cat => cat.id !== id);
+    setLocalSkillCategories(copy);
+    if (activeSkillCategoryTab === id) {
+      setActiveSkillCategoryTab(copy[0]?.id || "");
+    }
+  };
+
+  const renameSkillCategory = (id, newLabel) => {
+    const copy = localSkillCategories.map(cat => {
+      if (cat.id === id) {
+        return { ...cat, label: newLabel };
+      }
+      return cat;
+    });
+    setLocalSkillCategories(copy);
+  };
+
+  const updateCategoryBullet = (categoryId, bulletIdx, value) => {
+    const copy = localSkillCategories.map(cat => {
+      if (cat.id === categoryId) {
+        const bullets = [...cat.bullets];
+        bullets[bulletIdx] = value;
+        return { ...cat, bullets };
+      }
+      return cat;
+    });
+    setLocalSkillCategories(copy);
+  };
+
+  const addCategoryBullet = (categoryId) => {
+    const copy = localSkillCategories.map(cat => {
+      if (cat.id === categoryId) {
+        const bullets = [...cat.bullets, "New key expertise point"];
+        return { ...cat, bullets };
+      }
+      return cat;
+    });
+    setLocalSkillCategories(copy);
+  };
+
+  const deleteCategoryBullet = (categoryId, bulletIdx) => {
+    const copy = localSkillCategories.map(cat => {
+      if (cat.id === categoryId) {
+        const bullets = cat.bullets.filter((_, i) => i !== bulletIdx);
+        return { ...cat, bullets };
+      }
+      return cat;
+    });
+    setLocalSkillCategories(copy);
+  };
+
+  const moveCategoryBullet = (categoryId, bulletIdx, direction) => {
+    const newIdx = bulletIdx + direction;
+    const cat = localSkillCategories.find(c => c.id === categoryId);
+    if (!cat || newIdx < 0 || newIdx >= cat.bullets.length) return;
+    
+    const copy = localSkillCategories.map(c => {
+      if (c.id === categoryId) {
+        const bullets = [...c.bullets];
+        const temp = bullets[bulletIdx];
+        bullets[bulletIdx] = bullets[newIdx];
+        bullets[newIdx] = temp;
+        return { ...c, bullets };
+      }
+      return c;
+    });
+    setLocalSkillCategories(copy);
+  };
+
+  const toggleSkillInCategory = (categoryId, skillName) => {
+    const copy = localSkillCategories.map(cat => {
+      if (cat.id === categoryId) {
+        const skillNames = [...(cat.skillNames || [])];
+        const idx = skillNames.indexOf(skillName);
+        if (idx > -1) {
+          skillNames.splice(idx, 1);
+        } else {
+          skillNames.push(skillName);
+        }
+        return { ...cat, skillNames };
+      }
+      return cat;
+    });
+    setLocalSkillCategories(copy);
+  };
+
+  const addCustomSkill = () => {
+    if (!newSkillName.trim()) return;
+    if (localSkills.some(s => s.name.toLowerCase() === newSkillName.trim().toLowerCase())) {
+      alert("A skill with this name already exists.");
+      return;
+    }
+    const newSkill = {
+      name: newSkillName.trim(),
+      icon: newSkillIcon || ""
+    };
+    setLocalSkills([...localSkills, newSkill]);
+    setNewSkillName("");
+    setNewSkillIcon("");
+  };
+
+  const deleteCustomSkill = (name) => {
+    const copySkills = localSkills.filter(s => s.name !== name);
+    setLocalSkills(copySkills);
+    
+    const copyCategories = localSkillCategories.map(cat => {
+      const skillNames = (cat.skillNames || []).filter(s => s !== name);
+      return { ...cat, skillNames };
+    });
+    setLocalSkillCategories(copyCategories);
+  };
+
+  const addProject = () => {
+    const copy = [...localProjects];
+    copy.push({
+      title: "New Project",
+      synopsis: "Project synopsis...",
+      category: "Full Stack (Web)",
+      platform: "Web",
+      duration: "Jan 2026 - Present",
+      role: "Lead Developer",
+      client: "Client Name",
+      teamSize: 1,
+      stacks: ["React.js", "TypeScript"],
+      responsibilities: ["Developed core modules", "Integrated APIs"],
+      image: ""
+    });
+    setLocalProjects(copy);
+    setActiveProjectIdx(copy.length - 1);
+  };
+
+  const deleteProject = (idx) => {
+    const copy = localProjects.filter((_, i) => i !== idx);
+    setLocalProjects(copy);
+    if (activeProjectIdx >= copy.length) {
+      setActiveProjectIdx(Math.max(0, copy.length - 1));
+    }
+  };
+
+  const moveProject = (idx, direction) => {
+    const newIdx = idx + direction;
+    if (newIdx < 0 || newIdx >= localProjects.length) return;
+    const copy = [...localProjects];
+    const temp = copy[idx];
+    copy[idx] = copy[newIdx];
+    copy[newIdx] = temp;
+    setLocalProjects(copy);
+    setActiveProjectIdx(newIdx);
+  };
+
+  const updateActiveProjectField = (field, value) => {
+    if (localProjects.length === 0) return;
+    const copy = [...localProjects];
+    copy[activeProjectIdx] = { ...copy[activeProjectIdx], [field]: value };
+    setLocalProjects(copy);
+  };
+
+  const addStackToActiveProject = () => {
+    if (!newProjectStack.trim() || localProjects.length === 0) return;
+    const currentProject = localProjects[activeProjectIdx];
+    const stacks = [...(currentProject.stacks || [])];
+    if (stacks.includes(newProjectStack.trim())) {
+      alert("Stack already exists.");
+      return;
+    }
+    stacks.push(newProjectStack.trim());
+    updateActiveProjectField("stacks", stacks);
+    setNewProjectStack("");
+  };
+
+  const deleteStackFromActiveProject = (stackName) => {
+    if (localProjects.length === 0) return;
+    const currentProject = localProjects[activeProjectIdx];
+    const stacks = (currentProject.stacks || []).filter(s => s !== stackName);
+    updateActiveProjectField("stacks", stacks);
+  };
+
+  const addResponsibilityToActiveProject = () => {
+    if (!newProjectResponsibility.trim() || localProjects.length === 0) return;
+    const currentProject = localProjects[activeProjectIdx];
+    const responsibilities = [...(currentProject.responsibilities || []), newProjectResponsibility.trim()];
+    updateActiveProjectField("responsibilities", responsibilities);
+    setNewProjectResponsibility("");
+  };
+
+  const updateResponsibilityInActiveProject = (idx, value) => {
+    if (localProjects.length === 0) return;
+    const currentProject = localProjects[activeProjectIdx];
+    const responsibilities = [...(currentProject.responsibilities || [])];
+    responsibilities[idx] = value;
+    updateActiveProjectField("responsibilities", responsibilities);
+  };
+
+  const deleteResponsibilityFromActiveProject = (idx) => {
+    if (localProjects.length === 0) return;
+    const currentProject = localProjects[activeProjectIdx];
+    const responsibilities = (currentProject.responsibilities || []).filter((_, i) => i !== idx);
+    updateActiveProjectField("responsibilities", responsibilities);
+  };
+
+  const moveResponsibilityInActiveProject = (idx, direction) => {
+    if (localProjects.length === 0) return;
+    const currentProject = localProjects[activeProjectIdx];
+    const responsibilities = [...(currentProject.responsibilities || [])];
+    const newIdx = idx + direction;
+    if (newIdx < 0 || newIdx >= responsibilities.length) return;
+    const temp = responsibilities[idx];
+    responsibilities[idx] = responsibilities[newIdx];
+    responsibilities[newIdx] = temp;
+    updateActiveProjectField("responsibilities", responsibilities);
+  };
+
+  const addCert = () => {
+    const copy = [...localCertifications];
+    const newId = copy.length > 0 ? Math.max(...copy.map(c => c.id || 0)) + 1 : 1;
+    copy.push({
+      id: newId,
+      title: "New Certification",
+      description: "Description outline...",
+      image: "",
+      lastUpdated: "Feb - 2026",
+      issuer: "Issuer Name",
+      offeredBy: "Offered By",
+      pdfFile: ""
+    });
+    setLocalCertifications(copy);
+    setActiveCertIdx(copy.length - 1);
+  };
+
+  const deleteCert = (idx) => {
+    const copy = localCertifications.filter((_, i) => i !== idx);
+    setLocalCertifications(copy);
+    if (activeCertIdx >= copy.length) {
+      setActiveCertIdx(Math.max(0, copy.length - 1));
+    }
+  };
+
+  const moveCert = (idx, direction) => {
+    const newIdx = idx + direction;
+    if (newIdx < 0 || newIdx >= localCertifications.length) return;
+    const copy = [...localCertifications];
+    const temp = copy[idx];
+    copy[idx] = copy[newIdx];
+    copy[newIdx] = temp;
+    setLocalCertifications(copy);
+    setActiveCertIdx(newIdx);
+  };
+
+  const updateActiveCertField = (field, value) => {
+    if (localCertifications.length === 0) return;
+    const copy = [...localCertifications];
+    copy[activeCertIdx] = { ...copy[activeCertIdx], [field]: value };
+    setLocalCertifications(copy);
+  };
+
+  // Helper: Journey/Timeline & Summary Stats
+  const addTimelineItem = () => {
+    const copy = [...localTimelineData];
+    copy.push({
+      time: "New Duration",
+      title: "New Title",
+      org: "Organization Name",
+      location: "Location",
+      percent: ""
+    });
+    setLocalTimelineData(copy);
+    setActiveTimelineIdx(copy.length - 1);
+  };
+
+  const deleteTimelineItem = (idx) => {
+    const copy = localTimelineData.filter((_, i) => i !== idx);
+    setLocalTimelineData(copy);
+    if (activeTimelineIdx >= copy.length) {
+      setActiveTimelineIdx(Math.max(0, copy.length - 1));
+    }
+  };
+
+  const moveTimelineItem = (idx, direction) => {
+    const newIdx = idx + direction;
+    if (newIdx < 0 || newIdx >= localTimelineData.length) return;
+    const copy = [...localTimelineData];
+    const temp = copy[idx];
+    copy[idx] = copy[newIdx];
+    copy[newIdx] = temp;
+    setLocalTimelineData(copy);
+    setActiveTimelineIdx(newIdx);
+  };
+
+  const updateActiveTimelineField = (field, value) => {
+    if (localTimelineData.length === 0) return;
+    const copy = [...localTimelineData];
+    copy[activeTimelineIdx] = { ...copy[activeTimelineIdx], [field]: value };
+    setLocalTimelineData(copy);
+  };
+
+  const updateSummaryStat = (idx, key, value) => {
+    const copy = [...localSummaryStats];
+    if (key === "value") {
+      const numVal = parseFloat(value);
+      copy[idx] = { ...copy[idx], [key]: isNaN(numVal) ? 0 : numVal };
+    } else {
+      copy[idx] = { ...copy[idx], [key]: value };
+    }
+    setLocalSummaryStats(copy);
+  };
+
+  const updateContactInfoField = (field, value) => {
+    setLocalContactInfo((prev) => ({ ...prev, [field]: value }));
+  };
+
   const handleSave = async (e) => {
     if (e) e.preventDefault();
     setIsSaving(true);
@@ -155,61 +664,64 @@ export default function Admin({
       centerSvg: processedSvg,
       orbitingStacks: localOrbitingStacks,
       about: localAbout,
+      servicesSubtitle: localServicesSubtitle,
+      servicesData: localServicesData,
+      skills: localSkills,
+      skillCategories: localSkillCategories,
+      projects: localProjects,
+      certifications: localCertifications,
+      timelineData: localTimelineData,
+      summaryStats: localSummaryStats,
+      contactInfo: localContactInfo,
+      themeMode: localThemeMode,
+      pageTitles: localPageTitles,
+      pageDescriptions: localPageDescriptions,
+      sectionVisibility: localSectionVisibility,
+      sectionTitles: localSectionTitles,
     };
 
     try {
       const isDev = import.meta.env.DEV;
-      const apiUrl = isDev ? "/api/theme" : `${import.meta.env.BASE_URL}api/theme`;
+      const apiUrl = isDev ? "/api/theme" : null;
 
       let responseSuccess = false;
 
-      if (isDev) {
+      if (isDev && apiUrl) {
         // Try calling the Vite development API middleware
         const res = await fetch(apiUrl, {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
         });
-        if (res.ok) {
-          responseSuccess = true;
-        }
+        if (res.ok) responseSuccess = true;
       }
 
-      // Save to local storage fallbacks
-      localStorage.setItem("portfolio_theme_color", pickedColor);
-      localStorage.setItem("portfolio_roles", JSON.stringify(localRoles));
-      localStorage.setItem("portfolio_description", localDescription);
-      localStorage.setItem("portfolio_center_svg", processedSvg);
-      localStorage.setItem("portfolio_orbiting_stacks", JSON.stringify(localOrbitingStacks));
-      localStorage.setItem("portfolio_about", JSON.stringify(localAbout));
+      // Always save to localStorage (works in both dev and prod)
+      const lsKeys = [
+        ["portfolio_theme_color", pickedColor],
+        ["portfolio_roles", JSON.stringify(localRoles)],
+        ["portfolio_description", localDescription],
+        ["portfolio_center_svg", processedSvg],
+        ["portfolio_orbiting_stacks", JSON.stringify(localOrbitingStacks)],
+        ["portfolio_about", JSON.stringify(localAbout)],
+        ["portfolio_services_subtitle", localServicesSubtitle],
+        ["portfolio_services_data", JSON.stringify(localServicesData)],
+        ["portfolio_skills", JSON.stringify(localSkills)],
+        ["portfolio_skill_categories", JSON.stringify(localSkillCategories)],
+        ["portfolio_projects", JSON.stringify(localProjects)],
+        ["portfolio_certifications", JSON.stringify(localCertifications)],
+        ["portfolio_timeline_data", JSON.stringify(localTimelineData)],
+        ["portfolio_summary_stats", JSON.stringify(localSummaryStats)],
+        ["portfolio_contact_info", JSON.stringify(localContactInfo)],
+        ["portfolio_theme_mode", localThemeMode],
+        ["portfolio_page_titles", JSON.stringify(localPageTitles)],
+        ["portfolio_page_descriptions", JSON.stringify(localPageDescriptions)],
+        ["portfolio_section_visibility", JSON.stringify(localSectionVisibility)],
+        ["portfolio_section_titles", JSON.stringify(localSectionTitles)],
+      ];
+      lsKeys.forEach(([k, v]) => localStorage.setItem(k, v));
 
       // Update global states
-      setPrimaryColor(pickedColor);
-      setRoles(localRoles);
-      setDescription(localDescription);
-      setCenterSvg(processedSvg);
-      setLocalCenterSvg(processedSvg); // reflect injection in textarea
-      setOrbitingStacks(localOrbitingStacks);
-      setAbout(localAbout);
-
-      // If we are in dev, check the API result
-      if (!isDev || responseSuccess) {
-        setSaveStatus("success");
-      } else {
-        setSaveStatus("error");
-      }
-    } catch (err) {
-      console.error("Failed to save theme settings:", err);
-      // Fallback local storage save on network error
-      localStorage.setItem("portfolio_theme_color", pickedColor);
-      localStorage.setItem("portfolio_roles", JSON.stringify(localRoles));
-      localStorage.setItem("portfolio_description", localDescription);
-      localStorage.setItem("portfolio_center_svg", processedSvg);
-      localStorage.setItem("portfolio_orbiting_stacks", JSON.stringify(localOrbitingStacks));
-      localStorage.setItem("portfolio_about", JSON.stringify(localAbout));
-
       setPrimaryColor(pickedColor);
       setRoles(localRoles);
       setDescription(localDescription);
@@ -217,7 +729,85 @@ export default function Admin({
       setLocalCenterSvg(processedSvg);
       setOrbitingStacks(localOrbitingStacks);
       setAbout(localAbout);
-      setSaveStatus("success");
+      setServicesSubtitle(localServicesSubtitle);
+      setServicesData(localServicesData);
+      setSkills(localSkills);
+      setSkillCategories(localSkillCategories);
+      setProjects(localProjects);
+      setCertifications(localCertifications);
+      setTimelineData(localTimelineData);
+      setSummaryStats(localSummaryStats);
+      setContactInfo(localContactInfo);
+      setThemeMode(localThemeMode);
+      setPageTitles(localPageTitles);
+      setPageDescriptions(localPageDescriptions);
+      setSectionVisibility(localSectionVisibility);
+      setSectionTitles(localSectionTitles);
+
+      if (!isDev) {
+        // Production: download db.json so admin can commit it and redeploy
+        downloadDbJson(payload);
+        setSaveStatus("prod");
+      } else if (responseSuccess) {
+        setSaveStatus("success");
+      } else {
+        setSaveStatus("error");
+      }
+    } catch (err) {
+      console.error("Failed to save theme settings:", err);
+      // On any error, still attempt localStorage + download fallback
+      try {
+        const lsKeys = [
+          ["portfolio_theme_color", pickedColor],
+          ["portfolio_roles", JSON.stringify(localRoles)],
+          ["portfolio_description", localDescription],
+          ["portfolio_center_svg", processedSvg],
+          ["portfolio_orbiting_stacks", JSON.stringify(localOrbitingStacks)],
+          ["portfolio_about", JSON.stringify(localAbout)],
+          ["portfolio_services_subtitle", localServicesSubtitle],
+          ["portfolio_services_data", JSON.stringify(localServicesData)],
+          ["portfolio_skills", JSON.stringify(localSkills)],
+          ["portfolio_skill_categories", JSON.stringify(localSkillCategories)],
+          ["portfolio_projects", JSON.stringify(localProjects)],
+          ["portfolio_certifications", JSON.stringify(localCertifications)],
+          ["portfolio_timeline_data", JSON.stringify(localTimelineData)],
+          ["portfolio_summary_stats", JSON.stringify(localSummaryStats)],
+          ["portfolio_contact_info", JSON.stringify(localContactInfo)],
+          ["portfolio_theme_mode", localThemeMode],
+          ["portfolio_page_titles", JSON.stringify(localPageTitles)],
+          ["portfolio_page_descriptions", JSON.stringify(localPageDescriptions)],
+          ["portfolio_section_visibility", JSON.stringify(localSectionVisibility)],
+          ["portfolio_section_titles", JSON.stringify(localSectionTitles)],
+        ];
+        lsKeys.forEach(([k, v]) => localStorage.setItem(k, v));
+      } catch {/* ignore */}
+      setPrimaryColor(pickedColor);
+      setRoles(localRoles);
+      setDescription(localDescription);
+      setCenterSvg(processedSvg);
+      setLocalCenterSvg(processedSvg);
+      setOrbitingStacks(localOrbitingStacks);
+      setAbout(localAbout);
+      setServicesSubtitle(localServicesSubtitle);
+      setServicesData(localServicesData);
+      setSkills(localSkills);
+      setSkillCategories(localSkillCategories);
+      setProjects(localProjects);
+      setCertifications(localCertifications);
+      setTimelineData(localTimelineData);
+      setSummaryStats(localSummaryStats);
+      setContactInfo(localContactInfo);
+      setThemeMode(localThemeMode);
+      setPageTitles(localPageTitles);
+      setPageDescriptions(localPageDescriptions);
+      setSectionVisibility(localSectionVisibility);
+      setSectionTitles(localSectionTitles);
+      if (isProd) {
+        downloadDbJson(payload);
+        setSaveStatus("prod");
+      } else {
+        setSaveStatus("success");
+      }
     } finally {
       setIsSaving(false);
       setTimeout(() => {
@@ -228,6 +818,7 @@ export default function Admin({
 
   const resetToDefault = () => {
     handleColorChange("#00D5D5");
+    setLocalThemeMode("dark");
     setLocalRoles([
       "Senior Software Developer",
       "Full-Stack Engineer",
@@ -248,21 +839,131 @@ export default function Admin({
       { label: "TypeScript", type: "outline" }
     ]);
     setLocalAbout(DEFAULT_ABOUT);
+    setLocalServicesSubtitle("High-performance, scalable, and secure software development solutions tailored to meet business objectives and deliver outstanding user experiences.");
+    setLocalServicesData(DEFAULT_SERVICES_DATA);
+    setLocalSkills(DEFAULT_SKILLS);
+    setLocalSkillCategories(DEFAULT_SKILL_CATEGORIES);
+    setLocalProjects(DEFAULT_PROJECTS || []);
+    setActiveProjectIdx(0);
+    setLocalCertifications(DEFAULT_CERTIFICATIONS || []);
+    setActiveCertIdx(0);
+    setLocalTimelineData(DEFAULT_TIMELINE_DATA || []);
+    setActiveTimelineIdx(0);
+    setLocalSummaryStats(DEFAULT_SUMMARY_STATS || []);
+    setLocalContactInfo(DEFAULT_CONTACT_INFO || {});
+    setLocalPageTitles(defaultPageTitles);
+    setLocalPageDescriptions(defaultPageDescriptions);
+    setLocalSectionVisibility({
+      Home: true,
+      About: true,
+      Services: true,
+      Skills: true,
+      Projects: true,
+      Certification: true,
+      Journey: true,
+      Contact: true
+    });
+    setLocalSectionTitles({
+      About: "Who am I ?",
+      Services: "What I Offer ?",
+      Skills: "What I Know ?",
+      Projects: "What I did ?",
+      Certification: "What I achieved?",
+      Journey: "What I've done ?",
+      Contact: "Where to find me ?"
+    });
   };
 
   // Nav tabs definition
   const tabs = [
+    { id: "dashboard", label: "Console Dashboard", icon: FiGrid },
     { id: "theme", label: "Theme & Colors", icon: FiSliders },
     { id: "home", label: "Home Section", icon: FiType },
     { id: "about", label: "About Section", icon: FiUser },
-    { id: "svg", label: "Graphic SVG Editor", icon: FiCode },
-    { id: "orbit", label: "Orbiting Stacks", icon: FiGrid },
+    { id: "services", label: "Services Section", icon: FiBriefcase },
+    { id: "skills", label: "Skills Section", icon: FiCpu },
+    { id: "projects", label: "Projects Section", icon: FiFolder },
+    { id: "certifications", label: "Certifications Section", icon: FiAward },
+    { id: "journey", label: "Journey Section", icon: FiActivity },
+    { id: "contact", label: "Contact Section", icon: FiMail },
+    { id: "seo", label: "SEO & Metadata", icon: FiCompass }
   ];
 
+  const renderTabButton = (tab) => {
+    const IconComponent = tab.icon;
+    const isActive = activeTab === tab.id;
+    
+    const getSectionNameByTabId = (tabId) => {
+      if (tabId === "certifications") return "Certification";
+      return tabId.charAt(0).toUpperCase() + tabId.slice(1);
+    };
+    
+    const sectionName = getSectionNameByTabId(tab.id);
+    const isHidden = ["home", "about", "services", "skills", "projects", "certifications", "journey", "contact"].includes(tab.id) && localSectionVisibility[sectionName] === false;
+
+    return (
+      <button
+        key={tab.id}
+        type="button"
+        onClick={() => setActiveTab(tab.id)}
+        className={`flex items-center gap-3 px-4 py-2.5 text-[10.5px] font-bold uppercase tracking-wider rounded-xl transition-all duration-300 whitespace-nowrap cursor-pointer text-left w-full border-l-2 ${
+          isActive
+            ? "text-white bg-white/5"
+            : "text-stone-400 bg-transparent border-transparent hover:bg-stone-900/35 hover:text-white"
+        }`}
+        style={isActive ? { borderLeftColor: pickedColor, textShadow: "0 0 10px rgba(255,255,255,0.2)" } : {}}
+      >
+        <IconComponent className="text-sm shrink-0" style={isActive ? { color: pickedColor } : {}} />
+        <span className="flex items-center justify-between w-full">
+          <span>{tab.label.replace(" Section", "")}</span>
+          {isHidden && (
+            <span className="text-[8px] bg-red-500/10 text-red-400 px-1.5 py-0.5 rounded border border-red-500/20 font-bold font-mono">
+              HIDDEN
+            </span>
+          )}
+        </span>
+      </button>
+    );
+  };
+
+  const renderSectionVisibilityBanner = (sectionName) => {
+    const isVisible = localSectionVisibility[sectionName] !== false;
+    return (
+      <div
+        className="p-4 rounded-2xl border flex items-center justify-between mb-6"
+        style={{
+          background: isVisible ? `${pickedColor}08` : "rgba(239, 68, 68, 0.05)",
+          borderColor: isVisible ? `${pickedColor}20` : "rgba(239, 68, 68, 0.15)",
+        }}
+      >
+        <div className="text-left">
+          <span className="text-xs font-black text-white block">Section Active Status</span>
+          <span className="text-[9.5px] text-stone-400 font-medium leading-normal block mt-0.5">
+            {isVisible 
+              ? `The ${sectionName} section is active and visible in the main portfolio scrolling view and the sidebar.` 
+              : `The ${sectionName} section is currently hidden from both the portfolio scrolling view and the sidebar.`}
+          </span>
+        </div>
+        <button
+          type="button"
+          onClick={() => setLocalSectionVisibility(prev => ({ ...prev, [sectionName]: !isVisible }))}
+          className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider py-1.5 px-3 rounded-xl cursor-pointer transition-all border shrink-0"
+          style={{
+            color: isVisible ? pickedColor : "#f87171",
+            borderColor: isVisible ? `${pickedColor}30` : "rgba(239, 68, 68, 0.3)",
+            backgroundColor: isVisible ? `${pickedColor}10` : "rgba(239, 68, 68, 0.1)",
+          }}
+        >
+          {isVisible ? "Hide Section" : "Show Section"}
+        </button>
+      </div>
+    );
+  };
+
   return (
-    <div className="relative min-h-screen flex flex-col items-center justify-center bg-[#000000] text-[#FFFFFF] px-4 py-8 overflow-hidden font-sans">
+    <div className="admin-console-page relative z-0 h-screen w-screen flex flex-col md:flex-row bg-[var(--bg-main)] text-[var(--text-white-or-dark)] overflow-hidden font-sans">
       {/* Background Particles */}
-      <div className="fixed inset-0 w-full h-full -z-10" style={{ backgroundColor: "#000000" }}>
+      <div className="fixed inset-0 w-full h-full -z-10 bg-transparent">
         <Particles
           particleColors={[pickedColor, "#FFFFFF"]}
           particleCount={60}
@@ -276,17 +977,18 @@ export default function Admin({
 
       {/* Main Glass Dashboard Card Container */}
       <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="w-full max-w-5xl glass-panel rounded-3xl relative z-10 border border-primary/10 shadow-2xl flex flex-col md:flex-row overflow-hidden"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+        className="w-full h-full glass-panel relative z-10 flex flex-col md:flex-row overflow-hidden border-none"
         style={{
-          borderColor: `rgba(var(--primary-rgb), 0.15)`,
-          boxShadow: `0 30px 70px -20px rgba(var(--primary-rgb), 0.18)`,
+          background: "rgba(10, 10, 10, 0.75)",
+          backdropFilter: "blur(20px)",
+          WebkitBackdropFilter: "blur(20px)",
         }}
       >
         {/* SIDEBAR NAVIGATION PANEL */}
-        <div className="w-full md:w-[280px] bg-stone-950/90 border-b md:border-b-0 md:border-r border-stone-900/60 p-6 flex flex-col justify-between shrink-0 select-none">
+        <div className="w-full md:w-[280px] bg-stone-950/95 md:bg-stone-950/45 border-b md:border-b-0 md:border-r border-stone-900/60 p-6 flex flex-col justify-between shrink-0 select-none h-full">
           <div className="flex flex-col gap-6">
             {/* Logo/Brand Header */}
             <div>
@@ -301,29 +1003,62 @@ export default function Admin({
               </span>
             </div>
 
-            {/* Nav Tabs */}
-            <nav className="flex md:flex-col overflow-x-auto md:overflow-x-visible gap-1 pb-3 md:pb-0 scrollbar-none">
-              {tabs.map((tab) => {
-                const IconComponent = tab.icon;
-                const isActive = activeTab === tab.id;
-                return (
-                  <button
-                    key={tab.id}
-                    type="button"
-                    onClick={() => setActiveTab(tab.id)}
-                    className={`flex items-center gap-3 px-4 py-3 text-xs font-bold uppercase tracking-wider rounded-xl transition-all duration-300 whitespace-nowrap cursor-pointer text-left w-full border ${
-                      isActive
-                        ? "text-black bg-primary border-transparent"
-                        : "text-stone-400 bg-transparent border-transparent hover:bg-stone-900 hover:text-white"
-                    }`}
-                    style={isActive ? { boxShadow: `0 4px 16px rgba(var(--primary-rgb), 0.3)` } : {}}
-                  >
-                    <IconComponent className="text-base shrink-0" />
-                    <span>{tab.label}</span>
-                  </button>
-                );
-              })}
-            </nav>
+            {/* Nav Tabs categorized by sections */}
+            <div className="flex md:flex-col gap-5 overflow-y-auto max-h-[70vh] pr-1.5 scrollbar-thin select-none">
+              <div>
+                <span className="text-[8px] font-black tracking-[0.2em] text-stone-500 uppercase block mb-1.5 px-3 select-none">
+                  Overview
+                </span>
+                <nav className="flex md:flex-col gap-0.5">
+                  {tabs.filter(t => t.id === "dashboard").map(renderTabButton)}
+                </nav>
+              </div>
+
+              <div>
+                <span className="text-[8px] font-black tracking-[0.2em] text-stone-500 uppercase block mb-1.5 px-3 select-none">
+                  Design Accent
+                </span>
+                <nav className="flex md:flex-col gap-0.5">
+                  {tabs.filter(t => t.id === "theme").map(renderTabButton)}
+                </nav>
+              </div>
+
+              <div>
+                <span className="text-[8px] font-black tracking-[0.2em] text-stone-500 uppercase block mb-1.5 px-3 select-none">
+                  About & Services
+                </span>
+                <nav className="flex md:flex-col gap-0.5">
+                  {tabs.filter(t => ["home", "about", "services"].includes(t.id)).map(renderTabButton)}
+                </nav>
+              </div>
+
+              <div>
+                <span className="text-[8px] font-black tracking-[0.2em] text-stone-500 uppercase block mb-1.5 px-3 select-none">
+                  Skills & Works
+                </span>
+                <nav className="flex md:flex-col gap-0.5">
+                  {tabs.filter(t => ["skills", "projects", "certifications", "journey"].includes(t.id)).map(renderTabButton)}
+                </nav>
+              </div>
+
+              <div>
+                <span className="text-[8px] font-black tracking-[0.2em] text-stone-500 uppercase block mb-1.5 px-3 select-none">
+                  Connect
+                </span>
+                <nav className="flex md:flex-col gap-0.5">
+                  {tabs.filter(t => t.id === "contact").map(renderTabButton)}
+                </nav>
+              </div>
+
+              <div>
+                <span className="text-[8px] font-black tracking-[0.2em] text-stone-500 uppercase block mb-1.5 px-3 select-none">
+                  SEO Config
+                </span>
+                <nav className="flex md:flex-col gap-0.5">
+                  {tabs.filter(t => t.id === "seo").map(renderTabButton)}
+                </nav>
+              </div>
+            </div>
           </div>
 
           {/* User Profile or Branding Footer */}
@@ -338,10 +1073,10 @@ export default function Admin({
         </div>
 
         {/* SETTINGS CONTENT CONTAINER PANEL */}
-        <div className="flex-1 flex flex-col justify-between p-6 sm:p-8 md:p-10 relative">
-          <form onSubmit={handleSave} className="flex-1 flex flex-col justify-between gap-6">
+        <div className="flex-1 flex flex-col h-full overflow-hidden relative">
+          <form onSubmit={handleSave} className="flex-1 flex flex-col h-full overflow-hidden">
             {/* Header info bar */}
-            <div className="flex items-center justify-between border-b border-stone-900 pb-4 select-none">
+            <div className="flex items-center justify-between border-b border-stone-900/60 px-6 sm:px-8 py-5 select-none shrink-0 bg-stone-950/10">
               <div className="text-left">
                 <span className="text-[9px] font-bold uppercase tracking-widest text-primary font-mono">
                   Module Configuration
@@ -361,531 +1096,205 @@ export default function Admin({
             </div>
 
             {/* Scrollable Form Settings Fields */}
-            <div className="flex-1 overflow-y-auto max-h-[55vh] pr-2 scrollbar-thin text-left mt-2 space-y-6">
+            <div className="flex-1 overflow-y-auto px-6 sm:px-8 py-6 text-left space-y-6 scrollbar-thin">
+              <Suspense fallback={
+                <div className="flex items-center justify-center p-12 text-stone-500 font-bold uppercase tracking-wider text-[10px] select-none">
+                  Loading Config Module...
+                </div>
+              }>
+                {activeTab === "dashboard" && (
+                <DashboardTab
+                  localProjects={localProjects}
+                  localCertifications={localCertifications}
+                  localSkills={localSkills}
+                  localTimelineData={localTimelineData}
+                  localAbout={localAbout}
+                  localSectionVisibility={localSectionVisibility}
+                  setLocalSectionVisibility={setLocalSectionVisibility}
+                  pickedColor={pickedColor}
+                  localThemeMode={localThemeMode}
+                  tabs={tabs}
+                  setActiveTab={setActiveTab}
+                />
+              )}
 
-              {/* ══════════════════ TAB 1: THEME ══════════════════ */}
               {activeTab === "theme" && (
-                <div className="space-y-6 animate-fadeIn">
-                  {/* Preset swatches row */}
-                  <div className="flex flex-col gap-2">
-                    <label className="text-[10px] font-bold uppercase tracking-wider text-stone-400">
-                      Preset Design Accents
-                    </label>
-                    <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
-                      {COLOR_SWATCHES.map((swatch) => {
-                        const isSelected = pickedColor.toLowerCase() === swatch.value.toLowerCase();
-                        return (
-                          <button
-                            key={swatch.name}
-                            type="button"
-                            onClick={() => handleColorChange(swatch.value)}
-                            className="p-3 rounded-2xl bg-stone-950 border transition-all duration-300 flex flex-col items-center justify-center gap-2 text-center cursor-pointer group"
-                            style={{
-                              borderColor: isSelected ? swatch.value : "rgba(255,255,255,0.05)",
-                              boxShadow: isSelected ? `0 4px 16px ${swatch.value}30` : "none",
-                            }}
-                          >
-                            <span
-                              className="w-5 h-5 rounded-full shadow-inner border border-white/10"
-                              style={{ backgroundColor: swatch.value }}
-                            />
-                            <span className="text-[9px] font-extrabold tracking-wider uppercase text-stone-400 group-hover:text-white transition-colors">
-                              {swatch.name}
-                            </span>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  {/* Manual custom picker */}
-                  <div className="flex flex-col gap-2">
-                    <label className="text-[10px] font-bold uppercase tracking-wider text-stone-400">
-                      Custom Accent Hex
-                    </label>
-                    <div className="flex items-center gap-4 bg-stone-950 border border-stone-900 rounded-2xl p-4">
-                      <input
-                        type="color"
-                        value={pickedColor}
-                        onChange={(e) => handleColorChange(e.target.value)}
-                        className="w-14 h-14 rounded-xl border-0 cursor-pointer outline-none bg-transparent"
-                      />
-                      <div className="flex-1">
-                        <input
-                          type="text"
-                          value={pickedColor}
-                          onChange={(e) => handleColorChange(e.target.value)}
-                          placeholder="#00D5D5"
-                          maxLength={7}
-                          className="w-full bg-transparent border-b border-stone-800 focus:border-primary outline-none text-base font-mono tracking-wider py-1 uppercase text-white font-bold"
-                          style={{ borderBottomColor: pickedColor }}
-                        />
-                        <span className="text-[9px] text-stone-500 font-semibold block mt-1.5 leading-normal">
-                          Choose any hex accent. Colors, halos, and animations will render unified in your portfolio.
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Layout components preview */}
-                  <div className="flex flex-col gap-2 pt-2">
-                    <label className="text-[10px] font-bold uppercase tracking-wider text-stone-400">
-                      Element Rendering Preview
-                    </label>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-stone-950 p-4 border border-stone-900 rounded-2xl">
-                      <div className="flex flex-col gap-2 items-center justify-center p-4 rounded-xl bg-stone-900/40 border border-stone-900/60 min-h-[90px]">
-                        <span className="text-[8px] text-stone-500 uppercase tracking-widest font-extrabold mb-1">
-                          Dynamic Button
-                        </span>
-                        <button
-                          type="button"
-                          onClick={(e) => e.preventDefault()}
-                          className="primary_button py-2.5 px-6 text-[9.5px] rounded-xl cursor-default w-full"
-                        >
-                          Primary Action
-                        </button>
-                      </div>
-
-                      <div className="flex flex-col gap-2 items-center justify-center p-4 rounded-xl bg-stone-900/40 border border-stone-900/60 min-h-[90px]">
-                        <span className="text-[8px] text-stone-500 uppercase tracking-widest font-extrabold mb-1">
-                          Accent Chips
-                        </span>
-                        <div className="flex items-center gap-2">
-                          <span className="tag-primary text-[9px] py-1 px-3.5">Primary tag</span>
-                          <span className="tag-outline text-[9px] py-1 px-3.5">Outline</span>
-                        </div>
-                      </div>
-
-                      <div className="flex flex-col gap-2 items-center justify-center p-4 rounded-xl bg-stone-900/40 border border-stone-900/60 min-h-[90px] col-span-1 sm:col-span-2">
-                        <span className="text-[8px] text-stone-500 uppercase tracking-widest font-extrabold mb-1">
-                          Typography Heading
-                        </span>
-                        <span className="neon-text text-base font-black tracking-tight select-none uppercase">
-                          Ganapathy Natarajan
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <ThemeTab
+                  pickedColor={pickedColor}
+                  handleColorChange={handleColorChange}
+                  localThemeMode={localThemeMode}
+                  handleThemeModeChange={handleThemeModeChange}
+                  localAbout={localAbout}
+                />
               )}
 
-              {/* ══════════════════ TAB 2: HOME SECTION ══════════════════ */}
               {activeTab === "home" && (
-                <div className="space-y-6 animate-fadeIn">
-                  {/* Typewriter list */}
-                  <div className="flex flex-col gap-2">
-                    <div className="flex items-center gap-2 mb-1">
-                      <div className="w-1 h-4 rounded-full" style={{ backgroundColor: pickedColor }} />
-                      <span className="text-[11px] font-extrabold uppercase tracking-wider text-white">Typewriter Roles</span>
-                      <span className="text-[9px] text-stone-500 font-mono ml-auto">Homepage titles cycled in the hero</span>
-                    </div>
-                    <div className="flex flex-col gap-2.5">
-                      {[0, 1, 2, 3, 4].map((idx) => (
-                        <div key={idx} className="flex items-center gap-3 bg-stone-950 border border-stone-900 rounded-xl px-4 py-2">
-                          <span className="font-mono text-[9px] font-extrabold text-stone-500">#{idx + 1}</span>
-                          <input
-                            type="text"
-                            value={localRoles[idx] || ""}
-                            onChange={(e) => {
-                              const copy = [...localRoles];
-                              copy[idx] = e.target.value;
-                              setLocalRoles(copy);
-                            }}
-                            placeholder={`Role Title #${idx + 1}`}
-                            className="flex-1 bg-transparent border-0 outline-none text-xs text-white font-semibold"
-                          />
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Subheadline description */}
-                  <div className="flex flex-col gap-2">
-                    <div className="flex items-center gap-2 mb-1">
-                      <div className="w-1 h-4 rounded-full" style={{ backgroundColor: pickedColor }} />
-                      <span className="text-[11px] font-extrabold uppercase tracking-wider text-white">Sub-Headline Description</span>
-                      <span className="text-[9px] font-mono font-bold text-stone-500 ml-auto">
-                        {localDescription.length} / 280
-                      </span>
-                    </div>
-                    <textarea
-                      value={localDescription}
-                      onChange={(e) => setLocalDescription(e.target.value.slice(0, 280))}
-                      rows={3}
-                      placeholder="Input the introductory tagline text on your homepage."
-                      className="w-full bg-stone-950 border border-stone-900 focus:border-primary outline-none text-xs rounded-xl px-4 py-3 text-white font-medium leading-relaxed resize-none"
-                    />
-                  </div>
-                </div>
+                <HomeTab
+                  localAbout={localAbout}
+                  updateAbout={updateAbout}
+                  localRoles={localRoles}
+                  setLocalRoles={setLocalRoles}
+                  localDescription={localDescription}
+                  setLocalDescription={setLocalDescription}
+                  localCenterSvg={localCenterSvg}
+                  setLocalCenterSvg={setLocalCenterSvg}
+                  svgColorInjected={svgColorInjected}
+                  setSvgColorInjected={setSvgColorInjected}
+                  localOrbitingStacks={localOrbitingStacks}
+                  setLocalOrbitingStacks={setLocalOrbitingStacks}
+                  pickedColor={pickedColor}
+                  renderSectionVisibilityBanner={renderSectionVisibilityBanner}
+                  localSectionTitles={localSectionTitles}
+                  setLocalSectionTitles={setLocalSectionTitles}
+                />
               )}
 
-              {/* ══════════════════ TAB 3: ABOUT SECTION ══════════════════ */}
               {activeTab === "about" && (
-                <div className="space-y-8 animate-fadeIn">
-
-                  {/* ── Sub-section: Profile Identity ── */}
-                  <div className="flex flex-col gap-3">
-                    <div className="flex items-center gap-2">
-                      <div className="w-1 h-4 rounded-full" style={{ backgroundColor: pickedColor }} />
-                      <span className="text-[11px] font-extrabold uppercase tracking-wider text-white">Profile Identity</span>
-                    </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      <div className="flex flex-col gap-1.5">
-                        <label className="text-[9px] font-bold uppercase tracking-wider text-stone-500">Display Name</label>
-                        <input
-                          type="text"
-                          value={localAbout.name || ""}
-                          onChange={(e) => updateAbout("name", e.target.value)}
-                          placeholder="Your Name"
-                          className="bg-stone-950 border border-stone-900 focus:border-primary outline-none text-xs rounded-xl px-4 py-2.5 text-white font-semibold"
-                        />
-                      </div>
-                      <div className="flex flex-col gap-1.5">
-                        <label className="text-[9px] font-bold uppercase tracking-wider text-stone-500">Card Sub-Title</label>
-                        <input
-                          type="text"
-                          value={localAbout.title || ""}
-                          onChange={(e) => updateAbout("title", e.target.value)}
-                          placeholder="Your Job Title"
-                          className="bg-stone-950 border border-stone-900 focus:border-primary outline-none text-xs rounded-xl px-4 py-2.5 text-white font-semibold"
-                        />
-                      </div>
-                    </div>
-                    <div className="flex flex-col gap-1.5">
-                      <label className="text-[9px] font-bold uppercase tracking-wider text-stone-500">Resume File Name</label>
-                      <input
-                        type="text"
-                        value={localAbout.resumeFileName || ""}
-                        onChange={(e) => updateAbout("resumeFileName", e.target.value)}
-                        placeholder="Your_Name_Resume.pdf"
-                        className="bg-stone-950 border border-stone-900 focus:border-primary outline-none text-xs rounded-xl px-4 py-2.5 text-white font-semibold"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Divider */}
-                  <div className="border-t border-stone-900" />
-
-                  {/* ── Sub-section: Typewriter Titles ── */}
-                  <div className="flex flex-col gap-3">
-                    <div className="flex items-center gap-2">
-                      <div className="w-1 h-4 rounded-full" style={{ backgroundColor: pickedColor }} />
-                      <span className="text-[11px] font-extrabold uppercase tracking-wider text-white">Typewriter Titles</span>
-                      <span className="text-[9px] text-stone-500 font-mono ml-auto">Animated on About bio heading</span>
-                    </div>
-                    <div className="flex flex-col gap-2">
-                      {[0, 1, 2].map((idx) => (
-                        <div key={idx} className="flex items-center gap-3 bg-stone-950 border border-stone-900 rounded-xl px-4 py-2">
-                          <span className="font-mono text-[9px] font-extrabold text-stone-500">#{idx + 1}</span>
-                          <input
-                            type="text"
-                            value={(localAbout.professionalTitles || [])[idx] || ""}
-                            onChange={(e) => updateAboutTitle(idx, e.target.value)}
-                            placeholder={`Title #${idx + 1}`}
-                            className="flex-1 bg-transparent border-0 outline-none text-xs text-white font-semibold"
-                          />
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Divider */}
-                  <div className="border-t border-stone-900" />
-
-                  {/* ── Sub-section: Biography ── */}
-                  <div className="flex flex-col gap-3">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <div className="w-1 h-4 rounded-full" style={{ backgroundColor: pickedColor }} />
-                        <span className="text-[11px] font-extrabold uppercase tracking-wider text-white">Biography Paragraph</span>
-                      </div>
-                      <span className="text-[9px] font-mono font-bold text-stone-500">
-                        {(localAbout.bio || "").length} chars
-                      </span>
-                    </div>
-                    <textarea
-                      value={localAbout.bio || ""}
-                      onChange={(e) => updateAbout("bio", e.target.value)}
-                      rows={4}
-                      placeholder="Write your professional biography here..."
-                      className="w-full bg-stone-950 border border-stone-900 focus:border-primary outline-none text-xs rounded-xl px-4 py-3 text-white font-medium leading-relaxed resize-none"
-                    />
-                  </div>
-
-                  {/* Divider */}
-                  <div className="border-t border-stone-900" />
-
-                  {/* ── Sub-section: Stat Cards ── */}
-                  <div className="flex flex-col gap-3">
-                    <div className="flex items-center gap-2">
-                      <div className="w-1 h-4 rounded-full" style={{ backgroundColor: pickedColor }} />
-                      <span className="text-[11px] font-extrabold uppercase tracking-wider text-white">Achievement Stats</span>
-                      <span className="text-[9px] text-stone-500 font-mono ml-auto">3 metric cards on About</span>
-                    </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                      {[0, 1, 2].map((idx) => {
-                        const stat = (localAbout.stats || [])[idx] || { value: "", label: "" };
-                        return (
-                          <div key={idx} className="flex flex-col gap-2 bg-stone-950 border border-stone-900 rounded-2xl p-3">
-                            <span className="text-[8px] font-extrabold font-mono text-stone-500">STAT #{idx + 1}</span>
-                            <input
-                              type="text"
-                              value={stat.value}
-                              onChange={(e) => updateAboutStat(idx, "value", e.target.value)}
-                              placeholder="e.g. 6+"
-                              className="bg-stone-900/50 border border-stone-800 focus:border-primary outline-none text-sm font-black rounded-lg px-3 py-1.5 text-white text-center"
-                              style={{ color: pickedColor }}
-                            />
-                            <input
-                              type="text"
-                              value={stat.label}
-                              onChange={(e) => updateAboutStat(idx, "label", e.target.value)}
-                              placeholder="e.g. Years Exp"
-                              className="bg-stone-900/50 border border-stone-800 focus:border-primary outline-none text-[9px] font-bold rounded-lg px-3 py-1.5 text-stone-400 uppercase tracking-wider text-center"
-                            />
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  {/* Divider */}
-                  <div className="border-t border-stone-900" />
-
-                  {/* ── Sub-section: Spec / Highlights Table ── */}
-                  <div className="flex flex-col gap-3">
-                    <div className="flex items-center gap-2">
-                      <div className="w-1 h-4 rounded-full" style={{ backgroundColor: pickedColor }} />
-                      <span className="text-[11px] font-extrabold uppercase tracking-wider text-white">Highlight Specs</span>
-                      <span className="text-[9px] text-stone-500 font-mono ml-auto">Key-value rows on profile card</span>
-                    </div>
-                    <div className="flex flex-col gap-2">
-                      {[0, 1, 2].map((idx) => {
-                        const h = (localAbout.highlights || [])[idx] || { label: "", value: "" };
-                        return (
-                          <div key={idx} className="flex items-center gap-3 bg-stone-950 border border-stone-900 rounded-xl px-3 py-2">
-                            <span className="font-mono text-[8px] font-extrabold text-stone-600">#{idx + 1}</span>
-                            <input
-                              type="text"
-                              value={h.label}
-                              onChange={(e) => updateAboutHighlight(idx, "label", e.target.value)}
-                              placeholder="Label (e.g. Cloud)"
-                              className="w-32 bg-transparent border-0 border-r border-stone-800 outline-none text-[10px] text-stone-400 font-bold uppercase tracking-wider pr-3"
-                            />
-                            <input
-                              type="text"
-                              value={h.value}
-                              onChange={(e) => updateAboutHighlight(idx, "value", e.target.value)}
-                              placeholder="Value (e.g. AWS · Serverless)"
-                              className="flex-1 bg-transparent border-0 outline-none text-xs text-white font-semibold"
-                            />
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  {/* Divider */}
-                  <div className="border-t border-stone-900" />
-
-                  {/* ── Sub-section: Social Links ── */}
-                  <div className="flex flex-col gap-3">
-                    <div className="flex items-center gap-2">
-                      <div className="w-1 h-4 rounded-full" style={{ backgroundColor: pickedColor }} />
-                      <span className="text-[11px] font-extrabold uppercase tracking-wider text-white">Social Links</span>
-                    </div>
-                    <div className="flex flex-col gap-3">
-                      {(localAbout.socialLinks || []).map((link, idx) => (
-                        <div key={idx} className="flex flex-col gap-2 bg-stone-950 border border-stone-900 rounded-2xl p-3">
-                          <div className="flex items-center justify-between">
-                            <span className="text-[8px] font-extrabold font-mono text-stone-500">LINK #{idx + 1}</span>
-                            <select
-                              value={link.icon || "FaLinkedinIn"}
-                              onChange={(e) => updateAboutSocialLink(idx, "icon", e.target.value)}
-                              className="bg-stone-900 border border-stone-800 outline-none text-[9px] rounded-lg px-2 py-1 text-stone-300 cursor-pointer"
-                            >
-                              <option value="FaLinkedinIn">LinkedIn</option>
-                              <option value="FaGithub">GitHub</option>
-                            </select>
-                          </div>
-                          <input
-                            type="text"
-                            value={link.label || ""}
-                            onChange={(e) => updateAboutSocialLink(idx, "label", e.target.value)}
-                            placeholder="Label (e.g. LinkedIn)"
-                            className="bg-stone-900/50 border border-stone-800 focus:border-primary outline-none text-xs rounded-lg px-3 py-2 text-white font-semibold"
-                          />
-                          <input
-                            type="url"
-                            value={link.href || ""}
-                            onChange={(e) => updateAboutSocialLink(idx, "href", e.target.value)}
-                            placeholder="https://..."
-                            className="bg-stone-900/50 border border-stone-800 focus:border-primary outline-none text-xs rounded-lg px-3 py-2 text-stone-300 font-mono"
-                          />
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                </div>
+                <AboutTab
+                  localAbout={localAbout}
+                  updateAbout={updateAbout}
+                  updateAboutStat={updateAboutStat}
+                  updateAboutHighlight={updateAboutHighlight}
+                  updateAboutSocialLink={updateAboutSocialLink}
+                  updateAboutTitle={updateAboutTitle}
+                  pickedColor={pickedColor}
+                  renderSectionVisibilityBanner={renderSectionVisibilityBanner}
+                  localSectionTitles={localSectionTitles}
+                  setLocalSectionTitles={setLocalSectionTitles}
+                />
               )}
 
-              {/* ══════════════════ TAB 4: SVG EDITOR ══════════════════ */}
-              {activeTab === "svg" && (
-                <div className="space-y-6 animate-fadeIn">
-                  {/* SVG Codearea */}
-                  <div className="flex flex-col gap-2">
-                    <div className="flex items-center justify-between">
-                      <label className="text-[10px] font-bold uppercase tracking-wider text-stone-400">
-                        Raw SVG Code String
-                      </label>
-                      {svgColorInjected && (
-                        <motion.span
-                          initial={{ opacity: 0, scale: 0.8 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          exit={{ opacity: 0 }}
-                          className="text-[8px] font-bold uppercase tracking-wider px-2 py-1 rounded-lg"
-                          style={{ backgroundColor: `${pickedColor}20`, color: pickedColor }}
-                        >
-                          ✓ Colors auto-themed
-                        </motion.span>
-                      )}
-                    </div>
-                    <textarea
-                      value={localCenterSvg}
-                      onChange={(e) => {
-                        const raw = e.target.value;
-                        setLocalCenterSvg(raw);
-                        // Auto-inject on change if it looks like SVG
-                        if (looksLikeSvg(raw)) {
-                          const injected = injectPrimaryColor(raw);
-                          if (injected !== raw) {
-                            setSvgColorInjected(true);
-                          } else {
-                            setSvgColorInjected(false);
-                          }
-                        } else {
-                          setSvgColorInjected(false);
-                        }
-                      }}
-                      onBlur={(e) => {
-                        // On blur, actually apply the injection to the textarea content
-                        const raw = e.target.value;
-                        if (looksLikeSvg(raw)) {
-                          const injected = injectPrimaryColor(raw);
-                          if (injected !== raw) {
-                            setLocalCenterSvg(injected);
-                            setSvgColorInjected(true);
-                          }
-                        }
-                      }}
-                      rows={6}
-                      placeholder="Paste raw SVG string here (e.g. <svg>...</svg>)"
-                      className="w-full bg-stone-950 border border-stone-900 focus:border-primary outline-none text-xs font-mono rounded-xl px-4 py-3 text-stone-300 resize-none whitespace-pre"
-                    />
-                    <div className="flex items-start gap-2 text-stone-500 leading-normal">
-                      <FiInfo className="text-xs mt-0.5 shrink-0" style={{ color: pickedColor }} />
-                      <span className="text-[8px] font-semibold">
-                        Paste any SVG — fill and stroke colors will be <strong style={{ color: pickedColor }}>automatically replaced</strong> with your accent color when you click away or save.
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* SVG Live Preview */}
-                  <div className="flex flex-col gap-2">
-                    <label className="text-[10px] font-bold uppercase tracking-wider text-stone-400">
-                      Code Validation Live Preview
-                    </label>
-                    <div className="w-full min-h-[140px] bg-stone-950 border border-stone-900 rounded-2xl flex items-center justify-center relative p-6">
-                      {localCenterSvg ? (
-                        <div
-                          className="w-[100px] h-[100px] object-contain flex items-center justify-center relative z-10"
-                          style={{ filter: `drop-shadow(0 0 10px ${pickedColor}40)` }}
-                          dangerouslySetInnerHTML={{ __html: localCenterSvg }}
-                        />
-                      ) : (
-                        <div className="text-center space-y-2 select-none pointer-events-none">
-                          <FiCode className="text-2xl text-stone-600 mx-auto" />
-                          <span className="text-[9px] text-stone-500 uppercase font-extrabold tracking-wider block">
-                            Laptop Fallback Active
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
+              {activeTab === "services" && (
+                <ServicesTab
+                  localServicesSubtitle={localServicesSubtitle}
+                  setLocalServicesSubtitle={setLocalServicesSubtitle}
+                  localServicesData={localServicesData}
+                  updateService={updateService}
+                  addService={addService}
+                  deleteService={deleteService}
+                  moveService={moveService}
+                  pickedColor={pickedColor}
+                  renderSectionVisibilityBanner={renderSectionVisibilityBanner}
+                  localSectionTitles={localSectionTitles}
+                  setLocalSectionTitles={setLocalSectionTitles}
+                />
               )}
 
-              {/* ══════════════════ TAB 5: ORBITING STACKS ══════════════════ */}
-              {activeTab === "orbit" && (
-                <div className="space-y-6 animate-fadeIn">
-                  <div className="flex items-start gap-2.5 text-stone-500 leading-normal mb-1">
-                    <FiLayers className="text-xs mt-0.5 shrink-0" style={{ color: pickedColor }} />
-                    <span className="text-[9.5px] font-semibold">
-                      Configure the 6 circular orbital chips displayed on the main home landing screen layout.
-                    </span>
-                  </div>
-
-                  {/* Slots Grid */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {[0, 1, 2, 3, 4, 5].map((idx) => {
-                      const stack = localOrbitingStacks[idx] || { label: "", type: "primary" };
-                      return (
-                        <div
-                          key={idx}
-                          className="p-4 bg-stone-950 border border-stone-900 rounded-2xl flex flex-col gap-3 relative group transition-all duration-300 hover:border-stone-800"
-                        >
-                          <div className="flex items-center justify-between">
-                            <span className="text-[9px] font-extrabold font-mono text-stone-500">
-                              ORBITAL SLOT #{idx + 1}
-                            </span>
-                            <span
-                              className={`text-[8px] font-bold uppercase px-2 py-0.5 rounded ${
-                                stack.type === "outline" ? "bg-stone-900 text-stone-400" : "bg-primary/10 text-primary"
-                              }`}
-                              style={stack.type !== "outline" ? { color: pickedColor, backgroundColor: `${pickedColor}15` } : {}}
-                            >
-                              {stack.type === "outline" ? "Outline" : "Accent Glow"}
-                            </span>
-                          </div>
-
-                          <div className="flex flex-col gap-1.5">
-                            <input
-                              type="text"
-                              value={stack.label}
-                              onChange={(e) => {
-                                const copy = [...localOrbitingStacks];
-                                if (!copy[idx]) copy[idx] = { label: "", type: "primary" };
-                                copy[idx] = { ...copy[idx], label: e.target.value };
-                                setLocalOrbitingStacks(copy);
-                              }}
-                              placeholder="Tech Label (e.g. React)"
-                              className="w-full bg-stone-900/50 border border-stone-800 focus:border-primary outline-none text-xs rounded-xl px-3 py-2 text-white font-semibold"
-                            />
-                            <select
-                              value={stack.type}
-                              onChange={(e) => {
-                                const copy = [...localOrbitingStacks];
-                                if (!copy[idx]) copy[idx] = { label: "", type: "primary" };
-                                copy[idx] = { ...copy[idx], type: e.target.value };
-                                setLocalOrbitingStacks(copy);
-                              }}
-                              className="w-full bg-stone-900/50 border border-stone-800 focus:border-primary outline-none text-xs rounded-xl px-3.5 py-2 text-white font-semibold cursor-pointer"
-                            >
-                              <option value="primary">Accent Glow Color</option>
-                              <option value="outline">Muted Border Outline</option>
-                            </select>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
+              {activeTab === "skills" && (
+                <SkillsTab
+                  localSkills={localSkills}
+                  localSkillCategories={localSkillCategories}
+                  activeSkillCategoryTab={activeSkillCategoryTab}
+                  setActiveSkillCategoryTab={setActiveSkillCategoryTab}
+                  newSkillCategoryName={newSkillCategoryName}
+                  setNewSkillCategoryName={setNewSkillCategoryName}
+                  newSkillName={newSkillName}
+                  setNewSkillName={setNewSkillName}
+                  newSkillIcon={newSkillIcon}
+                  setNewSkillIcon={setNewSkillIcon}
+                  addSkillCategory={addSkillCategory}
+                  deleteSkillCategory={deleteSkillCategory}
+                  renameSkillCategory={renameSkillCategory}
+                  updateCategoryBullet={updateCategoryBullet}
+                  addCategoryBullet={addCategoryBullet}
+                  deleteCategoryBullet={deleteCategoryBullet}
+                  moveCategoryBullet={moveCategoryBullet}
+                  toggleSkillInCategory={toggleSkillInCategory}
+                  addCustomSkill={addCustomSkill}
+                  deleteCustomSkill={deleteCustomSkill}
+                  pickedColor={pickedColor}
+                  renderSectionVisibilityBanner={renderSectionVisibilityBanner}
+                  localSectionTitles={localSectionTitles}
+                  setLocalSectionTitles={setLocalSectionTitles}
+                />
               )}
+
+              {activeTab === "projects" && (
+                <ProjectsTab
+                  localProjects={localProjects}
+                  activeProjectIdx={activeProjectIdx}
+                  setActiveProjectIdx={setActiveProjectIdx}
+                  newProjectStack={newProjectStack}
+                  setNewProjectStack={setNewProjectStack}
+                  newProjectResponsibility={newProjectResponsibility}
+                  setNewProjectResponsibility={setNewProjectResponsibility}
+                  addProject={addProject}
+                  deleteProject={deleteProject}
+                  moveProject={moveProject}
+                  updateActiveProjectField={updateActiveProjectField}
+                  addStackToActiveProject={addStackToActiveProject}
+                  deleteStackFromActiveProject={deleteStackFromActiveProject}
+                  addResponsibilityToActiveProject={addResponsibilityToActiveProject}
+                  updateResponsibilityInActiveProject={updateResponsibilityInActiveProject}
+                  deleteResponsibilityFromActiveProject={deleteResponsibilityFromActiveProject}
+                  moveResponsibilityInActiveProject={moveResponsibilityInActiveProject}
+                  pickedColor={pickedColor}
+                  renderSectionVisibilityBanner={renderSectionVisibilityBanner}
+                  localSectionTitles={localSectionTitles}
+                  setLocalSectionTitles={setLocalSectionTitles}
+                />
+              )}
+
+              {activeTab === "certifications" && (
+                <CertificationsTab
+                  localCertifications={localCertifications}
+                  activeCertIdx={activeCertIdx}
+                  setActiveCertIdx={setActiveCertIdx}
+                  addCert={addCert}
+                  deleteCert={deleteCert}
+                  moveCert={moveCert}
+                  updateActiveCertField={updateActiveCertField}
+                  pickedColor={pickedColor}
+                  renderSectionVisibilityBanner={renderSectionVisibilityBanner}
+                  localSectionTitles={localSectionTitles}
+                  setLocalSectionTitles={setLocalSectionTitles}
+                />
+              )}
+
+              {activeTab === "journey" && (
+                <JourneyTab
+                  pickedColor={pickedColor}
+                  renderSectionVisibilityBanner={renderSectionVisibilityBanner}
+                  localSectionTitles={localSectionTitles}
+                  setLocalSectionTitles={setLocalSectionTitles}
+                  localSummaryStats={localSummaryStats}
+                  updateSummaryStat={updateSummaryStat}
+                  localTimelineData={localTimelineData}
+                  activeTimelineIdx={activeTimelineIdx}
+                  setActiveTimelineIdx={setActiveTimelineIdx}
+                  addTimelineItem={addTimelineItem}
+                  deleteTimelineItem={deleteTimelineItem}
+                  moveTimelineItem={moveTimelineItem}
+                  updateActiveTimelineField={updateActiveTimelineField}
+                />
+              )}
+
+              {activeTab === "contact" && (
+                <ContactTab
+                  pickedColor={pickedColor}
+                  renderSectionVisibilityBanner={renderSectionVisibilityBanner}
+                  localSectionTitles={localSectionTitles}
+                  setLocalSectionTitles={setLocalSectionTitles}
+                  localContactInfo={localContactInfo}
+                  updateContactInfoField={updateContactInfoField}
+                />
+              )}
+
+              {activeTab === "seo" && (
+                <SeoTab
+                  pickedColor={pickedColor}
+                  tabs={tabs}
+                  localPageTitles={localPageTitles}
+                  setLocalPageTitles={setLocalPageTitles}
+                  localPageDescriptions={localPageDescriptions}
+                  setLocalPageDescriptions={setLocalPageDescriptions}
+                />
+              )}
+              </Suspense>
             </div>
 
             {/* Bottom Actions Row */}
-            <div className="flex items-center gap-3 border-t border-stone-900 pt-5 mt-3 select-none">
+            <div className="flex items-center gap-3 border-t border-stone-900/60 px-6 sm:px-8 py-5 select-none bg-stone-950/20 shrink-0">
               <button
                 type="button"
                 onClick={resetToDefault}
@@ -923,19 +1332,44 @@ export default function Admin({
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 10 }}
-            className="fixed bottom-6 right-6 p-4 rounded-2xl border flex items-center gap-2.5 text-xs font-bold shadow-2xl backdrop-blur-md z-50 select-none max-w-sm"
+            className="fixed bottom-6 right-6 p-4 rounded-2xl border flex items-center gap-2.5 text-xs font-bold shadow-2xl backdrop-blur-md z-50 select-none"
             style={{
-              backgroundColor: saveStatus === "success" ? "rgba(16, 185, 129, 0.1)" : "rgba(239, 68, 68, 0.1)",
-              borderColor: saveStatus === "success" ? "rgba(16, 185, 129, 0.3)" : "rgba(239, 68, 68, 0.3)",
-              color: saveStatus === "success" ? "#10B981" : "#EF4444",
+              backgroundColor:
+                saveStatus === "success" ? "rgba(16, 185, 129, 0.1)"
+                : saveStatus === "prod" ? "rgba(99, 102, 241, 0.12)"
+                : "rgba(239, 68, 68, 0.1)",
+              borderColor:
+                saveStatus === "success" ? "rgba(16, 185, 129, 0.3)"
+                : saveStatus === "prod" ? "rgba(99, 102, 241, 0.35)"
+                : "rgba(239, 68, 68, 0.3)",
+              color:
+                saveStatus === "success" ? "#10B981"
+                : saveStatus === "prod" ? "#a5b4fc"
+                : "#EF4444",
+              maxWidth: "360px",
             }}
           >
-            {saveStatus === "success" ? (
+            {saveStatus === "success" && (
               <>
                 <FiCheck className="text-base shrink-0" />
-                <span>Configuration saved successfully to db.json!</span>
+                <span>Configuration saved to db.json successfully!</span>
               </>
-            ) : (
+            )}
+            {saveStatus === "prod" && (
+              <div className="flex flex-col gap-1.5">
+                <div className="flex items-center gap-2">
+                  <FiDownload className="text-base shrink-0" />
+                  <span className="font-black">db.json downloaded!</span>
+                </div>
+                <span className="text-[10px] leading-normal font-medium opacity-80">
+                  UI updated. To make changes permanent for all visitors, commit the downloaded
+                  <strong className="font-black"> db.json</strong> to your repo root{" "}
+                  <code className="font-mono bg-white/10 px-1 py-0.5 rounded">public/db.json</code>{" "}
+                  and redeploy.
+                </span>
+              </div>
+            )}
+            {saveStatus === "error" && (
               <>
                 <span className="text-base shrink-0">!</span>
                 <span>Failed to save configurations. Please verify inputs.</span>

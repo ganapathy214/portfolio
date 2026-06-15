@@ -1,21 +1,23 @@
 import "./App.css";
 
 import { useEffect, useRef, useState } from "react";
+import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { HiArrowUp } from "react-icons/hi2";
 import Particles from "./common/Particles";
 import Sidebar from "./components/Sidebar";
-import { sidebarItems, PAGE_DESCRIPTIONS, PAGE_TITLES } from "./constants";
-import About from "./sections/About";
-import Services from "./sections/Services";
-import Certification from "./sections/Certification";
-import Contact from "./sections/Contact";
+import { sidebarItems } from "./constants";
 import Home from "./sections/Home";
-import Journey from "./sections/Journey";
-import Projects from "./sections/Projects";
-import Skills from "./sections/Skills";
 
-export default function Portfolio({ primaryColor, roles, description, centerSvg, orbitingStacks, about }) {
+const About = React.lazy(() => import("./sections/About"));
+const Services = React.lazy(() => import("./sections/Services"));
+const Skills = React.lazy(() => import("./sections/Skills"));
+const Projects = React.lazy(() => import("./sections/Projects"));
+const Certification = React.lazy(() => import("./sections/Certification"));
+const Journey = React.lazy(() => import("./sections/Journey"));
+const Contact = React.lazy(() => import("./sections/Contact"));
+
+export default function Portfolio({ primaryColor, roles, description, centerSvg, orbitingStacks, about, servicesSubtitle, servicesData, skills, skillCategories, projects, certifications, timelineData, summaryStats, contactInfo, pageTitles, pageDescriptions, sectionVisibility, sectionTitles }) {
   const [activeSection, setActiveSection] = useState("Home");
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [isScrollHovered, setIsScrollHovered] = useState(false);
@@ -23,24 +25,32 @@ export default function Portfolio({ primaryColor, roles, description, centerSvg,
   const beamFillRef = useRef(null);
   const activeSectionRef = useRef("Home");
   const isScrollingRef = useRef(false);
-  const touchStartYRef = useRef(0);
+
+  const sectionsList = ["About", "Services", "Skills", "Projects", "Certification", "Journey", "Contact"];
+  const visibleSections = sectionsList.filter(id => !sectionVisibility || sectionVisibility[id] !== false);
+  const getSectionNum = (id) => {
+    const idx = visibleSections.indexOf(id);
+    return idx !== -1 ? String(idx + 1).padStart(2, "0") : "";
+  };
 
   useEffect(() => {
     activeSectionRef.current = activeSection;
   }, [activeSection]);
 
   useEffect(() => {
-    if (PAGE_TITLES[activeSection]) {
-      document.title = PAGE_TITLES[activeSection];
+    const titles = pageTitles || {};
+    const descriptions = pageDescriptions || {};
+    if (titles[activeSection]) {
+      document.title = titles[activeSection];
     }
     
-    if (PAGE_DESCRIPTIONS[activeSection]) {
+    if (descriptions[activeSection]) {
       const metaDesc = document.querySelector('meta[name="description"]');
       if (metaDesc) {
-        metaDesc.setAttribute("content", PAGE_DESCRIPTIONS[activeSection]);
+        metaDesc.setAttribute("content", descriptions[activeSection]);
       }
     }
-  }, [activeSection]);
+  }, [activeSection, pageTitles, pageDescriptions]);
 
   const transitionToSection = (item) => {
     if (!mainRef.current) return;
@@ -85,7 +95,7 @@ export default function Portfolio({ primaryColor, roles, description, centerSvg,
     if (!mainEl) return;
 
     // Cache the section elements on mount to avoid document.getElementById queries on scroll
-    const cachedSections = sidebarItems.map((item) => {
+    const cachedSections = sidebarItems.filter(item => !sectionVisibility || sectionVisibility[item.name] !== false).map((item) => {
       const id = item.href.replace("#", "");
       const el = document.getElementById(id);
       return { name: item.name, href: item.href, el };
@@ -146,7 +156,7 @@ export default function Portfolio({ primaryColor, roles, description, centerSvg,
       const hash = window.location.hash;
       if (hash) {
         const targetItem = sidebarItems.find(item => item.href === hash);
-        if (targetItem) {
+        if (targetItem && (!sectionVisibility || sectionVisibility[targetItem.name] !== false)) {
           const targetId = hash.replace("#", "");
           const targetEl = document.getElementById(targetId);
           if (targetEl) {
@@ -178,7 +188,7 @@ export default function Portfolio({ primaryColor, roles, description, centerSvg,
       window.removeEventListener("scroll", handleScroll);
       clearTimeout(initTimeout);
     };
-  }, []);
+  }, [sectionVisibility]);
 
   const handleBeamClick = (e) => {
     const beam = e.currentTarget;
@@ -197,12 +207,9 @@ export default function Portfolio({ primaryColor, roles, description, centerSvg,
   };
 
   return (
-    <div className="relative min-h-screen flex flex-col md:flex-row bg-[#000000] overflow-hidden text-[#FFFFFF]">
+    <div className="relative z-0 min-h-screen flex flex-col md:flex-row bg-[var(--bg-main)] overflow-hidden text-[var(--text-white-or-dark)]">
       <div
-        className="fixed inset-0 w-full h-full -z-10"
-        style={{
-          backgroundColor: "#000000",
-        }}
+        className="fixed inset-0 w-full h-full -z-10 bg-transparent"
       >
         <Particles
           particleColors={[primaryColor || "#00D5D5", "#FFFFFF"]}
@@ -250,6 +257,7 @@ export default function Portfolio({ primaryColor, roles, description, centerSvg,
         <Sidebar
           activeSection={activeSection}
           onItemClick={handleSidebarClick}
+          sectionVisibility={sectionVisibility}
         />
       </motion.div>
 
@@ -277,19 +285,43 @@ export default function Portfolio({ primaryColor, roles, description, centerSvg,
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8 }}
         >
-          <Home
-            roles={roles}
-            description={description}
-            centerSvg={centerSvg}
-            orbitingStacks={orbitingStacks}
-          />
-          <About about={about} />
-          <Services />
-          <Skills />
-          <Projects />
-          <Certification />
-          <Journey />
-          <Contact />
+          {(!sectionVisibility || sectionVisibility.Home !== false) && (
+            <Home
+              name={about?.name}
+              roles={roles}
+              description={description}
+              centerSvg={centerSvg}
+              orbitingStacks={orbitingStacks}
+              statusBadgeText={about?.statusBadgeText}
+            />
+          )}
+          <React.Suspense fallback={
+            <div className="w-full h-[50vh] flex items-center justify-center">
+              <div
+                className="w-10 h-10 rounded-full border-4 border-t-transparent animate-spin"
+                style={{
+                  borderColor: "var(--primary) transparent var(--primary) transparent",
+                  filter: "drop-shadow(0 0 6px var(--primary))"
+                }}
+              />
+            </div>
+          }>
+            {(!sectionVisibility || sectionVisibility.About !== false) && <About about={about} title={sectionTitles?.About} sectionNum={getSectionNum("About")} />}
+            {(!sectionVisibility || sectionVisibility.Services !== false) && (
+              <Services servicesSubtitle={servicesSubtitle} servicesData={servicesData} title={sectionTitles?.Services} sectionNum={getSectionNum("Services")} />
+            )}
+            {(!sectionVisibility || sectionVisibility.Skills !== false) && (
+              <Skills skills={skills} skillCategories={skillCategories} title={sectionTitles?.Skills} sectionNum={getSectionNum("Skills")} />
+            )}
+            {(!sectionVisibility || sectionVisibility.Projects !== false) && <Projects projects={projects} title={sectionTitles?.Projects} sectionNum={getSectionNum("Projects")} />}
+            {(!sectionVisibility || sectionVisibility.Certification !== false) && (
+              <Certification certifications={certifications} title={sectionTitles?.Certification} sectionNum={getSectionNum("Certification")} />
+            )}
+            {(!sectionVisibility || sectionVisibility.Journey !== false) && (
+              <Journey timelineData={timelineData} summaryStats={summaryStats} title={sectionTitles?.Journey} sectionNum={getSectionNum("Journey")} />
+            )}
+            {(!sectionVisibility || sectionVisibility.Contact !== false) && <Contact contactInfo={contactInfo} title={sectionTitles?.Contact} sectionNum={getSectionNum("Contact")} />}
+          </React.Suspense>
         </motion.div>
       </main>
 

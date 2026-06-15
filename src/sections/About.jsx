@@ -13,31 +13,7 @@ const ICONS = {
   FaGithub,
 };
 
-const DEFAULT_ABOUT = {
-  name: "Ganapathy N",
-  title: "Senior Frontend & Full Stack Developer",
-  bio: "Senior Frontend & Full Stack Developer with 6+ years of experience specializing in React.js, Next.js, React Native, TypeScript, and modern JavaScript ecosystems. I design and build high-performance, accessible, and scalable enterprise web and mobile applications.",
-  professionalTitles: [
-    "Senior Frontend Developer",
-    "Senior Full Stack Developer",
-    "React & Next.js Specialist",
-  ],
-  stats: [
-    { value: "6+", label: "Years Exp" },
-    { value: "10+", label: "Certificates" },
-    { value: "12+", label: "Projects" },
-  ],
-  highlights: [
-    { label: "Specialization", value: "React · Next.js · React Native" },
-    { label: "Cloud", value: "AWS · Serverless · DevOps" },
-    { label: "Location", value: "India · Remote Ready" },
-  ],
-  socialLinks: [
-    { href: "https://www.linkedin.com/in/gananata/", icon: "FaLinkedinIn", label: "LinkedIn" },
-    { href: "https://github.com/ganapathy214", icon: "FaGithub", label: "Github" },
-  ],
-  resumeFileName: "Ganapathy_N_Resume.pdf",
-};
+import { DEFAULT_ABOUT } from "../constants";
 
 const SocialLinks = ({ links = [] }) => (
   <div className="flex gap-3 mt-6 flex-wrap select-none">
@@ -65,7 +41,7 @@ const SocialLinks = ({ links = [] }) => (
   </div>
 );
 
-const About = ({ about }) => {
+const About = ({ about, title, sectionNum }) => {
   const headerRef = useRef(null);
 
   // Merge with defaults so missing fields never break the UI
@@ -80,10 +56,11 @@ const About = ({ about }) => {
   return (
     <SectionLayout
       id="about"
-      label="Who am I ?"
+      label={title || "Who am I ?"}
       headerRef={headerRef}
       spotlightColor="rgba(var(--primary-rgb), 0.06)"
       textColorClass="text-primary"
+      sectionNum={sectionNum}
     >
       <div className="w-full min-h-[78vh] flex flex-col lg:flex-row justify-center items-start gap-10 lg:gap-16 py-4">
 
@@ -106,7 +83,7 @@ const About = ({ about }) => {
             <ProfileCard
               name={data.name}
               title={data.title}
-              avatarUrl={avatar}
+              avatarUrl={data.avatarUrl || avatar}
               enableTilt={true}
             />
           </div>
@@ -115,12 +92,12 @@ const About = ({ about }) => {
           <div className="flex gap-3 mt-6 w-full max-w-sm">
             <button
               onClick={() => {
-                const link = document.createElement("a");
-                link.href = resumePdf;
-                link.download = data.resumeFileName || "Resume.pdf";
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
+                 const link = document.createElement("a");
+                 link.href = data.resumeUrl || resumePdf;
+                 link.download = data.resumeFileName || "Resume.pdf";
+                 document.body.appendChild(link);
+                 link.click();
+                 document.body.removeChild(link);
               }}
               className="primary_button flex-1 cursor-pointer"
             >

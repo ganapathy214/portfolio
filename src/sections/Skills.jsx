@@ -4,37 +4,55 @@ import SectionLayout from "../layout/SectionLayout";
 import { skillCategories, skills } from "../constants";
 import { FiCheckCircle } from "react-icons/fi";
 
-const Skills = () => {
+const Skills = ({ skills: propSkills, skillCategories: propSkillCategories, title, sectionNum }) => {
   const headerRef = useRef(null);
-  const [activeCategory, setActiveCategory] = useState(skillCategories[0]?.id || "frontend");
 
-  const currentCategory = skillCategories.find((cat) => cat.id === activeCategory);
+  const categories = propSkillCategories && propSkillCategories.length > 0 ? propSkillCategories : skillCategories;
+  const allSkills = propSkills && propSkills.length > 0 ? propSkills : skills;
+
+  const [activeCategory, setActiveCategory] = useState(categories[0]?.id || "frontend");
+
+  const currentCategory = categories.find((cat) => cat.id === activeCategory) || categories[0];
 
   // Filter skills that belong to the active category
-  const filteredSkills = skills.filter((skill) =>
-    currentCategory?.skillNames.includes(skill.name)
+  const filteredSkills = allSkills.filter((skill) =>
+    currentCategory?.skillNames?.includes(skill.name)
   );
+
+  // Map default static icons for lookup
+  const defaultIconMap = {};
+  skills.forEach((s) => {
+    if (s.name && s.icon) {
+      defaultIconMap[s.name.toLowerCase()] = s.icon;
+    }
+  });
+
+  const getIconSource = (skill) => {
+    if (skill.icon && skill.icon.startsWith("data:")) return skill.icon;
+    return defaultIconMap[skill.name.toLowerCase()] || skill.icon || "";
+  };
 
   return (
     <SectionLayout
       id="skills"
-      label="What I Know ?"
+      label={title || "What I Know ?"}
       headerRef={headerRef}
       spotlightColor="rgba(var(--primary-rgb), 0.06)"
       textColorClass="text-primary"
+      sectionNum={sectionNum}
     >
       <div className="w-full min-h-[78vh] flex flex-col space-y-8 py-4">
 
         {/* Category Navigation — horizontal scrollable pills */}
         <div className="flex flex-wrap gap-2 select-none pb-4 relative">
-          {skillCategories.map((category) => {
+          {categories.map((category) => {
             const isActive = activeCategory === category.id;
             return (
               <button
                 key={category.id}
                 onClick={() => setActiveCategory(category.id)}
                 className={`relative px-5 py-2 text-[10px] sm:text-xs font-bold uppercase tracking-widest transition-all duration-300 rounded-none ${isActive
-                    ? "text-black bg-primary"
+                    ? "text-[var(--primary-contrast)] bg-primary"
                     : "text-stone-500 bg-transparent border border-stone-800 hover:text-primary hover:border-primary/40"
                   }`}
                 style={isActive ? { boxShadow: "0 0 16px rgba(var(--primary-rgb),0.3)" } : {}}
@@ -132,7 +150,7 @@ const Skills = () => {
                         style={{ background: "linear-gradient(to right, transparent, var(--primary), transparent)" }}
                       />
                       <img
-                        src={skill.icon}
+                        src={getIconSource(skill)}
                         alt={skill.name}
                         className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-110"
                         loading="lazy"

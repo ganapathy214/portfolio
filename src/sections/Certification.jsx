@@ -7,7 +7,7 @@ import {
   FiRefreshCw,
   FiExternalLink,
 } from "react-icons/fi";
-import { certifications, getTheme } from "../constants";
+import { certifications as defaultCertifications, getTheme } from "../constants";
 import SectionLayout from "../layout/SectionLayout";
 import CertModal from "../components/Certification/CertModal";
 
@@ -28,7 +28,7 @@ const resolveAlphaColor = (color, hexOpacity) => {
 };
 
 /* ─── Main Certification Section ─── */
-const Certification = () => {
+const Certification = ({ certifications: certificationsProp, title, sectionNum }) => {
   const headerRef = useRef(null);
   const scrollContainerRef = useRef(null);
   const cardBackRef = useRef(null);
@@ -40,7 +40,20 @@ const Certification = () => {
   const [rotateX, setRotateX] = useState(0);
   const [rotateY, setRotateY] = useState(0);
 
-  const activeCertData = certifications[activeIndex];
+  const allCertifications = certificationsProp && certificationsProp.length > 0 ? certificationsProp : defaultCertifications;
+
+  const resolvedCertifications = useMemo(() => {
+    return allCertifications.map(cert => {
+      let resolvedImage = cert.image;
+      if (!resolvedImage || typeof resolvedImage === "string" && !resolvedImage.startsWith("data:")) {
+        const match = defaultCertifications.find(c => c.title.toLowerCase() === cert.title.toLowerCase() || c.id === cert.id);
+        if (match) resolvedImage = match.image;
+      }
+      return { ...cert, image: resolvedImage };
+    });
+  }, [allCertifications]);
+
+  const activeCertData = resolvedCertifications[activeIndex];
   const theme = getTheme(activeCertData?.issuer);
 
   // Split description dynamically for skills preview
@@ -94,6 +107,10 @@ const Certification = () => {
 
   const handleVerify = () => {
     if (!activeCertData?.pdfFile) return;
+    if (activeCertData.pdfFile.startsWith("data:")) {
+      window.open(activeCertData.pdfFile, "_blank");
+      return;
+    }
     const baseUrl = import.meta.env.BASE_URL || "/";
     const cleanBase = baseUrl.endsWith("/") ? baseUrl : `${baseUrl}/`;
     const url = `${cleanBase}files/certification/${encodeURIComponent(activeCertData.pdfFile)}`;
@@ -103,10 +120,11 @@ const Certification = () => {
   return (
     <SectionLayout
       id="certification"
-      label="What I achieved?"
+      label={title || "What I achieved?"}
       headerRef={headerRef}
       spotlightColor="rgba(var(--primary-rgb), 0.06)"
       textColorClass="text-primary"
+      sectionNum={sectionNum}
     >
       <div className="w-full py-2">
         <div className="w-full min-h-[78vh] flex flex-col md:flex-row gap-8 items-stretch justify-center">
@@ -136,7 +154,7 @@ const Certification = () => {
                 transition={{ type: "spring", stiffness: 260, damping: 22 }}
                 className="w-full h-full transform-style-preserve-3d relative rounded-2xl border"
                 style={{
-                  borderColor: "rgba(255,255,255,0.06)",
+                  borderColor: "var(--border-color)",
                   boxShadow: isFlipped
                     ? `0 20px 40px -12px ${resolveAlphaColor(theme.accent, "25")}, 0 0 20px 1px ${resolveAlphaColor(theme.accent, "15")}`
                     : "0 10px 30px rgba(0,0,0,0.6)",
@@ -144,7 +162,7 @@ const Certification = () => {
               >
                 {/* ── Front Face ── */}
                 <div
-                  className="absolute inset-0 w-full h-full backface-hidden rounded-2xl overflow-hidden flex flex-col bg-[#121212]"
+                  className="absolute inset-0 w-full h-full backface-hidden rounded-2xl overflow-hidden flex flex-col bg-[var(--card-bg)]"
                 >
                   {/* Top brand header strip */}
                   <div
@@ -153,7 +171,7 @@ const Certification = () => {
                   />
 
                   {/* Image */}
-                  <div className="relative w-full flex-1 overflow-hidden bg-[#080808] flex items-center justify-center">
+                  <div className="relative w-full flex-1 overflow-hidden bg-[var(--card-bg-darker)] flex items-center justify-center">
                     <img
                       src={activeCertData?.image}
                       alt={activeCertData?.title}
@@ -164,7 +182,7 @@ const Certification = () => {
                     <div
                       className="absolute inset-0"
                       style={{
-                        background: "linear-gradient(to top, rgba(18,18,18,0.92) 0%, transparent 60%)",
+                        background: "linear-gradient(to top, var(--card-bg) 0%, transparent 60%)",
                       }}
                     />
 
@@ -218,7 +236,7 @@ const Certification = () => {
                   </div>
 
                   {/* Metadata bottom bar */}
-                  <div className="p-4 sm:p-5 text-left border-t border-white/5">
+                  <div className="p-4 sm:p-5 text-left border-t border-[var(--border-color)]">
                     <div className="flex items-center justify-between mb-2 select-none">
                       <span className={`text-[8px] font-bold uppercase tracking-widest px-2 py-0.5 rounded border ${theme.badge}`}>
                         {activeCertData?.issuer}
@@ -236,12 +254,12 @@ const Certification = () => {
                 {/* ── Back Face ── */}
                 <div
                   ref={cardBackRef}
-                  className="absolute inset-0 w-full h-full backface-hidden rounded-2xl bg-[#121212] p-5 sm:p-6 flex flex-col justify-between overflow-y-auto text-left"
+                  className="absolute inset-0 w-full h-full backface-hidden rounded-2xl bg-[var(--card-bg)] p-5 sm:p-6 flex flex-col justify-between overflow-y-auto text-left"
                   style={{ transform: "rotateY(180deg)", overscrollBehavior: "contain" }}
                 >
                   <div className="space-y-4">
                     {/* Header */}
-                    <div className="flex items-center justify-between border-b border-white/5 pb-2">
+                    <div className="flex items-center justify-between border-b border-[var(--border-color)] pb-2">
                       <div>
                         <span className={`text-[8px] font-bold uppercase tracking-widest px-2 py-0.5 rounded border select-none ${theme.badge}`}>
                           {activeCertData?.issuer}
@@ -255,8 +273,8 @@ const Certification = () => {
                           e.stopPropagation();
                           setIsFlipped(false);
                         }}
-                        className="w-7 h-7 rounded-full flex items-center justify-center border border-white/5 text-stone-400 transition-colors hover:text-white"
-                        style={{ background: "rgba(255,255,255,0.03)" }}
+                        className="w-7 h-7 rounded-full flex items-center justify-center border border-[var(--border-color)] text-stone-400 transition-colors hover:text-[var(--text-white-or-dark)]"
+                        style={{ background: "rgba(var(--text-muted-rgb), 0.03)" }}
                       >
                         <FiRefreshCw className="text-[11px]" />
                       </button>
@@ -302,7 +320,7 @@ const Certification = () => {
                         e.stopPropagation();
                         handleVerify();
                       }}
-                      className="w-full inline-flex items-center justify-center gap-2 font-bold px-3 py-2 rounded-xl transition cursor-pointer text-[10px] uppercase tracking-wider text-black"
+                      className="w-full inline-flex items-center justify-center gap-2 font-bold px-3 py-2 rounded-xl transition cursor-pointer text-[10px] uppercase tracking-wider text-[var(--primary-contrast)]"
                       style={{
                         background: theme.accent,
                         boxShadow: `0 0 14px ${resolveAlphaColor(theme.accent, "30")}`,
@@ -324,8 +342,8 @@ const Certification = () => {
           {/* ── Right Pane: Scrolling Selector Sidebar/Belt ── */}
           <div className="w-full md:w-[45%] flex flex-col relative">
             {/* Top and Bottom Scroll Indicator Fades (Only visible on desktop) */}
-            <div className="hidden md:block absolute top-0 left-0 right-0 h-8 bg-gradient-to-b from-black to-transparent pointer-events-none z-10" />
-            <div className="hidden md:block absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-black to-transparent pointer-events-none z-10" />
+            <div className="hidden md:block absolute top-0 left-0 right-0 h-8 bg-gradient-to-b from-[var(--bg-main)] to-transparent pointer-events-none z-10" />
+            <div className="hidden md:block absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-[var(--bg-main)] to-transparent pointer-events-none z-10" />
 
             {/* Dial Selector List container (horizontal scrolling on mobile, vertical scrolling on desktop) */}
             <div
@@ -333,7 +351,7 @@ const Certification = () => {
               className="flex md:flex-col overflow-x-auto md:overflow-y-auto gap-3.5 w-full pr-2 pb-4 md:pb-6 scrollbar-thin max-h-none md:max-h-[500px] lg:max-h-[720px] pt-1"
               style={{ overscrollBehavior: "contain" }}
             >
-              {certifications.map((cert, index) => {
+              {resolvedCertifications.map((cert, index) => {
                 const isActive = index === activeIndex;
                 const cardTheme = getTheme(cert.issuer);
 
@@ -342,11 +360,12 @@ const Certification = () => {
                     key={cert.id}
                     onClick={() => setActiveIndex(index)}
                     className={`flex-shrink-0 w-[260px] md:w-full flex items-center gap-3.5 p-3 rounded-xl border text-left transition-all duration-300 cursor-pointer ${isActive
-                      ? "bg-white/5 shadow-2xl scale-[1.01]"
-                      : "bg-white/[0.01] border-white/5 hover:border-white/10 hover:bg-white/[0.03]"
+                      ? "shadow-2xl scale-[1.01]"
+                      : "hover:bg-[rgba(var(--text-muted-rgb),0.03)]"
                       }`}
                     style={{
-                      borderColor: isActive ? cardTheme.accent : "rgba(255,255,255,0.06)",
+                      background: isActive ? "rgba(var(--text-muted-rgb), 0.05)" : "rgba(var(--text-muted-rgb), 0.01)",
+                      borderColor: isActive ? cardTheme.accent : "var(--border-color)",
                       boxShadow: isActive ? `0 0 18px ${resolveAlphaColor(cardTheme.accent, "15")}` : "none",
                     }}
                   >
@@ -388,10 +407,10 @@ const Certification = () => {
             </div>
 
             {/* Total Counter Indicator */}
-            <div className="hidden md:flex justify-between items-center text-[10px] font-bold font-mono tracking-widest text-stone-500 pt-2 border-t border-white/5 mt-1">
+            <div className="hidden md:flex justify-between items-center text-[10px] font-bold font-mono tracking-widest text-stone-500 pt-2 border-t border-[var(--border-color)] mt-1">
               <span>ACTIVE CREDENTIAL:</span>
               <span style={{ color: theme.accent }}>
-                {String(activeIndex + 1).padStart(2, "0")} / {String(certifications.length).padStart(2, "0")}
+                {String(activeIndex + 1).padStart(2, "0")} / {String(resolvedCertifications.length).padStart(2, "0")}
               </span>
             </div>
           </div>
