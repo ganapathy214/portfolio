@@ -215,8 +215,7 @@ export default function App() {
 
       // 2. Fetch from DB
       try {
-        const isDev = import.meta.env.DEV;
-        const themeUrl = isDev ? "/api/theme" : `${import.meta.env.BASE_URL}db.json`;
+        const themeUrl = "/api/theme";
         
         const res = await fetch(themeUrl);
         if (res.ok) {

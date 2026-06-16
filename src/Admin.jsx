@@ -682,18 +682,23 @@ export default function Admin({
 
     try {
       const isDev = import.meta.env.DEV;
-      const apiUrl = isDev ? "/api/theme" : null;
-
+      const apiUrl = "/api/theme";
       let responseSuccess = false;
 
-      if (isDev && apiUrl) {
-        // Try calling the Vite development API middleware
+      try {
         const res = await fetch(apiUrl, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
         });
-        if (res.ok) responseSuccess = true;
+        if (res.ok) {
+          const resData = await res.json();
+          if (resData.success) {
+            responseSuccess = true;
+          }
+        }
+      } catch (apiErr) {
+        console.warn("Failed to POST to API, fallback might be used:", apiErr);
       }
 
       // Always save to localStorage (works in both dev and prod)
@@ -744,14 +749,16 @@ export default function Admin({
       setSectionVisibility(localSectionVisibility);
       setSectionTitles(localSectionTitles);
 
-      if (!isDev) {
-        // Production: download db.json so admin can commit it and redeploy
-        downloadDbJson(payload);
-        setSaveStatus("prod");
-      } else if (responseSuccess) {
+      if (responseSuccess) {
         setSaveStatus("success");
       } else {
-        setSaveStatus("error");
+        if (!isDev) {
+          // Fallback to downloading db.json in production if DB API fails
+          downloadDbJson(payload);
+          setSaveStatus("prod");
+        } else {
+          setSaveStatus("error");
+        }
       }
     } catch (err) {
       console.error("Failed to save theme settings:", err);
@@ -1352,7 +1359,7 @@ export default function Admin({
             {saveStatus === "success" && (
               <>
                 <FiCheck className="text-base shrink-0" />
-                <span>Configuration saved to db.json successfully!</span>
+                <span>Configuration saved successfully!</span>
               </>
             )}
             {saveStatus === "prod" && (
