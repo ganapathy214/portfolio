@@ -24,6 +24,8 @@ export const DEFAULT_ABOUT = {
   name: "Ganapathy N",
   title: "Senior Frontend & Full Stack Developer",
   bio: "Senior Frontend & Full Stack Developer with 6+ years of experience specializing in React.js, Next.js, React Native, TypeScript, and modern JavaScript ecosystems. I design and build high-performance, accessible, and scalable enterprise web and mobile applications.",
+  bioPrefix: "A Passionate",
+  bioSubLabel: "Biography",
   professionalTitles: [
     "Senior Frontend Developer",
     "Senior Full Stack Developer",

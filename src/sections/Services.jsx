@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import React, { useRef } from "react";
 import { FiCode } from "react-icons/fi";
 import { SERVICES_DATA, SERVICE_ICONS } from "../constants";
-import SectionLayout from "../layout/SectionLayout";
+import SectionLayout from "../layouts/SectionLayout";
 
 const Services = ({ servicesSubtitle, servicesData, title, sectionNum }) => {
   const headerRef = useRef(null);

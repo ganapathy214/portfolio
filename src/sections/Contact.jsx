@@ -1,8 +1,8 @@
 import { motion } from "framer-motion";
 import React, { useRef, useState } from "react";
 import { CiLocationOn, CiMail, CiPhone } from "react-icons/ci";
-import ShinyText from "../common/ShinyText";
-import SectionLayout from "../layout/SectionLayout";
+import ShinyText from "../components/common/ShinyText";
+import SectionLayout from "../layouts/SectionLayout";
 import { CONTACT_INFO, INPUT_CLASS } from "../constants";
 
 const ContactInfoCard = ({ icon, label, value, delay }) => {
@@ -99,22 +99,75 @@ const Contact = ({ contactInfo, title, sectionNum }) => {
 
         {/* Map & Form */}
         <div className="flex-1 flex flex-col lg:flex-row gap-6 items-stretch min-h-[350px] lg:min-h-0">
-          {/* Map */}
+          {/* Map or Placeholder */}
           <motion.div
-            className="w-full lg:w-1/2 overflow-hidden min-h-[350px] lg:min-h-0 relative corner-card"
+            className="w-full lg:w-1/2 overflow-hidden min-h-[350px] lg:min-h-0 relative corner-card flex flex-col justify-center items-center p-6 text-center select-none"
             style={{ borderRadius: "16px" }}
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.7, delay: 0.4 }}
           >
-            <iframe
-              title="Google Maps"
-              src={info.googleMapsUrl}
-              className="w-full h-full absolute inset-0 border-none"
-              allowFullScreen=""
-              loading="lazy"
-            />
+            {info.googleMapsUrl ? (
+              <iframe
+                title="Google Maps"
+                src={info.googleMapsUrl}
+                className="w-full h-full absolute inset-0 border-none"
+                allowFullScreen=""
+                loading="lazy"
+              />
+            ) : (
+              <>
+                {/* Glowing Background Aura */}
+                <div
+                  className="absolute inset-0 opacity-20 pointer-events-none filter blur-3xl"
+                  style={{
+                    background: "radial-gradient(circle, var(--primary) 0%, transparent 65%)",
+                  }}
+                />
+                
+                {/* Decorative Map Pin Icon with pulse animation */}
+                <motion.div 
+                  className="w-20 h-20 rounded-full flex items-center justify-center mb-6 relative z-10 border"
+                  style={{
+                    background: "rgba(var(--primary-rgb), 0.08)",
+                    borderColor: "rgba(var(--primary-rgb), 0.25)",
+                    color: "var(--primary)",
+                  }}
+                  animate={{
+                    boxShadow: [
+                      "0 0 0 0 rgba(var(--primary-rgb), 0)",
+                      "0 0 0 15px rgba(var(--primary-rgb), 0.15)",
+                      "0 0 0 30px rgba(var(--primary-rgb), 0)"
+                    ]
+                  }}
+                  transition={{
+                    repeat: Infinity,
+                    duration: 2.5,
+                    ease: "easeInOut"
+                  }}
+                >
+                  <CiLocationOn className="text-4xl" />
+                </motion.div>
+
+                <h3 className="text-lg font-bold text-white mb-2 relative z-10">
+                  Current Headquarters
+                </h3>
+                <p className="text-sm text-stone-300 font-semibold mb-4 max-w-sm relative z-10 leading-relaxed">
+                  {info.address || "Coimbatore, Tamil Nadu, India"}
+                </p>
+                <div 
+                  className="px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider relative z-10 border"
+                  style={{
+                    background: "rgba(var(--primary-rgb), 0.05)",
+                    borderColor: "rgba(var(--primary-rgb), 0.15)",
+                    color: "var(--primary)"
+                  }}
+                >
+                  🌍 Open to Remote & Relocation
+                </div>
+              </>
+            )}
           </motion.div>
 
           {/* Form */}
@@ -130,13 +183,13 @@ const Contact = ({ contactInfo, title, sectionNum }) => {
             {/* Form header */}
             <div className="mb-1">
               <ShinyText
-                text="Send a Message"
+                text={info.formTitle || "Send a Message"}
                 disabled={false}
                 speed={5}
                 className="text-xl sm:text-2xl font-black text-primary select-none"
               />
               <p className="text-xs text-stone-600 mt-1 select-none">
-                For custom projects, consulting, or new opportunities.
+                {info.formSubtitle || "For custom projects, consulting, or new opportunities."}
               </p>
             </div>
 

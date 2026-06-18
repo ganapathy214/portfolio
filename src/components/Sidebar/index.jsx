@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import React from "react";
 import { sidebarItems } from "../../constants";
-import DecryptedText from "../../common/DecryptedText";
+import DecryptedText from "../common/DecryptedText";
 
 const Sidebar = ({ activeSection, onItemClick, sectionVisibility }) => {
   const visibleItems = sidebarItems.filter(
@@ -102,6 +102,60 @@ const Sidebar = ({ activeSection, onItemClick, sectionVisibility }) => {
         </nav>
       </motion.div>
 
+      {/* Mobile Bottom Bar */}
+      <motion.nav
+        className="md:hidden fixed bottom-0 left-0 w-full flex justify-around px-2 py-3 z-50 border-t"
+        style={{
+          background: "rgba(10, 10, 10, 0.95)",
+          borderTopColor: "rgba(var(--primary-rgb), 0.15)",
+          backdropFilter: "blur(16px)",
+          WebkitBackdropFilter: "blur(16px)",
+        }}
+        initial={{ y: 100 }}
+        animate={{ y: 0 }}
+        transition={{ type: "spring", stiffness: 200, damping: 28 }}
+      >
+        {visibleItems.map((item) => {
+          const isActive = activeSection === item.name;
+          return (
+            <a
+              key={item.name}
+              href={item.href}
+              onClick={(e) => {
+                e.preventDefault();
+                onItemClick(item);
+              }}
+              className="flex flex-col items-center gap-1 relative px-2 py-1 select-none"
+            >
+              {/* Active indicator dot */}
+              {isActive && (
+                <motion.div
+                  layoutId="mobile-indicator"
+                  className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full"
+                  style={{
+                    background: "var(--primary)",
+                    boxShadow: "0 0 10px rgba(var(--primary-rgb), 0.8)",
+                  }}
+                />
+              )}
+              <item.icon
+                className="w-5 h-5 transition-all duration-200"
+                style={{
+                  color: isActive ? "var(--primary)" : "rgba(255,255,255,0.45)",
+                  filter: isActive ? "drop-shadow(0 0 6px rgba(var(--primary-rgb), 0.6))" : "none",
+                  transform: isActive ? "scale(1.1)" : "scale(1)",
+                }}
+              />
+              <span
+                className="text-[8px] font-bold uppercase tracking-wider transition-colors duration-200 hidden min-[420px]:block"
+                style={{ color: isActive ? "var(--primary)" : "rgba(255,255,255,0.35)" }}
+              >
+                {item.name}
+              </span>
+            </a>
+          );
+        })}
+      </motion.nav>
     </>
   );
 };

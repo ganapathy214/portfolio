@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import React, { useRef, useState, useMemo, useEffect } from "react";
 import { projects as defaultProjects } from "../constants";
-import SectionLayout from "../layout/SectionLayout";
+import SectionLayout from "../layouts/SectionLayout";
 import ProjectCard from "../components/Projects/ProjectCard";
 import ProjectModal from "../components/Projects/ProjectModal";
 
@@ -79,7 +79,7 @@ const Projects = ({ projects: propProjects, title, sectionNum }) => {
 
         {/* ── Filters ── */}
         <div className="flex items-center justify-between flex-wrap gap-3 select-none">
-          <div className="flex gap-1">
+          <div className="flex flex-wrap gap-1.5">
             {projectFilters.map((f) => {
               const isActive = activeFilter === f.id;
               return (

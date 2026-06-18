@@ -7,4 +7,7 @@ export * from "./certifications";
 export * from "./contact";
 export * from "./navigation";
 export * from "./about";
+export * from "./testimonials";
+export * from "./blogs";
+export * from "./faqs";
 

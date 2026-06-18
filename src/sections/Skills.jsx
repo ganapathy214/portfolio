@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import SectionLayout from "../layout/SectionLayout";
+import SectionLayout from "../layouts/SectionLayout";
 import { skillCategories, skills } from "../constants";
 import { FiCheckCircle } from "react-icons/fi";
 
