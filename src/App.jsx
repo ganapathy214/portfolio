@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { SERVICES_DATA, skills as defaultSkills, skillCategories as defaultSkillCategories, projects as defaultProjects, certifications as defaultCertifications, timelineData as defaultTimelineData, summaryStats as defaultSummaryStats, CONTACT_INFO as defaultContactInfo, PAGE_TITLES as defaultPageTitles, PAGE_DESCRIPTIONS as defaultPageDescriptions, DEFAULT_ABOUT, DEFAULT_PRIMARY_COLOR, DEFAULT_ROLES, DEFAULT_DESCRIPTION, DEFAULT_ORBITING_STACKS } from "./constants";
+import { SERVICES_DATA, skills as defaultSkills, skillCategories as defaultSkillCategories, projects as defaultProjects, certifications as defaultCertifications, timelineData as defaultTimelineData, summaryStats as defaultSummaryStats, CONTACT_INFO as defaultContactInfo, PAGE_TITLES as defaultPageTitles, PAGE_DESCRIPTIONS as defaultPageDescriptions, DEFAULT_ABOUT, DEFAULT_PRIMARY_COLOR, DEFAULT_ROLES, DEFAULT_DESCRIPTION, DEFAULT_ORBITING_STACKS, defaultTestimonials, defaultBlogs, defaultFaqs } from "./constants";
 import { getContrastColor } from "./utils/color";
-import PageLoader from "./common/PageLoader";
+import PageLoader from "./components/common/PageLoader";
 
-const Portfolio = React.lazy(() => import("./Portfolio"));
-const Admin = React.lazy(() => import("./Admin"));
+const Portfolio = React.lazy(() => import("./pages/Portfolio"));
+const Setitings = React.lazy(() => import("./pages/Setitings"));
 
 // Apply dynamic theme color to documentElement style variables
 const applyThemeColor = (color) => {
@@ -43,7 +43,11 @@ export default function App() {
   const [timelineData, setTimelineData] = useState(defaultTimelineData);
   const [summaryStats, setSummaryStats] = useState(defaultSummaryStats);
   const [contactInfo, setContactInfo] = useState(defaultContactInfo);
+  const [testimonials, setTestimonials] = useState(defaultTestimonials);
+  const [blogs, setBlogs] = useState(defaultBlogs);
+  const [faqs, setFaqs] = useState(defaultFaqs);
   const [themeMode, setThemeMode] = useState("dark");
+  const [selectedTemplate, setSelectedTemplate] = useState("template-1");
   const [pageTitles, setPageTitles] = useState(defaultPageTitles);
   const [pageDescriptions, setPageDescriptions] = useState(defaultPageDescriptions);
   const [sectionVisibility, setSectionVisibility] = useState({
@@ -53,7 +57,10 @@ export default function App() {
     Skills: true,
     Projects: true,
     Certification: true,
+    Testimonials: true,
     Journey: true,
+    Blogs: true,
+    Faq: true,
     Contact: true
   });
   const [sectionTitles, setSectionTitles] = useState({
@@ -62,7 +69,10 @@ export default function App() {
     Skills: "What I Know ?",
     Projects: "What I did ?",
     Certification: "What I achieved?",
+    Testimonials: "What clients say?",
     Journey: "What I've done ?",
+    Blogs: "My Publications & Blogs",
+    Faq: "Frequently Asked Questions",
     Contact: "Where to find me ?"
   });
   
@@ -70,11 +80,77 @@ export default function App() {
 
   useEffect(() => {
     const fetchTheme = async () => {
+      // Check if preview mode is active in the URL
+      const searchParams = new URLSearchParams(window.location.search);
+      const isPreview = searchParams.get("preview") === "true";
+      if (isPreview) {
+        const previewDataRaw = localStorage.getItem("portfolio_preview_config");
+        if (previewDataRaw) {
+          try {
+            const data = JSON.parse(previewDataRaw);
+            if (data.primaryColor) {
+              setPrimaryColor(data.primaryColor);
+              applyThemeColor(data.primaryColor);
+            }
+            if (data.roles) setRoles(data.roles);
+            if (data.description) setDescription(data.description);
+            if (data.centerSvg) setCenterSvg(data.centerSvg);
+            if (data.orbitingStacks) setOrbitingStacks(data.orbitingStacks);
+            if (data.about) setAbout(data.about);
+            if (data.servicesSubtitle) setServicesSubtitle(data.servicesSubtitle);
+            if (data.servicesData) setServicesData(data.servicesData);
+            if (data.skills) setSkills(data.skills);
+            if (data.skillCategories) setSkillCategories(data.skillCategories);
+            if (data.projects) setProjects(data.projects);
+            if (data.certifications) setCertifications(data.certifications);
+            if (data.timelineData) setTimelineData(data.timelineData);
+            if (data.summaryStats) setSummaryStats(data.summaryStats);
+            if (data.contactInfo) setContactInfo(data.contactInfo);
+            if (data.themeMode) setThemeMode(data.themeMode);
+            if (data.selectedTemplate) setSelectedTemplate(data.selectedTemplate);
+            if (data.pageTitles) setPageTitles(data.pageTitles);
+            if (data.pageDescriptions) setPageDescriptions(data.pageDescriptions);
+            if (data.testimonials) setTestimonials(data.testimonials);
+            if (data.blogs) setBlogs(data.blogs);
+            if (data.faqs) setFaqs(data.faqs);
+            if (data.sectionVisibility) setSectionVisibility(data.sectionVisibility);
+            if (data.sectionTitles) setSectionTitles(data.sectionTitles);
+            return; // Exit fetchTheme early in preview mode
+          } catch (e) {
+            console.error("Failed to parse preview configuration:", e);
+          }
+        }
+      }
+
       // 1. Check local storage fallback first (instant load)
       const localColor = localStorage.getItem("portfolio_theme_color");
       if (localColor) {
         setPrimaryColor(localColor);
         applyThemeColor(localColor);
+      }
+      const localTestimonials = localStorage.getItem("portfolio_testimonials");
+      if (localTestimonials) {
+        try {
+          setTestimonials(JSON.parse(localTestimonials));
+        } catch (e) {
+          console.warn("Failed to parse localTestimonials:", e);
+        }
+      }
+      const localBlogs = localStorage.getItem("portfolio_blogs");
+      if (localBlogs) {
+        try {
+          setBlogs(JSON.parse(localBlogs));
+        } catch (e) {
+          console.warn("Failed to parse localBlogs:", e);
+        }
+      }
+      const localFaqs = localStorage.getItem("portfolio_faqs");
+      if (localFaqs) {
+        try {
+          setFaqs(JSON.parse(localFaqs));
+        } catch (e) {
+          console.warn("Failed to parse localFaqs:", e);
+        }
       }
       const localRoles = localStorage.getItem("portfolio_roles");
       if (localRoles) {
@@ -179,6 +255,10 @@ export default function App() {
       const localThemeMode = localStorage.getItem("portfolio_theme_mode");
       if (localThemeMode) {
         setThemeMode(localThemeMode);
+      }
+      const localTemplate = localStorage.getItem("portfolio_selected_template");
+      if (localTemplate) {
+        setSelectedTemplate(localTemplate);
       }
       const localPageTitles = localStorage.getItem("portfolio_page_titles");
       if (localPageTitles) {
@@ -285,6 +365,10 @@ export default function App() {
             setThemeMode(data.themeMode);
             localStorage.setItem("portfolio_theme_mode", data.themeMode);
           }
+          if (data.selectedTemplate) {
+            setSelectedTemplate(data.selectedTemplate);
+            localStorage.setItem("portfolio_selected_template", data.selectedTemplate);
+          }
           if (data.pageTitles) {
             setPageTitles(data.pageTitles);
             localStorage.setItem("portfolio_page_titles", JSON.stringify(data.pageTitles));
@@ -292,6 +376,18 @@ export default function App() {
           if (data.pageDescriptions) {
             setPageDescriptions(data.pageDescriptions);
             localStorage.setItem("portfolio_page_descriptions", JSON.stringify(data.pageDescriptions));
+          }
+          if (data.testimonials) {
+            setTestimonials(data.testimonials);
+            localStorage.setItem("portfolio_testimonials", JSON.stringify(data.testimonials));
+          }
+          if (data.blogs) {
+            setBlogs(data.blogs);
+            localStorage.setItem("portfolio_blogs", JSON.stringify(data.blogs));
+          }
+          if (data.faqs) {
+            setFaqs(data.faqs);
+            localStorage.setItem("portfolio_faqs", JSON.stringify(data.faqs));
           }
           if (data.sectionVisibility) {
             setSectionVisibility(data.sectionVisibility);
@@ -361,6 +457,7 @@ export default function App() {
             path="/"
             element={
               <Portfolio
+                selectedTemplate={selectedTemplate}
                 primaryColor={primaryColor}
                 roles={roles}
                 description={description}
@@ -381,13 +478,18 @@ export default function App() {
                 pageDescriptions={pageDescriptions}
                 sectionVisibility={sectionVisibility}
                 sectionTitles={sectionTitles}
+                testimonials={testimonials}
+                blogs={blogs}
+                faqs={faqs}
               />
             }
           />
           <Route
-            path="/admin"
+            path="/setitings"
             element={
-              <Admin
+              <Setitings
+                selectedTemplate={selectedTemplate}
+                setSelectedTemplate={setSelectedTemplate}
                 primaryColor={primaryColor}
                 setPrimaryColor={setPrimaryColor}
                 roles={roles}
@@ -428,6 +530,67 @@ export default function App() {
                 setSectionVisibility={setSectionVisibility}
                 sectionTitles={sectionTitles}
                 setSectionTitles={setSectionTitles}
+                testimonials={testimonials}
+                setTestimonials={setTestimonials}
+                blogs={blogs}
+                setBlogs={setBlogs}
+                faqs={faqs}
+                setFaqs={setFaqs}
+              />
+            }
+          />
+          <Route
+            path="/settings"
+            element={
+              <Setitings
+                selectedTemplate={selectedTemplate}
+                setSelectedTemplate={setSelectedTemplate}
+                primaryColor={primaryColor}
+                setPrimaryColor={setPrimaryColor}
+                roles={roles}
+                setRoles={setRoles}
+                description={description}
+                setDescription={setDescription}
+                centerSvg={centerSvg}
+                setCenterSvg={setCenterSvg}
+                orbitingStacks={orbitingStacks}
+                setOrbitingStacks={setOrbitingStacks}
+                about={about}
+                setAbout={setAbout}
+                servicesSubtitle={servicesSubtitle}
+                setServicesSubtitle={setServicesSubtitle}
+                servicesData={servicesData}
+                setServicesData={setServicesData}
+                skills={skills}
+                setSkills={setSkills}
+                skillCategories={skillCategories}
+                setSkillCategories={setSkillCategories}
+                projects={projects}
+                setProjects={setProjects}
+                certifications={certifications}
+                setCertifications={setCertifications}
+                timelineData={timelineData}
+                setTimelineData={setTimelineData}
+                summaryStats={summaryStats}
+                setSummaryStats={setSummaryStats}
+                contactInfo={contactInfo}
+                setContactInfo={setContactInfo}
+                themeMode={themeMode}
+                setThemeMode={setThemeMode}
+                pageTitles={pageTitles}
+                setPageTitles={setPageTitles}
+                pageDescriptions={pageDescriptions}
+                setPageDescriptions={setPageDescriptions}
+                sectionVisibility={sectionVisibility}
+                setSectionVisibility={setSectionVisibility}
+                sectionTitles={sectionTitles}
+                setSectionTitles={setSectionTitles}
+                testimonials={testimonials}
+                setTestimonials={setTestimonials}
+                blogs={blogs}
+                setBlogs={setBlogs}
+                faqs={faqs}
+                setFaqs={setFaqs}
               />
             }
           />

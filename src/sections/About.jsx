@@ -3,10 +3,11 @@ import React, { useRef } from "react";
 import { FaLinkedinIn, FaGithub } from "react-icons/fa";
 import avatar from "../assets/avatar.png";
 import resumePdf from "../assets/resume.pdf";
+import { downloadPdf } from "../utils/pdf";
 
-import ProfileCard from "../common/ProfileCard";
-import { useTypewriter } from "../common/utils/hooks/useTypewriter";
-import SectionLayout from "../layout/SectionLayout";
+import ProfileCard from "../components/common/ProfileCard";
+import { useTypewriter } from "../components/common/utils/hooks/useTypewriter";
+import SectionLayout from "../layouts/SectionLayout";
 
 const ICONS = {
   FaLinkedinIn,
@@ -89,16 +90,9 @@ const About = ({ about, title, sectionNum }) => {
           </div>
 
           {/* Action buttons */}
-          <div className="flex gap-3 mt-6 w-full max-w-sm">
+          <div className="flex flex-col sm:flex-row gap-3 mt-6 w-full max-w-sm">
             <button
-              onClick={() => {
-                 const link = document.createElement("a");
-                 link.href = data.resumeUrl || resumePdf;
-                 link.download = data.resumeFileName || "Resume.pdf";
-                 document.body.appendChild(link);
-                 link.click();
-                 document.body.removeChild(link);
-              }}
+              onClick={() => downloadPdf(data.resumeUrl || resumePdf, data.resumeFileName || "Resume.pdf")}
               className="primary_button flex-1 cursor-pointer"
             >
               Download CV
@@ -136,12 +130,12 @@ const About = ({ about, title, sectionNum }) => {
           {/* Section mini-label */}
           <div className="flex items-center gap-3 mb-5">
             <div className="w-8 h-[1px]" style={{ background: "var(--primary)", opacity: 0.4 }} />
-            <span className="section-number">Biography</span>
+            <span className="section-number">{data.bioSubLabel || "Biography"}</span>
           </div>
 
           {/* Dynamic headline */}
           <div className="text-3xl sm:text-4xl md:text-5xl font-black leading-tight mb-6 text-white">
-            A Passionate <br />
+            {data.bioPrefix || "A Passionate"} <br />
             <span
               className="text-transparent bg-clip-text"
               style={{
