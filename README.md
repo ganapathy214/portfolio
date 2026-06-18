@@ -1,6 +1,6 @@
 # 🚀 Developer Portfolio — SaaS-Grade Dynamic Portfolio
 
-A **fully dynamic, admin-controlled developer portfolio** built with React 19, Vite, Tailwind CSS v4, and Framer Motion. Every section of the portfolio — from your name and skills to projects and certifications — is editable live through a built-in **Admin Console**, with changes persisted via `db.json` and `localStorage`.
+A **fully dynamic, setitings-controlled developer portfolio** built with React 19, Vite, Tailwind CSS v4, and Framer Motion. Every section of the portfolio — from your name and skills to projects and certifications — is editable live through a built-in **Setitings Console**, with changes persisted via `db.json` and `localStorage`.
 
 ---
 
@@ -11,12 +11,12 @@ A **fully dynamic, admin-controlled developer portfolio** built with React 19, V
 - **Live theme system** — primary accent color applied across all UI elements (buttons, glows, tags, borders) via CSS variables
 - **Dark / Light mode** — toggle between themes; user preference persisted
 - **Dynamic favicon** — auto-generated from primary color and developer's initials
-- **Animated sidebar navigation** — scrolls to active section; respects admin-controlled section visibility
+- **Animated sidebar navigation** — scrolls to active section; respects setitings-controlled section visibility
 - **Smooth Framer Motion animations** — fade-ins, staggered lists, parallax effects
 - **Fully responsive** — mobile-first layout with adaptive grids and typography
 - **SEO-ready** — configurable page titles, meta descriptions per page
 
-### Admin Console (`/admin`)
+### Setitings Console (`/setitings`)
 - **11-tab configuration panel** — Dashboard, Theme & Colors, Home, About, Services, Skills, Projects, Certifications, Journey, Contact, SEO & Metadata
 - **Live color preview** — pick any hex color or choose from preset swatches; applied to the DOM instantly
 - **Section visibility controls** — show/hide any section globally from the Dashboard or per-tab banner
@@ -50,7 +50,7 @@ portfolio/
 │   └── favicon.svg
 ├── src/
 │   ├── App.jsx              # Root: loads db.json + localStorage, provides state
-│   ├── Admin.jsx            # Admin console controller (state + handlers)
+│   ├── Setitings.jsx            # Setitings Console controller (state + handlers)
 │   ├── Portfolio.jsx        # Portfolio page assembler
 │   ├── sections/            # Public-facing portfolio sections
 │   │   ├── Home.jsx
@@ -114,15 +114,15 @@ npm run dev
 Opens at `http://localhost:5173`. The Vite dev server includes a custom middleware that serves and writes `db.json` at `/api/theme`.
 
 - **Portfolio**: `http://localhost:5173/portfolio`
-- **Admin Console**: `http://localhost:5173/portfolio/admin`
+- **Setitings Console**: `http://localhost:5173/portfolio/setitings`
 
 ---
 
-## ⚙️ Admin Console
+## ⚙️ Setitings Console
 
-Navigate to `/admin` on your deployed site or `http://localhost:5173/portfolio/admin` in dev.
+Navigate to `/setitings` on your deployed site or `http://localhost:5173/portfolio/setitings` in dev.
 
-### Admin Tabs
+### Setitings Tabs
 
 | Tab | What you can configure |
 |---|---|
@@ -143,7 +143,7 @@ Navigate to `/admin` on your deployed site or `http://localhost:5173/portfolio/a
 ## 💾 Save & Deploy Workflow
 
 ### In Development (`npm run dev`)
-1. Make changes in the Admin Console
+1. Make changes in the Setitings Console
 2. Click **Save Settings**
 3. Changes write to `db.json` via Vite middleware
 4. Both `db.json` (project root) and `public/db.json` are updated automatically
@@ -152,7 +152,7 @@ Navigate to `/admin` on your deployed site or `http://localhost:5173/portfolio/a
 ### In Production (Vercel / GitHub Pages)
 Static hosts cannot write files, so the admin uses a **download-and-commit** workflow:
 
-1. Visit `your-site.com/admin`
+1. Visit `your-site.com/setitings`
 2. Make your changes across any tabs
 3. Click **Save Settings**
 4. A `db.json` file is **automatically downloaded** to your computer
@@ -223,7 +223,7 @@ To change the accent color globally in CSS:
 }
 ```
 
-Or use the Admin Console — **Theme & Colors** tab for live preview and save.
+Or use the Setitings Console — **Theme & Colors** tab for live preview and save.
 
 ---
 

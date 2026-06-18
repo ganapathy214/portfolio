@@ -6,6 +6,9 @@ import {
   HiIdentification,
   HiRocketLaunch,
   HiSquares2X2,
+  HiChatBubbleLeftRight,
+  HiBookOpen,
+  HiQuestionMarkCircle,
 } from "react-icons/hi2";
 import { GrCertificate } from "react-icons/gr";
 
@@ -87,7 +90,10 @@ export const sidebarItems = [
   { name: "Skills", href: "#skills", icon: HiCog },
   { name: "Projects", href: "#projects", icon: HiCodeBracket },
   { name: "Certification", href: "#certification", icon: GrCertificate },
+  { name: "Testimonials", href: "#testimonials", icon: HiChatBubbleLeftRight },
   { name: "Journey", href: "#journey", icon: HiRocketLaunch },
+  { name: "Blogs", href: "#blogs", icon: HiBookOpen },
+  { name: "Faq", href: "#faq", icon: HiQuestionMarkCircle },
   { name: "Contact", href: "#contact", icon: HiEnvelope },
 ];
 
@@ -119,7 +125,10 @@ export const PAGE_TITLES = {
   Skills: "Skills & Expertise | Ganapathy N | Senior Frontend Developer",
   Projects: "Featured Portfolio Projects | Ganapathy N",
   Certification: "Verified Certifications & Achievements | Ganapathy N",
+  Testimonials: "Testimonials & Client Feedback | Ganapathy N",
   Journey: "Professional Journey & Timeline | Ganapathy N",
+  Blogs: "Technical Publications & Blogs | Ganapathy N",
+  Faq: "Frequently Asked Questions | Ganapathy N",
   Contact: "Contact & Collaboration | Ganapathy N",
 };
 
@@ -130,7 +139,10 @@ export const PAGE_DESCRIPTIONS = {
   Skills: "Discover the core technical competencies, frameworks, testing automation tools, and cloud platforms utilized by Ganapathy N.",
   Projects: "Explore featured full-stack, frontend, and mobile projects delivered by Ganapathy N, including healthcare and maritime platforms.",
   Certification: "View professional credentials, cloud certifications, and technical program completions achieved by Ganapathy N from IBM, Meta, Google, and Cisco.",
+  Testimonials: "Read reviews and testimonials from client partners, tech leaders, and engineering managers who have worked with Ganapathy N.",
   Journey: "Track the professional experience timeline, academic background, and milestones in the career of Ganapathy N.",
+  Blogs: "Read technical articles, blogs, and tutorials authored by Ganapathy N on modern frontend optimization, Next.js, and mobile development.",
+  Faq: "Find answers to frequently asked questions about Ganapathy N's remote consulting terms, technology specialization, and notice periods.",
   Contact: "Get in touch with Ganapathy N for contract development, consulting, or job opportunities in web and mobile applications.",
 };
 

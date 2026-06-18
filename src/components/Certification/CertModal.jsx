@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import React, { useEffect } from "react";
 import { FiExternalLink, FiX, FiAward, FiCalendar } from "react-icons/fi";
 import { getTheme } from "../../constants";
+import { openPdf } from "../../utils/pdf";
 
 const resolveAlphaColor = (color, hexOpacity) => {
   if (color && color.startsWith("var(")) {
@@ -29,11 +30,7 @@ const CertModal = ({ cert, onClose }) => {
   }, [onClose]);
 
   const handleVerify = () => {
-    if (!cert.pdfFile) return;
-    const baseUrl = import.meta.env.BASE_URL || "/";
-    const cleanBase = baseUrl.endsWith("/") ? baseUrl : `${baseUrl}/`;
-    const url = `${cleanBase}files/certification/${encodeURIComponent(cert.pdfFile)}`;
-    window.open(url, "_blank");
+    openPdf(cert.pdfFile);
   };
 
   return (

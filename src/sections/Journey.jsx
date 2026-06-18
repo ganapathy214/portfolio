@@ -1,9 +1,9 @@
 import React, { useRef } from "react";
-import ShinyText from "../common/ShinyText";
-import CountUp from "../common/CountUp";
+import ShinyText from "../components/common/ShinyText";
+import CountUp from "../components/common/CountUp";
 import { motion } from "framer-motion";
 import { summaryStats, timelineData } from "../constants";
-import SectionLayout from "../layout/SectionLayout";
+import SectionLayout from "../layouts/SectionLayout";
 
 const cardVariants = {
   hidden: { opacity: 0, y: 30 },
