@@ -1,6 +1,10 @@
 import { motion } from "framer-motion";
 import React, { useRef } from "react";
-import { FaLinkedinIn, FaGithub } from "react-icons/fa";
+import {
+  FaLinkedinIn, FaGithub, FaTwitter, FaInstagram, FaYoutube,
+  FaGlobe, FaDribbble, FaBehance, FaMedium, FaDev,
+  FaStackOverflow, FaFigma, FaWhatsapp, FaTelegram,
+} from "react-icons/fa";
 import avatar from "../assets/avatar.png";
 import resumePdf from "../assets/resume.pdf";
 import { downloadPdf } from "../utils/pdf";
@@ -10,8 +14,10 @@ import { useTypewriter } from "../components/common/utils/hooks/useTypewriter";
 import SectionLayout from "../layouts/SectionLayout";
 
 const ICONS = {
-  FaLinkedinIn,
-  FaGithub,
+  FaLinkedinIn,  FaGithub,       FaTwitter,     FaInstagram,
+  FaYoutube,     FaGlobe,        FaDribbble,    FaBehance,
+  FaMedium,      FaDev,          FaStackOverflow, FaFigma,
+  FaWhatsapp,    FaTelegram,
 };
 
 import { DEFAULT_ABOUT } from "../constants";

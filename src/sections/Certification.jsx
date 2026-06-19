@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import React, { useState, useMemo, useEffect, useRef } from "react";
+import React, { useState, useMemo, useEffect, useRef, useCallback } from "react";
 import {
   FiCalendar,
   FiBriefcase,
@@ -269,7 +269,6 @@ const Certification = ({ certifications: certificationsProp, title, sectionNum }
   const headerRef = useRef(null);
 
   const [activeIndex, setActiveIndex] = useState(0);
-  const [direction, setDirection] = useState(0);
   const [activeCert, setActiveCert] = useState(null);
   const [isPlaying, setIsPlaying] = useState(true);
   const [windowWidth, setWindowWidth] = useState(typeof window !== "undefined" ? window.innerWidth : 1200);
@@ -306,6 +305,19 @@ const Certification = ({ certifications: certificationsProp, title, sectionNum }
   const visibleCount = getVisibleCount();
   const maxIndex = Math.max(0, resolvedCertifications.length - visibleCount);
 
+  const paginate = useCallback((newDirection) => {
+    setActiveIndex((prevIndex) => {
+      let nextIndex = prevIndex + newDirection;
+      const limit = maxIndex;
+      if (nextIndex < 0) {
+        nextIndex = limit;
+      } else if (nextIndex > limit) {
+        nextIndex = 0;
+      }
+      return nextIndex;
+    });
+  }, [maxIndex]);
+
   // Autoplay effect
   useEffect(() => {
     if (!isPlaying) return;
@@ -313,7 +325,7 @@ const Certification = ({ certifications: certificationsProp, title, sectionNum }
       paginate(1);
     }, 4000);
     return () => clearInterval(interval);
-  }, [isPlaying, activeIndex, maxIndex]);
+  }, [isPlaying, paginate]);
 
   // Lock scroll when modal open
   useEffect(() => {
@@ -333,20 +345,6 @@ const Certification = ({ certifications: certificationsProp, title, sectionNum }
 
   const handleVerify = (cert) => {
     openPdf(cert?.pdfFile);
-  };
-
-  const paginate = (newDirection) => {
-    setDirection(newDirection);
-    setActiveIndex((prevIndex) => {
-      let nextIndex = prevIndex + newDirection;
-      const limit = maxIndex;
-      if (nextIndex < 0) {
-        nextIndex = limit;
-      } else if (nextIndex > limit) {
-        nextIndex = 0;
-      }
-      return nextIndex;
-    });
   };
 
   const handleDragEnd = (e, info) => {
