@@ -1,6 +1,6 @@
 import React from "react";
 import { FiCompass } from "react-icons/fi";
-import { FormField } from "../SetitingsCommon";
+import { FormField } from "../SettingsCommon";
 
 export default function SeoTab({
   pickedColor,

@@ -1,6 +1,6 @@
 import React from "react";
 import { FiPlusCircle, FiChevronUp, FiChevronDown, FiTrash2 } from "react-icons/fi";
-import { FormField, FileUpload, TabCardWrapper } from "../SetitingsCommon";
+import { FormField, FileUpload, TabCardWrapper } from "../SettingsCommon";
 
 export default function CertificationsTab({
   localCertifications,
@@ -46,7 +46,7 @@ export default function CertificationsTab({
         </div>
 
         {localCertifications.length === 0 ? (
-          <div className="p-8 text-center bg-stone-950/40 border border-stone-900 rounded-3xl select-none">
+          <div className="p-8 text-center bg-stone-950 border border-stone-900 rounded-3xl select-none">
             <span className="text-stone-500 text-xs font-bold uppercase tracking-wider">
               No certifications registered. Click "Add Certification" to begin.
             </span>
@@ -82,7 +82,7 @@ export default function CertificationsTab({
                           moveCert(idx, -1);
                         }}
                         disabled={idx === 0}
-                        className="p-1 rounded bg-stone-900/50 text-stone-450 hover:text-white disabled:opacity-35 cursor-pointer"
+                        className="p-1 rounded-lg border border-stone-900 bg-stone-950 text-stone-400 hover:text-white hover:border-stone-850 transition-colors disabled:opacity-35 cursor-pointer"
                       >
                         <FiChevronUp className="text-[10px]" />
                       </button>
@@ -93,7 +93,7 @@ export default function CertificationsTab({
                           moveCert(idx, 1);
                         }}
                         disabled={idx === localCertifications.length - 1}
-                        className="p-1 rounded bg-stone-900/50 text-stone-450 hover:text-white disabled:opacity-35 cursor-pointer"
+                        className="p-1 rounded-lg border border-stone-900 bg-stone-950 text-stone-400 hover:text-white hover:border-stone-850 transition-colors disabled:opacity-35 cursor-pointer"
                       >
                         <FiChevronDown className="text-[10px]" />
                       </button>
@@ -103,7 +103,7 @@ export default function CertificationsTab({
                           e.stopPropagation();
                           deleteCert(idx);
                         }}
-                        className="p-1 rounded bg-red-950/40 text-red-400 hover:bg-red-900/50 hover:text-red-300 transition-colors cursor-pointer"
+                        className="p-1 rounded-lg border border-red-500/10 bg-stone-950 text-red-400 hover:bg-red-500/10 hover:border-red-500/30 transition-all cursor-pointer"
                       >
                         <FiTrash2 className="text-[10px]" />
                       </button>
@@ -115,7 +115,7 @@ export default function CertificationsTab({
 
             {/* Right: Selected Cert Form Fields */}
             {c && (
-              <div className="lg:col-span-8 bg-stone-950/40 border border-stone-900/60 p-5 rounded-3xl space-y-6">
+              <div className="lg:col-span-8 bg-stone-950 border border-stone-900 p-5 rounded-3xl space-y-6">
                 <div className="space-y-6 animate-fadeIn">
                   {/* Row 1: Title & Issuer */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -170,7 +170,7 @@ export default function CertificationsTab({
                   />
 
                   {c.image && (
-                    <div className="flex items-center gap-3 bg-stone-900/20 p-3 rounded-xl border border-stone-900">
+                    <div className="flex items-center gap-3 bg-stone-950 p-3 rounded-xl border border-stone-900">
                       <div className="relative w-16 h-10 border border-stone-800 rounded-lg overflow-hidden bg-stone-900 shrink-0">
                         <img
                           src={c.image.startsWith("data:") || c.image.startsWith("/") || c.image.startsWith("http") ? c.image : `/src/assets/certificate/${c.image}`}
@@ -202,7 +202,7 @@ export default function CertificationsTab({
                   />
 
                   {c.pdfFile && (
-                    <div className="flex items-center gap-3 bg-stone-900/20 p-3 rounded-xl border border-stone-900">
+                    <div className="flex items-center gap-3 bg-stone-950 p-3 rounded-xl border border-stone-900">
                       <span className="text-[10px] text-stone-400 font-mono">
                         Credential PDF Verification File exists
                       </span>

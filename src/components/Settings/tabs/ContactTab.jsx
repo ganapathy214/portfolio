@@ -1,5 +1,5 @@
 import React from "react";
-import { FormField, TabCardWrapper } from "../SetitingsCommon";
+import { FormField, TabCardWrapper } from "../SettingsCommon";
 
 export default function ContactTab({
   renderSectionVisibilityBanner,

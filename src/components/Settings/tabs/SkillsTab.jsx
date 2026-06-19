@@ -1,6 +1,6 @@
 import React from "react";
 import { FiPlusCircle, FiTrash2, FiChevronUp, FiChevronDown } from "react-icons/fi";
-import { FormField, TabCardWrapper } from "../SetitingsCommon";
+import { FormField, TabCardWrapper } from "../SettingsCommon";
 
 export default function SkillsTab({
   localSkills,
@@ -68,7 +68,7 @@ export default function SkillsTab({
 
         {/* Active Category Editor Section */}
         {activeSkillCategoryTab && currentCat ? (
-          <div className="space-y-6 bg-stone-950/40 p-5 border border-stone-900/60 rounded-3xl animate-fadeIn">
+          <div className="space-y-6 bg-stone-950 p-5 border border-stone-900 rounded-3xl animate-fadeIn">
             {/* Rename & Delete Category row */}
             <div className="flex flex-col sm:flex-row sm:items-center gap-3 justify-between">
               <div className="flex flex-col gap-1 flex-1">
@@ -78,7 +78,7 @@ export default function SkillsTab({
                   value={currentCat.label}
                   onChange={(e) => renameSkillCategory(currentCat.id, e.target.value)}
                   placeholder="Category Name"
-                  className="bg-stone-900 border border-stone-850 focus:border-primary outline-none text-xs rounded-xl px-4 py-2 text-white font-semibold max-w-sm transition-all"
+                  className="bg-stone-950 border border-stone-900 focus:border-primary outline-none text-xs rounded-xl px-4 py-2.5 text-white font-semibold max-w-sm transition-all focus:ring-1 focus:ring-primary/20"
                 />
               </div>
               <button
@@ -100,7 +100,7 @@ export default function SkillsTab({
                 <button
                   type="button"
                   onClick={() => addCategoryBullet(currentCat.id)}
-                  className="flex items-center gap-1 text-[8.5px] font-bold uppercase tracking-wider py-1 px-2.5 rounded-lg bg-stone-900 hover:bg-stone-800 transition-colors cursor-pointer border border-stone-800"
+                  className="flex items-center gap-1.5 text-[8.5px] font-bold uppercase tracking-wider py-1.5 px-3 rounded-xl bg-stone-950 hover:bg-stone-900/40 hover:border-stone-850 transition-colors cursor-pointer border border-stone-900 text-stone-300"
                 >
                   <FiPlusCircle className="text-xs" /> Add Bullet
                 </button>
@@ -122,7 +122,7 @@ export default function SkillsTab({
                         type="button"
                         onClick={() => moveCategoryBullet(currentCat.id, idx, -1)}
                         disabled={idx === 0}
-                        className="p-0.5 rounded bg-stone-900 text-stone-500 hover:text-white disabled:opacity-30 cursor-pointer"
+                        className="p-1 rounded-lg border border-stone-900 bg-stone-950 text-stone-400 hover:text-white hover:border-stone-850 transition-colors disabled:opacity-30 cursor-pointer"
                       >
                         <FiChevronUp className="text-[10px]" />
                       </button>
@@ -130,14 +130,14 @@ export default function SkillsTab({
                         type="button"
                         onClick={() => moveCategoryBullet(currentCat.id, idx, 1)}
                         disabled={idx === currentCat.bullets.length - 1}
-                        className="p-0.5 rounded bg-stone-900 text-stone-500 hover:text-white disabled:opacity-30 cursor-pointer"
+                        className="p-1 rounded-lg border border-stone-900 bg-stone-950 text-stone-400 hover:text-white hover:border-stone-850 transition-colors disabled:opacity-30 cursor-pointer"
                       >
                         <FiChevronDown className="text-[10px]" />
                       </button>
                       <button
                         type="button"
                         onClick={() => deleteCategoryBullet(currentCat.id, idx)}
-                        className="p-0.5 rounded text-red-500 hover:bg-red-900/20 cursor-pointer ml-0.5"
+                        className="p-1 rounded-lg border border-red-500/10 bg-stone-950 text-red-400 hover:bg-red-500/10 hover:border-red-500/30 transition-all cursor-pointer ml-0.5"
                       >
                         <FiTrash2 className="text-[10px]" />
                       </button>
@@ -181,19 +181,19 @@ export default function SkillsTab({
             </div>
           </div>
         ) : (
-          <div className="p-4 text-center bg-stone-950/40 border border-stone-900/60 rounded-3xl select-none">
+          <div className="p-4 text-center bg-stone-950 border border-stone-900 rounded-3xl select-none">
             <span className="text-stone-500 text-xs font-bold uppercase tracking-wider">Create a category to begin.</span>
           </div>
         )}
 
         {/* Add Category Section */}
-        <div className="flex items-center gap-2 bg-stone-950/30 p-4 border border-stone-900 rounded-2xl max-w-md">
+        <div className="flex items-center gap-2 bg-stone-950 p-4 border border-stone-900 rounded-2xl max-w-md">
           <input
             type="text"
             value={newSkillCategoryName}
             onChange={(e) => setNewSkillCategoryName(e.target.value)}
             placeholder="Create New Category..."
-            className="flex-1 bg-stone-900 border border-stone-850 focus:border-primary outline-none text-xs rounded-xl px-4 py-2.5 text-white font-semibold transition-all focus:ring-1 focus:ring-primary/20"
+            className="flex-1 bg-stone-950 border border-stone-900 focus:border-primary outline-none text-xs rounded-xl px-4 py-2.5 text-white font-semibold transition-all focus:ring-1 focus:ring-primary/20"
           />
           <button
             type="button"
@@ -239,9 +239,9 @@ export default function SkillsTab({
               value={newSkillName}
               onChange={(e) => setNewSkillName(e.target.value)}
               placeholder="Skill Name (e.g. Docker)"
-              className="w-full bg-stone-900 border border-stone-850 focus:border-primary outline-none text-xs rounded-xl px-3.5 py-2 text-white font-semibold transition-all focus:ring-1 focus:ring-primary/20"
+              className="w-full bg-stone-950 border border-stone-900 focus:border-primary outline-none text-xs rounded-xl px-4 py-2.5 text-white font-semibold transition-all focus:ring-1 focus:ring-primary/20"
             />
-            <div className="flex flex-col sm:flex-row items-center gap-2 bg-stone-900/50 border border-stone-800 rounded-xl p-2 w-full justify-between">
+            <div className="flex flex-col sm:flex-row items-center gap-2 bg-stone-950 border border-stone-900 rounded-xl p-2.5 w-full justify-between">
               <input
                 type="file"
                 accept="image/svg+xml,image/png"

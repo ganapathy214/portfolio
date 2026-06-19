@@ -5,8 +5,8 @@
   "type": "module",
   "homepage": "https://ganapathy214.github.io/portfolio/",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
+    "dev": "node init && vite",
+    "build": "node init && vite build",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist",
     "lint": "eslint .",

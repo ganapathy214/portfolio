@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import SpotlightCard from "../components/common/SpotlightCard";
 import { SectionHeader } from "../components/common/utils";
 import { framerVariants, SECTION_NUMBERS } from "../constants";
+import { usePortfolio } from "../context/PortfolioContext";
 
 const getVariant = (key) => framerVariants.find((v) => v.key === key)?.value;
 
@@ -42,6 +43,62 @@ export default function SectionLayout({
 
     return () => section && observer.unobserve(section);
   }, []);
+
+  const { selectedTemplate } = usePortfolio() || {};
+  const isTemplate6 = selectedTemplate === "template-6";
+
+  if (isTemplate6) {
+    return (
+      <section
+        id={id}
+        ref={sectionRef}
+        className="min-h-[60vh] flex flex-col py-16 px-6 relative w-full text-left max-w-[90%] mx-auto"
+      >
+        {/* Section header row matching template-6 design */}
+        <div
+          ref={headerRef}
+          className="flex items-center gap-3 mb-12 relative z-10 w-full"
+        >
+          {/* Number Prefix (e.g., 02.) */}
+          <span
+            className="text-3xl font-extrabold font-mono select-none"
+            style={{ color: "var(--primary)" }}
+          >
+            {finalSectionNum}.
+          </span>
+
+          {/* Section title */}
+          <h2
+            className="text-3xl font-extrabold tracking-tight text-[var(--text-white-or-dark)]"
+          >
+            {label}
+          </h2>
+
+          {/* Horizontal rule accent */}
+          <div
+            className="flex-1 h-px"
+            style={{
+              background: "linear-gradient(to left, transparent, rgba(var(--primary-rgb),0.15))",
+            }}
+          />
+        </div>
+
+        {/* Content - full width, borderless, cardless */}
+        <div className="flex-1 flex min-h-0 relative z-10 w-full">
+          <motion.div
+            className="w-full h-full"
+            variants={containerVariant}
+            initial="hidden"
+            animate={isInView ? "visible" : "hidden"}
+          >
+            <motion.div className="w-full h-full" variants={itemVariant}>
+              {children}
+            </motion.div>
+          </motion.div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section

@@ -1,10 +1,11 @@
-@import url('https://fonts.googleapis.com/css2?family=Elms+Sans:ital,wght@0,100..900;1,100..900&family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Elms+Sans:ital,wght@0,100..900;1,100..900&family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&family=Outfit:wght@400;500;600;700;800;900&display=swap');
 @import "tailwindcss";
 
 :root {
   --primary: #00D5D5;
   --primary-rgb: 0, 213, 213;
   --primary-contrast: #000000;
+  --font-primary: "Outfit", sans-serif;
   
   --card-bg: #121212;
   --card-bg-rgb: 18, 18, 18;
@@ -25,14 +26,15 @@
 }
 
 
-html {
+html, body {
   scroll-behavior: smooth;
+  overflow-x: hidden;
 }
 
 :root {
   line-height: 1.5;
   font-weight: 400;
-  font-family: "Elms Sans", "Google Sans", sans-serif;
+  font-family: var(--font-primary, "Outfit", "Elms Sans", "Google Sans", sans-serif);
   color-scheme: dark;
   color: #FFFFFF;
   background-color: #000000;
@@ -70,7 +72,7 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: "Google Sans", sans-serif;
+  font-family: var(--font-primary, "Outfit", "Google Sans", sans-serif);
   letter-spacing: -0.02em;
 }
 
@@ -331,14 +333,14 @@ button {
 }
 
 /* === ADMIN CONSOLE PREMIUM STYLING === */
-.setitings-console-page {
+.settings-console-page {
   --sidebar-width: 280px;
 }
 
-.setitings-console-page input[type="text"],
-.setitings-console-page input[type="number"],
-.setitings-console-page input[type="email"],
-.setitings-console-page select {
+.settings-console-page input[type="text"],
+.settings-console-page input[type="number"],
+.settings-console-page input[type="email"],
+.settings-console-page select {
   background-color: #070709 !important;
   border: 1px solid #1a1a1e !important;
   border-radius: 12px !important;
@@ -352,7 +354,7 @@ button {
   padding: 10px 14px !important;
 }
 
-.setitings-console-page textarea {
+.settings-console-page textarea {
   background-color: #070709 !important;
   border: 1px solid #1a1a1e !important;
   border-radius: 12px !important;
@@ -366,24 +368,25 @@ button {
   padding: 12px 14px !important;
 }
 
-.setitings-console-page input[type="text"]:hover,
-.setitings-console-page input[type="number"]:hover,
-.setitings-console-page input[type="email"]:hover,
-.setitings-console-page textarea:hover,
-.setitings-console-page select:hover {
+.settings-console-page input[type="text"]:hover,
+.settings-console-page input[type="number"]:hover,
+.settings-console-page input[type="email"]:hover,
+.settings-console-page textarea:hover,
+.settings-console-page select:hover {
   border-color: #2b2b35 !important;
 }
 
-.setitings-console-page input[type="text"]:focus,
-.setitings-console-page input[type="number"]:focus,
-.setitings-console-page input[type="email"]:focus,
-.setitings-console-page textarea:focus,
-.setitings-console-page select:focus {
+.settings-console-page input[type="text"]:focus,
+.settings-console-page input[type="number"]:focus,
+.settings-console-page input[type="email"]:focus,
+.settings-console-page textarea:focus,
+.settings-console-page select:focus {
   border-color: var(--primary) !important;
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.6), 0 0 0 2px rgba(var(--primary-rgb), 0.15) !important;
+  transform: translateY(-1.5px) !important;
 }
 
-.setitings-console-page label {
+.settings-console-page label {
   color: #71717a !important; /* zinc-500 */
   font-size: 8.5px !important;
   font-weight: 800 !important;
@@ -393,13 +396,13 @@ button {
   transition: color 0.2s ease !important;
 }
 
-.setitings-console-page div:focus-within > label {
+.settings-console-page div:focus-within > label {
   color: var(--primary) !important;
 }
 
 /* Glass card styling inside the form */
-.setitings-console-page .bg-stone-950\/40,
-.setitings-console-page .bg-stone-950 {
+.settings-console-page .bg-stone-950\/40,
+.settings-console-page .bg-stone-950 {
   background: rgba(8, 8, 10, 0.5) !important;
   border: 1px solid #141418 !important;
   border-radius: 20px !important;
@@ -410,11 +413,11 @@ button {
 }
 
 /* Selected list items in selector sidebars */
-.setitings-console-page .lg\:col-span-4 > div > div {
+.settings-console-page .lg\:col-span-4 > div > div {
   transition: all 0.2s ease !important;
 }
 
-.setitings-console-page .lg\:col-span-4 > div > div:hover {
+.settings-console-page .lg\:col-span-4 > div > div:hover {
   background-color: rgba(255, 255, 255, 0.02) !important;
   border-color: #22222a !important;
 }
@@ -520,102 +523,102 @@ html.light .primary_button:hover {
 }
 
 /* Admin Console Overrides in Light Mode */
-html.light .setitings-console-page {
+html.light .settings-console-page {
   background-color: var(--bg-main) !important;
 }
 
-html.light .setitings-console-page .glass-panel {
+html.light .settings-console-page .glass-panel {
   background: rgba(255, 255, 255, 0.75) !important;
   border-color: rgba(0, 0, 0, 0.06) !important;
   box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.1) !important;
 }
 
-html.light .setitings-console-page .bg-stone-950\/95,
-html.light .setitings-console-page .bg-stone-950\/45 {
+html.light .settings-console-page .bg-stone-950\/95,
+html.light .settings-console-page .bg-stone-950\/45 {
   background-color: rgba(245, 245, 248, 0.8) !important;
   border-color: rgba(0, 0, 0, 0.08) !important;
 }
 
-html.light .setitings-console-page .border-stone-900\/60,
-html.light .setitings-console-page .border-stone-900,
-html.light .setitings-console-page .border-stone-800 {
+html.light .settings-console-page .border-stone-900\/60,
+html.light .settings-console-page .border-stone-900,
+html.light .settings-console-page .border-stone-800 {
   border-color: rgba(0, 0, 0, 0.08) !important;
 }
 
-html.light .setitings-console-page input[type="text"],
-html.light .setitings-console-page input[type="number"],
-html.light .setitings-console-page input[type="email"],
-html.light .setitings-console-page textarea,
-html.light .setitings-console-page select {
+html.light .settings-console-page input[type="text"],
+html.light .settings-console-page input[type="number"],
+html.light .settings-console-page input[type="email"],
+html.light .settings-console-page textarea,
+html.light .settings-console-page select {
   background-color: #ffffff !important;
   border-color: #d1d5db !important;
   color: #111113 !important;
   box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05) !important;
 }
 
-html.light .setitings-console-page select option {
+html.light .settings-console-page select option {
   background-color: #ffffff !important;
   color: #111113 !important;
 }
 
-html.light .setitings-console-page input[type="text"]:hover,
-html.light .setitings-console-page input[type="number"]:hover,
-html.light .setitings-console-page input[type="email"]:hover,
-html.light .setitings-console-page textarea:hover,
-html.light .setitings-console-page select:hover {
+html.light .settings-console-page input[type="text"]:hover,
+html.light .settings-console-page input[type="number"]:hover,
+html.light .settings-console-page input[type="email"]:hover,
+html.light .settings-console-page textarea:hover,
+html.light .settings-console-page select:hover {
   border-color: #c0c4cc !important;
 }
 
-html.light .setitings-console-page input[type="text"]:focus,
-html.light .setitings-console-page input[type="number"]:focus,
-html.light .setitings-console-page input[type="email"]:focus,
-html.light .setitings-console-page textarea:focus,
-html.light .setitings-console-page select:focus {
+html.light .settings-console-page input[type="text"]:focus,
+html.light .settings-console-page input[type="number"]:focus,
+html.light .settings-console-page input[type="email"]:focus,
+html.light .settings-console-page textarea:focus,
+html.light .settings-console-page select:focus {
   border-color: var(--primary) !important;
   box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05), 0 0 0 2px rgba(var(--primary-rgb), 0.15) !important;
 }
 
-html.light .setitings-console-page .bg-stone-950\/40,
-html.light .setitings-console-page .bg-stone-950 {
+html.light .settings-console-page .bg-stone-950\/40,
+html.light .settings-console-page .bg-stone-950 {
   background: rgba(255, 255, 255, 0.6) !important;
   border-color: rgba(0, 0, 0, 0.06) !important;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04) !important;
 }
 
 /* Stats inner blocks, shortcuts, and custom dropdowns override */
-html.light .setitings-console-page .bg-stone-900\/50,
-html.light .setitings-console-page .bg-stone-900\/30,
-html.light .setitings-console-page .bg-stone-900\/35,
-html.light .setitings-console-page .bg-stone-950\/30 {
+html.light .settings-console-page .bg-stone-900\/50,
+html.light .settings-console-page .bg-stone-900\/30,
+html.light .settings-console-page .bg-stone-900\/35,
+html.light .settings-console-page .bg-stone-950\/30 {
   background-color: rgba(0, 0, 0, 0.03) !important;
   border-color: rgba(0, 0, 0, 0.06) !important;
 }
 
-html.light .setitings-console-page button.bg-stone-900\/30:hover {
+html.light .settings-console-page button.bg-stone-900\/30:hover {
   background-color: rgba(0, 0, 0, 0.06) !important;
 }
 
-html.light .setitings-console-page .bg-stone-950\/20 {
+html.light .settings-console-page .bg-stone-950\/20 {
   background-color: rgba(0, 0, 0, 0.02) !important;
   border-top-color: rgba(0, 0, 0, 0.06) !important;
 }
 
-html.light .setitings-console-page button.bg-white\/5 {
+html.light .settings-console-page button.bg-white\/5 {
   background-color: rgba(0, 0, 0, 0.04) !important;
   color: #111113 !important;
 }
 
-html.light .setitings-console-page nav button:hover {
+html.light .settings-console-page nav button:hover {
   background-color: rgba(0, 0, 0, 0.04) !important;
   color: #111113 !important;
 }
 
-html.light .setitings-console-page .text-stone-400 {
+html.light .settings-console-page .text-stone-400 {
   color: #4b5563 !important;
 }
 
 /* Welcome Card in light mode admin console */
-html.light .setitings-console-page div.rounded-3xl.border.flex {
+html.light .settings-console-page div.rounded-3xl.border.flex {
   background: linear-gradient(135deg, rgba(var(--primary-rgb), 0.08), rgba(255,255,255,0.75)) !important;
   border-color: rgba(var(--primary-rgb), 0.2) !important;
 }
@@ -678,6 +681,12 @@ html.light .tag-outline {
 html.light .tag-outline:hover {
   border-color: var(--primary) !important;
   color: var(--primary) !important;
+}
+
+/* Spotlight card overrides in light mode */
+html.light .custom-spotlight-card {
+  background-color: rgba(255, 255, 255, 0.8) !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
 }
 
 /* Hide scrollbar utility */

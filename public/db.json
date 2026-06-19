@@ -1,5 +1,5 @@
 {
-  "primaryColor": "#f43f5e",
+  "primaryColor": "#14b8a6",
   "roles": [
     "Senior Software Developer",
     "Full-Stack Engineer",
@@ -36,7 +36,7 @@
     }
   ],
   "about": {
-    "name": "Ganapathy Natarajan",
+    "name": "Ganapathy N",
     "title": "Senior Frontend & Full Stack Developer",
     "bio": "Senior Frontend & Full Stack Developer with 6+ years of experience specializing in React.js, Next.js, React Native, TypeScript, and modern JavaScript ecosystems. I design and build high-performance, accessible, and scalable enterprise web and mobile applications.",
     "bioPrefix": "A Passionate",
@@ -86,7 +86,8 @@
         "label": "Github"
       }
     ],
-    "resumeFileName": "Ganapathy_N_Resume.pdf"
+    "resumeFileName": "Ganapathy_N_Resume.pdf",
+    "statusBadgeText": "Mr, Pro"
   },
   "servicesSubtitle": "High-performance, scalable, and secure software development solutions tailored to meet business objectives and deliver outstanding user experiences.",
   "servicesData": [
@@ -933,8 +934,8 @@
     "formTitle": "Send a Message",
     "formSubtitle": "For custom projects, consulting, or new opportunities."
   },
-  "themeMode": "light",
-  "selectedTemplate": "template-5",
+  "themeMode": "dark",
+  "selectedTemplate": "template-1",
   "pageTitles": {
     "Home": "Home | Ganapathy N | Senior Software Developer",
     "About": "About Me | Ganapathy N | Senior Full Stack Developer",
@@ -1031,5 +1032,20 @@
       "question": "What is your standard notice period?",
       "answer": "Depending on the complexity and urgency of the project, I can typically get started within 1 to 2 weeks."
     }
+  ],
+  "fontFamily": "Outfit",
+  "particlesStyle": "minimal",
+  "sectionOrder": [
+    "Home",
+    "About",
+    "Services",
+    "Skills",
+    "Projects",
+    "Certification",
+    "Testimonials",
+    "Journey",
+    "Blogs",
+    "Faq",
+    "Contact"
   ]
 }

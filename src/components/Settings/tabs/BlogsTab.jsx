@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { FiPlusCircle, FiChevronUp, FiChevronDown, FiTrash2 } from "react-icons/fi";
-import { FormField, TabCardWrapper } from "../SetitingsCommon";
+import { FormField, TabCardWrapper } from "../SettingsCommon";
 
 export default function BlogsTab({
   localBlogs = [],
@@ -82,7 +82,7 @@ export default function BlogsTab({
         </div>
 
         {localBlogs.length === 0 ? (
-          <div className="p-8 text-center bg-stone-950/40 border border-stone-900 rounded-3xl select-none">
+          <div className="p-8 text-center bg-stone-950 border border-stone-900 rounded-3xl select-none">
             <span className="text-stone-500 text-xs font-bold uppercase tracking-wider">
               No articles registered. Click "Add Article" to begin.
             </span>
@@ -118,7 +118,7 @@ export default function BlogsTab({
                           moveBlog(idx, -1);
                         }}
                         disabled={idx === 0}
-                        className="p-1 rounded bg-stone-900/50 text-stone-450 hover:text-white disabled:opacity-35 cursor-pointer"
+                        className="p-1 rounded-lg border border-stone-900 bg-stone-950 text-stone-400 hover:text-white hover:border-stone-850 transition-colors disabled:opacity-35 cursor-pointer"
                       >
                         <FiChevronUp className="text-[10px]" />
                       </button>
@@ -129,7 +129,7 @@ export default function BlogsTab({
                           moveBlog(idx, 1);
                         }}
                         disabled={idx === localBlogs.length - 1}
-                        className="p-1 rounded bg-stone-900/50 text-stone-450 hover:text-white disabled:opacity-35 cursor-pointer"
+                        className="p-1 rounded-lg border border-stone-900 bg-stone-950 text-stone-400 hover:text-white hover:border-stone-850 transition-colors disabled:opacity-35 cursor-pointer"
                       >
                         <FiChevronDown className="text-[10px]" />
                       </button>
@@ -139,7 +139,7 @@ export default function BlogsTab({
                           e.stopPropagation();
                           deleteBlog(idx);
                         }}
-                        className="p-1 rounded bg-red-950/40 text-red-400 hover:bg-red-900/50 hover:text-red-300 transition-colors cursor-pointer"
+                        className="p-1 rounded-lg border border-red-500/10 bg-stone-950 text-red-400 hover:bg-red-500/10 hover:border-red-500/30 transition-all cursor-pointer"
                       >
                         <FiTrash2 className="text-[10px]" />
                       </button>
@@ -151,7 +151,7 @@ export default function BlogsTab({
 
             {/* Right form fields */}
             {b && (
-              <div className="lg:col-span-8 bg-stone-950/40 border border-stone-900/60 p-5 rounded-3xl space-y-6">
+              <div className="lg:col-span-8 bg-stone-950 border border-stone-900 p-5 rounded-3xl space-y-6">
                 <div className="space-y-6 animate-fadeIn">
                   {/* Title */}
                   <FormField

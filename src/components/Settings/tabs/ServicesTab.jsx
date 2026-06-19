@@ -1,6 +1,6 @@
 import React from "react";
 import { FiPlusCircle } from "react-icons/fi";
-import { FormField, TabCardWrapper, ControlButtons } from "../SetitingsCommon";
+import { FormField, TabCardWrapper, ControlButtons } from "../SettingsCommon";
 
 export default function ServicesTab({
   localServicesSubtitle,
@@ -81,14 +81,14 @@ export default function ServicesTab({
                     value={service.title}
                     onChange={(e) => updateService(idx, "title", e.target.value)}
                     placeholder="Service Title"
-                    className="w-full bg-stone-900/50 border border-stone-850 focus:border-primary outline-none text-xs rounded-xl px-3 py-2 text-white font-semibold transition-all focus:ring-1 focus:ring-primary/20"
+                    className="w-full bg-stone-950 border border-stone-900 focus:border-primary outline-none text-xs rounded-xl px-4 py-2.5 text-white font-semibold transition-all focus:ring-1 focus:ring-primary/20"
                   />
                   <textarea
                     value={service.description}
                     onChange={(e) => updateService(idx, "description", e.target.value)}
                     placeholder="Service Description"
                     rows={2}
-                    className="w-full bg-stone-900/50 border border-stone-850 focus:border-primary outline-none text-xs rounded-xl px-3 py-2 text-stone-300 resize-none font-medium transition-all focus:ring-1 focus:ring-primary/20"
+                    className="w-full bg-stone-950 border border-stone-900 focus:border-primary outline-none text-xs rounded-xl px-4 py-3 text-stone-300 resize-none font-medium transition-all focus:ring-1 focus:ring-primary/20"
                   />
                 </div>
                 <div className="md:col-span-4 flex flex-col gap-1.5 text-left">
@@ -98,7 +98,7 @@ export default function ServicesTab({
                   <select
                     value={service.icon}
                     onChange={(e) => updateService(idx, "icon", e.target.value)}
-                    className="w-full bg-stone-900/50 border border-stone-850 focus:border-primary outline-none text-xs rounded-xl px-3.5 py-2.5 text-white font-bold cursor-pointer transition-all focus:ring-1 focus:ring-primary/20"
+                    className="w-full bg-stone-950 border border-stone-900 focus:border-primary outline-none text-xs rounded-xl px-4 py-2.5 text-white font-bold cursor-pointer transition-all focus:ring-1 focus:ring-primary/20"
                   >
                     <option value="code">Code (Terminal)</option>
                     <option value="database">Database (SQL/Server)</option>
