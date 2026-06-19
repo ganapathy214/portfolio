@@ -1,6 +1,6 @@
 import React from "react";
 import { FiPlusCircle } from "react-icons/fi";
-import { FormField, TabCardWrapper, ControlButtons } from "../SetitingsCommon";
+import { FormField, TabCardWrapper, ControlButtons } from "../SettingsCommon";
 
 export default function JourneyTab({
   pickedColor,
@@ -111,7 +111,7 @@ export default function JourneyTab({
             </div>
 
             {/* Right Form */}
-            <div className="lg:col-span-8 bg-stone-950/40 border border-stone-900/60 p-5 rounded-3xl space-y-6">
+            <div className="lg:col-span-8 bg-stone-950 border border-stone-900 p-5 rounded-3xl space-y-6">
               {(() => {
                 const item = localTimelineData[activeTimelineIdx];
                 if (!item) return null;

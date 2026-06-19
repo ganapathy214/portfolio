@@ -1,6 +1,6 @@
 import React from "react";
 import { FiPlusCircle, FiChevronUp, FiChevronDown, FiTrash2 } from "react-icons/fi";
-import { FormField, FileUpload, TabCardWrapper } from "../SetitingsCommon";
+import { FormField, FileUpload, TabCardWrapper } from "../SettingsCommon";
 
 export default function ProjectsTab({
   localProjects,
@@ -56,7 +56,7 @@ export default function ProjectsTab({
         </div>
 
         {localProjects.length === 0 ? (
-          <div className="p-8 text-center bg-stone-950/40 border border-stone-900 rounded-3xl select-none">
+          <div className="p-8 text-center bg-stone-950 border border-stone-900 rounded-3xl select-none">
             <span className="text-stone-500 text-xs font-bold uppercase tracking-wider">
               No projects registered. Click "Add Project" to begin.
             </span>
@@ -92,7 +92,7 @@ export default function ProjectsTab({
                           moveProject(idx, -1);
                         }}
                         disabled={idx === 0}
-                        className="p-1 rounded bg-stone-900/50 text-stone-450 hover:text-white disabled:opacity-35 cursor-pointer"
+                        className="p-1 rounded-lg border border-stone-900 bg-stone-950 text-stone-400 hover:text-white hover:border-stone-850 transition-colors disabled:opacity-35 cursor-pointer"
                       >
                         <FiChevronUp className="text-[10px]" />
                       </button>
@@ -103,7 +103,7 @@ export default function ProjectsTab({
                           moveProject(idx, 1);
                         }}
                         disabled={idx === localProjects.length - 1}
-                        className="p-1 rounded bg-stone-900/50 text-stone-450 hover:text-white disabled:opacity-35 cursor-pointer"
+                        className="p-1 rounded-lg border border-stone-900 bg-stone-950 text-stone-400 hover:text-white hover:border-stone-850 transition-colors disabled:opacity-35 cursor-pointer"
                       >
                         <FiChevronDown className="text-[10px]" />
                       </button>
@@ -113,7 +113,7 @@ export default function ProjectsTab({
                           e.stopPropagation();
                           deleteProject(idx);
                         }}
-                        className="p-1 rounded bg-red-950/40 text-red-400 hover:bg-red-900/50 hover:text-red-300 transition-colors cursor-pointer"
+                        className="p-1 rounded-lg border border-red-500/10 bg-stone-950 text-red-400 hover:bg-red-500/10 hover:border-red-500/30 transition-all cursor-pointer"
                       >
                         <FiTrash2 className="text-[10px]" />
                       </button>
@@ -125,7 +125,7 @@ export default function ProjectsTab({
 
             {/* Right: Selected Project Form Fields */}
             {p && (
-              <div className="lg:col-span-8 bg-stone-950/40 border border-stone-900/60 p-5 rounded-3xl space-y-6">
+              <div className="lg:col-span-8 bg-stone-950 border border-stone-900 p-5 rounded-3xl space-y-6">
                 <div className="space-y-6 animate-fadeIn">
                   {/* Row 1: Title & Category */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -199,7 +199,7 @@ export default function ProjectsTab({
                   />
 
                   {p.image && (
-                    <div className="flex items-center gap-3 bg-stone-900/20 p-3 rounded-xl border border-stone-900">
+                    <div className="flex items-center gap-3 bg-stone-950 p-3 rounded-xl border border-stone-900">
                       <div className="relative w-16 h-10 border border-stone-800 rounded-lg overflow-hidden bg-stone-900 shrink-0">
                         <img
                           src={p.image.startsWith("data:") || p.image.startsWith("/") || p.image.startsWith("http") ? p.image : `/src/assets/project/${p.image}`}
@@ -253,7 +253,7 @@ export default function ProjectsTab({
                         value={newProjectStack}
                         onChange={(e) => setNewProjectStack(e.target.value)}
                         placeholder="Add tag (e.g. Docker)..."
-                        className="flex-1 bg-stone-900 border border-stone-850 focus:border-primary outline-none text-xs rounded-xl px-4 py-2 text-white font-semibold transition-all"
+                        className="flex-1 bg-stone-950 border border-stone-900 focus:border-primary outline-none text-xs rounded-xl px-4 py-2.5 text-white font-semibold transition-all focus:ring-1 focus:ring-primary/20"
                         onKeyDown={(e) => {
                           if (e.key === "Enter") {
                             e.preventDefault();
@@ -295,7 +295,7 @@ export default function ProjectsTab({
                               type="button"
                               onClick={() => moveResponsibilityInActiveProject(idx, -1)}
                               disabled={idx === 0}
-                              className="p-0.5 rounded bg-stone-900 text-stone-500 hover:text-white disabled:opacity-30 cursor-pointer"
+                              className="p-1 rounded-lg border border-stone-900 bg-stone-950 text-stone-400 hover:text-white hover:border-stone-850 transition-colors disabled:opacity-30 cursor-pointer"
                             >
                               <FiChevronUp className="text-[10px]" />
                             </button>
@@ -303,14 +303,14 @@ export default function ProjectsTab({
                               type="button"
                               onClick={() => moveResponsibilityInActiveProject(idx, 1)}
                               disabled={idx === (p.responsibilities || []).length - 1}
-                              className="p-0.5 rounded bg-stone-900 text-stone-500 hover:text-white disabled:opacity-30 cursor-pointer"
+                              className="p-1 rounded-lg border border-stone-900 bg-stone-950 text-stone-400 hover:text-white hover:border-stone-850 transition-colors disabled:opacity-30 cursor-pointer"
                             >
                               <FiChevronDown className="text-[10px]" />
                             </button>
                             <button
                               type="button"
                               onClick={() => deleteResponsibilityFromActiveProject(idx)}
-                              className="p-0.5 rounded text-red-500 hover:bg-red-900/20 cursor-pointer ml-0.5"
+                              className="p-1 rounded-lg border border-red-500/10 bg-stone-950 text-red-400 hover:bg-red-500/10 hover:border-red-500/30 transition-all cursor-pointer ml-0.5"
                             >
                               <FiTrash2 className="text-[10px]" />
                             </button>
@@ -324,7 +324,7 @@ export default function ProjectsTab({
                         value={newProjectResponsibility}
                         onChange={(e) => setNewProjectResponsibility(e.target.value)}
                         placeholder="Add responsibility bullet..."
-                        className="flex-1 bg-stone-900 border border-stone-850 focus:border-primary outline-none text-xs rounded-xl px-4 py-2 text-white font-semibold transition-all"
+                        className="flex-1 bg-stone-950 border border-stone-900 focus:border-primary outline-none text-xs rounded-xl px-4 py-2.5 text-white font-semibold transition-all focus:ring-1 focus:ring-primary/20"
                         onKeyDown={(e) => {
                           if (e.key === "Enter") {
                             e.preventDefault();

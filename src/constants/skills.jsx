@@ -1,4 +1,78 @@
-import { skills } from "../lib/index.js";
+// Asset imports for Skills
+import BootstrapIcon from "../assets/stacks/basics/bootstrap.svg";
+import CssIcon from "../assets/stacks/basics/css.svg";
+import HtmlIcon from "../assets/stacks/basics/html.svg";
+import JavascriptIcon from "../assets/stacks/basics/js.svg";
+import ScssIcon from "../assets/stacks/basics/scss.svg";
+import TypescriptIcon from "../assets/stacks/basics/ts.svg";
+
+import NextIcon from "../assets/stacks/fe/nextjs.svg";
+import ReactNativeIcon from "../assets/stacks/fe/react-native.svg";
+import ReactIcon from "../assets/stacks/fe/react.svg";
+import ReduxIcon from "../assets/stacks/fe/redux.svg";
+import ViteIcon from "../assets/stacks/fe/vite.svg";
+
+import AntDesignIcon from "../assets/stacks/css_frameworks/antd.svg";
+import ChakraIcon from "../assets/stacks/css_frameworks/chakra.svg";
+import MaterialIcon from "../assets/stacks/css_frameworks/mui.svg";
+import ReactBootstrapIcon from "../assets/stacks/css_frameworks/react-bootstarp.svg";
+import ShadcnIcon from "../assets/stacks/css_frameworks/shadcn.svg";
+import StyledComponentsIcon from "../assets/stacks/css_frameworks/styled-components.svg";
+import TailwindIcon from "../assets/stacks/css_frameworks/tailwind.svg";
+
+import ExpressIcon from "../assets/stacks/be/express.svg";
+import MongodbIcon from "../assets/stacks/be/mongodb.svg";
+import MysqlIcon from "../assets/stacks/be/mysql.svg";
+import NodejsIcon from "../assets/stacks/be/nodejs.svg";
+import PostgresqlIcon from "../assets/stacks/be/pgsql.svg";
+import Sql from "../assets/stacks/be/sql.svg";
+
+import AwsIcon from "../assets/stacks/cloud/aws.svg";
+import FirebaseIcon from "../assets/stacks/cloud/firebase.svg";
+import DigitaloceanIcon from "../assets/stacks/cloud/digitalocean.svg";
+
+import AzureIcon from "../assets/stacks/version_control/azure.svg";
+import BitbucketIcon from "../assets/stacks/version_control/bitbucket.svg";
+import GitIcon from "../assets/stacks/version_control/git.svg";
+
+import JestIcon from "../assets/stacks/testing/jest.svg";
+import PlaywrightIcon from "../assets/stacks/testing/playwright.svg";
+
+export const skills = [
+  { name: "HTML", icon: HtmlIcon },
+  { name: "CSS", icon: CssIcon },
+  { name: "JavaScript", icon: JavascriptIcon },
+  { name: "TypeScript", icon: TypescriptIcon },
+  { name: "Bootstrap", icon: BootstrapIcon },
+
+  { name: "React", icon: ReactIcon },
+  { name: "Next.js", icon: NextIcon },
+  { name: "React Native", icon: ReactNativeIcon },
+  { name: "Vite", icon: ViteIcon },
+  { name: "Ant Design", icon: AntDesignIcon },
+  { name: "Chakra UI", icon: ChakraIcon },
+  { name: "Material UI", icon: MaterialIcon },
+  { name: "React Bootstrap", icon: ReactBootstrapIcon },
+  { name: "SCSS", icon: ScssIcon },
+  { name: "Styled Components", icon: StyledComponentsIcon },
+  { name: "Shadcn", icon: ShadcnIcon },
+  { name: "Tailwind", icon: TailwindIcon },
+  { name: "Jest", icon: JestIcon },
+  { name: "Playwright", icon: PlaywrightIcon },
+  { name: "Node.js", icon: NodejsIcon },
+  { name: "Express", icon: ExpressIcon },
+  { name: "MongoDB", icon: MongodbIcon },
+  { name: "MySQL", icon: MysqlIcon },
+  { name: "PostgreSQL", icon: PostgresqlIcon },
+  { name: "SQL", icon: Sql },
+  { name: "Git", icon: GitIcon },
+  { name: "Bitbucket", icon: BitbucketIcon },
+  { name: "Azure", icon: AzureIcon },
+  { name: "AWS", icon: AwsIcon },
+  { name: "Digitalocean", icon: DigitaloceanIcon },
+  { name: "Firebase", icon: FirebaseIcon },
+  { name: "Redux", icon: ReduxIcon },
+];
 
 export const skillCategories = [
   {
@@ -95,6 +169,4 @@ export const skillCategories = [
   ...cat,
   _skills: skills.filter((s) => cat.skillNames.includes(s.name)),
 }));
-
-export { skills };
 
