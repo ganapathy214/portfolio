@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from "react";
 import {
   SERVICES_DATA,
   skills as defaultSkills,
@@ -19,52 +19,96 @@ import {
   defaultBlogs,
   defaultFaqs,
 } from "../constants";
-import { getContrastColor } from "../utils/color";
+import { getContrastColor, getDarkShade } from "../utils/color";
 import { applyFont } from "../utils/font";
 
 
 // ── CSS variable helpers ──────────────────────────────────────────────────────
-export const applyThemeColor = (color) => {
+export const applyThemeColor = (color, themeMode = "dark") => {
   if (!color || !/^#[0-9A-F]{6}$/i.test(color)) return;
-  document.documentElement.style.setProperty("--primary", color);
-  const r = parseInt(color.slice(1, 3), 16);
-  const g = parseInt(color.slice(3, 5), 16);
-  const b = parseInt(color.slice(5, 7), 16);
+  
+  // Calculate contrast to see if it's a light color
+  const contrast = getContrastColor(color);
+  const isLightColor = contrast === "#000000"; // Black contrast means the background color is bright/light
+  
+  let adaptedColor = color;
+  if (themeMode === "light" && isLightColor) {
+    // Bright color in light mode: darken it to make it readable
+    adaptedColor = getDarkShade(color, 0.35); // Darken by 35%
+  }
+  
+  document.documentElement.style.setProperty("--primary", adaptedColor);
+  
+  const cleanHex = adaptedColor.startsWith("#") ? adaptedColor.slice(1) : adaptedColor;
+  const r = parseInt(cleanHex.slice(0, 2), 16);
+  const g = parseInt(cleanHex.slice(2, 4), 16);
+  const b = parseInt(cleanHex.slice(4, 6), 16);
   if (!isNaN(r) && !isNaN(g) && !isNaN(b)) {
     document.documentElement.style.setProperty("--primary-rgb", `${r}, ${g}, ${b}`);
   }
-  const contrast = getContrastColor(color);
-  document.documentElement.style.setProperty("--primary-contrast", contrast);
+  
+  document.documentElement.style.setProperty("--primary-contrast", getContrastColor(adaptedColor));
 };
 
 // Default section order
 const DEFAULT_SECTION_ORDER = [
-  "Home", "About", "Services", "Skills", "Projects",
-  "Certification", "Testimonials", "Journey", "Blogs", "Faq", "Contact"
+  "Home", "About", "Services", "Skills", "Projects", "Certification", "Testimonials", "Experience", "Education", "Blogs", "Faq", "Contact"
 ];
 
 const DEFAULT_SECTION_VISIBILITY = {
   Home: true, About: true, Services: true, Skills: true, Projects: true,
-  Certification: true, Testimonials: true, Journey: true, Blogs: true,
-  Faq: true, Contact: true
+  Experience: true, Education: true, Certification: true, Testimonials: true,
+  Blogs: true, Faq: true, Contact: true
 };
 
-// Default per-section layout selections
+// Default per-section layout selections (Design 1-5)
 export const DEFAULT_SECTION_LAYOUTS = {
-  Projects:      "card-row",   // card-row | masonry | table | featured
-  Skills:        "icon-grid",  // icon-grid | progress-bars | tag-cloud | category-cards
-  Services:      "icon-cards", // icon-cards | horizontal | minimal-list
-  Certification: "carousel",   // carousel | grid | timeline
+  Home: "design1",
+  About: "design1",
+  Services: "design1",
+  Skills: "design1",
+  Projects: "design1",
+  Experience: "design1",
+  Education: "design1",
+  Certification: "design1",
+  Testimonials: "design1",
+  Blogs: "design1",
+  Faq: "design1",
+  Contact: "design1",
 };
+
+export const getTemplateDefaultLayouts = (templateId) => {
+  const num = parseInt((templateId || "template-1").replace("template-", ""), 10) || 1;
+  const getDesignId = (maxVal) => {
+    const dNum = num > maxVal ? ((num - 1) % maxVal) + 1 : num;
+    return `design${dNum}`;
+  };
+  return {
+    Home: getDesignId(5),
+    About: getDesignId(5),
+    Services: getDesignId(3),
+    Skills: getDesignId(5),
+    Projects: getDesignId(5),
+    Experience: getDesignId(5),
+    Education: getDesignId(5),
+    Certification: getDesignId(3),
+    Testimonials: getDesignId(5),
+    Blogs: getDesignId(2),
+    Faq: getDesignId(2),
+    Contact: getDesignId(5),
+  };
+};
+
 
 const DEFAULT_SECTION_TITLES = {
   About: "Who am I ?",
   Services: "What I Offer ?",
   Skills: "What I Know ?",
   Projects: "What I did ?",
+  Experience: "Professional Experience",
+  Education: "Academic Background",
   Certification: "What I achieved?",
   Testimonials: "What clients say?",
-  Journey: "What I've done ?",
   Blogs: "My Publications & Blogs",
   Faq: "Frequently Asked Questions",
   Contact: "Where to find me ?"
@@ -105,6 +149,8 @@ const LS_KEYS = [
   ["portfolio_particles_style",     null,                       "string"],
   ["portfolio_section_order",       null,                       "json"],
   ["portfolio_section_layouts",     null,                       "json"],
+  ["portfolio_favicon_data_url",    null,                       "string"],
+  ["portfolio_copyright",           null,                       "string"],
 ];
 
 export const buildPayload = (state) => ({
@@ -136,6 +182,9 @@ export const buildPayload = (state) => ({
   particlesStyle:     state.particlesStyle,
   sectionOrder:       state.sectionOrder,
   sectionLayouts:     state.sectionLayouts,
+  faviconDataUrl:     state.faviconDataUrl,
+  copyright:          state.copyright,
+  navPosition:        state.navPosition,
 });
 
 export const saveAllToLocalStorage = (payload) => {
@@ -168,6 +217,9 @@ export const saveAllToLocalStorage = (payload) => {
     ["portfolio_particles_style",    payload.particlesStyle || "minimal"],
     ["portfolio_section_order",      JSON.stringify(payload.sectionOrder)],
     ["portfolio_section_layouts",    JSON.stringify(payload.sectionLayouts || DEFAULT_SECTION_LAYOUTS)],
+    ["portfolio_favicon_data_url",   payload.faviconDataUrl || ""],
+    ["portfolio_copyright",          payload.copyright || ""],
+    ["portfolio_nav_position",       payload.navPosition || "left"],
   ];
   pairs.forEach(([k, v]) => { try { localStorage.setItem(k, v); } catch { /* ignore */ } });
 };
@@ -210,10 +262,13 @@ export function PortfolioProvider({ children }) {
   const [sectionVisibility,  setSectionVisibility] = useState(DEFAULT_SECTION_VISIBILITY);
   const [sectionTitles,      setSectionTitles]     = useState(DEFAULT_SECTION_TITLES);
   const [sectionOrder,       setSectionOrder]      = useState(DEFAULT_SECTION_ORDER);
-  const [sectionLayouts,     setSectionLayouts]    = useState(DEFAULT_SECTION_LAYOUTS);
+  const [sectionLayouts,     setSectionLayouts]    = useState(() => getTemplateDefaultLayouts("template-1"));
+  const [faviconDataUrl,     setFaviconDataUrl]    = useState("");
+  const [copyright,          setCopyright]         = useState("© 2026. All rights reserved.");
+  const [navPosition,        setNavPosition]       = useState("left");
 
   // ── Apply side-effects ────────────────────────────────────────────────────
-  useEffect(() => { applyThemeColor(primaryColor); }, [primaryColor]);
+  useEffect(() => { applyThemeColor(primaryColor, themeMode); }, [primaryColor, themeMode]);
 
   useEffect(() => {
     if (themeMode === "light") {
@@ -225,60 +280,55 @@ export function PortfolioProvider({ children }) {
 
   useEffect(() => { applyFont(fontFamily); }, [fontFamily]);
 
-  // Dynamic favicon
+  // Dynamic page title
   useEffect(() => {
-    const firstInitial = (about?.name || "G").charAt(0).toUpperCase();
-    const fillCol = primaryColor || "#00D5D5";
-    const contrast = getContrastColor(fillCol);
-    const svgString = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><circle cx="16" cy="16" r="14" fill="${fillCol}" /><text x="16" y="22" font-family="'Google Sans', 'Segoe UI', Arial, sans-serif" font-size="16" font-weight="900" fill="${contrast}" text-anchor="middle">${firstInitial}</text></svg>`.trim();
-    const blob = new Blob([svgString], { type: "image/svg+xml" });
-    const url = URL.createObjectURL(blob);
+    const ownerName = about?.name || "";
+    const ownerTitle = about?.title || "";
+    const appTitle = pageTitles?.Home || "";
+
+    if (appTitle) {
+      document.title = appTitle;
+    } else if (ownerName) {
+      document.title = `${ownerName} | ${ownerTitle || "Portfolio"}`;
+    } else {
+      document.title = "Developer Portfolio";
+    }
+  }, [about?.name, about?.title, pageTitles?.Home]);
+
+  // Dynamic favicon or custom favicon
+  useEffect(() => {
+    let url;
+    let type = "image/svg+xml";
+    let isBlob = false;
+
+    if (faviconDataUrl) {
+      url = faviconDataUrl;
+      type = "image/png";
+    } else {
+      const firstInitial = (about?.name || "G").charAt(0).toUpperCase();
+      const fillCol = primaryColor || "#00D5D5";
+      const contrast = getContrastColor(fillCol);
+      const svgString = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><circle cx="16" cy="16" r="14" fill="${fillCol}" /><text x="16" y="22" font-family="'Google Sans', 'Segoe UI', Arial, sans-serif" font-size="16" font-weight="900" fill="${contrast}" text-anchor="middle">${firstInitial}</text></svg>`.trim();
+      const blob = new Blob([svgString], { type: "image/svg+xml" });
+      url = URL.createObjectURL(blob);
+      isBlob = true;
+    }
+
     let link = document.querySelector("link[rel~='icon']");
     if (!link) {
       link = document.createElement("link");
       link.rel = "icon";
-      link.type = "image/svg+xml";
       document.head.appendChild(link);
     }
+    link.type = type;
     link.href = url;
-    return () => URL.revokeObjectURL(url);
-  }, [primaryColor, about?.name]);
+
+    return () => {
+      if (isBlob) URL.revokeObjectURL(url);
+    };
+  }, [primaryColor, about?.name, faviconDataUrl]);
 
   // ── Load from localStorage + API on mount ─────────────────────────────────
-  useEffect(() => {
-    const fetchTheme = async () => {
-      // Preview mode shortcut
-      const searchParams = new URLSearchParams(window.location.search);
-      const isPreview = searchParams.get("preview") === "true";
-      if (isPreview) {
-        const previewDataRaw = localStorage.getItem("portfolio_preview_config");
-        if (previewDataRaw) {
-          try {
-            const data = JSON.parse(previewDataRaw);
-            applyFromData(data);
-            return;
-          } catch (e) { console.error("Failed to parse preview config:", e); }
-        }
-      }
-
-      // 1. Instant load from localStorage
-      loadFromLocalStorage();
-
-      // 2. Fetch from API (may override localStorage)
-      try {
-        const res = await fetch("/api/theme");
-        if (res.ok) {
-          const data = await res.json();
-          applyFromData(data);
-          saveAllToLocalStorage({ ...getDefaultState(), ...data });
-        }
-      } catch (err) {
-        console.warn("Theme DB fetch failed, using local fallback:", err);
-      }
-    };
-    fetchTheme();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
   const getDefaultState = () => ({
     primaryColor: DEFAULT_PRIMARY_COLOR,
     roles: DEFAULT_ROLES,
@@ -307,11 +357,13 @@ export function PortfolioProvider({ children }) {
     fontFamily: "Outfit",
     particlesStyle: "minimal",
     sectionOrder: DEFAULT_SECTION_ORDER,
-    sectionLayouts: DEFAULT_SECTION_LAYOUTS,
+    sectionLayouts: getTemplateDefaultLayouts("template-1"),
+    faviconDataUrl: "",
+    copyright: "© 2026. All rights reserved.",
   });
 
   const applyFromData = useCallback((data) => {
-    if (data.primaryColor)      { setPrimaryColor(data.primaryColor); applyThemeColor(data.primaryColor); }
+    if (data.primaryColor)      { setPrimaryColor(data.primaryColor); applyThemeColor(data.primaryColor, data.themeMode); }
     if (data.roles)             setRoles(data.roles);
     if (data.description)       setDescription(data.description);
     if (data.centerSvg)         setCenterSvg(data.centerSvg);
@@ -333,17 +385,40 @@ export function PortfolioProvider({ children }) {
     if (data.testimonials)      setTestimonials(data.testimonials);
     if (data.blogs)             setBlogs(data.blogs);
     if (data.faqs)              setFaqs(data.faqs);
-    if (data.sectionVisibility) setSectionVisibility(data.sectionVisibility);
-    if (data.sectionTitles)     setSectionTitles(data.sectionTitles);
+    if (data.sectionVisibility) setSectionVisibility({ ...DEFAULT_SECTION_VISIBILITY, ...data.sectionVisibility });
+    if (data.sectionTitles)     setSectionTitles({ ...DEFAULT_SECTION_TITLES, ...data.sectionTitles });
+    if (data.sectionOrder) {
+      let cleanLso = data.sectionOrder.filter(sec => DEFAULT_SECTION_ORDER.includes(sec));
+      DEFAULT_SECTION_ORDER.forEach(sec => {
+        if (!cleanLso.includes(sec)) {
+          cleanLso.push(sec);
+        }
+      });
+      // If the stored order is purely a permutation of DEFAULT_SECTION_ORDER
+      // (no user-added custom sections), always defer to the canonical default.
+      const isJustPermutation = cleanLso.length === DEFAULT_SECTION_ORDER.length &&
+        cleanLso.every(s => DEFAULT_SECTION_ORDER.includes(s)) &&
+        DEFAULT_SECTION_ORDER.every(s => cleanLso.includes(s));
+      setSectionOrder(isJustPermutation ? DEFAULT_SECTION_ORDER : cleanLso);
+    }
     if (data.fontFamily)        setFontFamily(data.fontFamily);
     if (data.particlesStyle)    setParticlesStyle(data.particlesStyle);
-    if (data.sectionOrder)      setSectionOrder(data.sectionOrder);
-    if (data.sectionLayouts)    setSectionLayouts({ ...DEFAULT_SECTION_LAYOUTS, ...data.sectionLayouts });
+    if (data.sectionLayouts) {
+      setSectionLayouts({ ...getTemplateDefaultLayouts(data.selectedTemplate || "template-1"), ...data.sectionLayouts });
+    } else if (data.selectedTemplate) {
+      setSectionLayouts(getTemplateDefaultLayouts(data.selectedTemplate));
+    }
+    if (data.faviconDataUrl && data.faviconDataUrl !== "null") setFaviconDataUrl(data.faviconDataUrl);
+    if (data.copyright)         setCopyright(data.copyright);
+    if (data.navPosition)       setNavPosition(data.navPosition);
   }, []);
 
   const loadFromLocalStorage = useCallback(() => {
+    const ltm = localStorage.getItem("portfolio_theme_mode") || "dark";
+    if (ltm) setThemeMode(ltm);
+
     const lc = localStorage.getItem("portfolio_theme_color");
-    if (lc) { setPrimaryColor(lc); applyThemeColor(lc); }
+    if (lc) { setPrimaryColor(lc); applyThemeColor(lc, ltm); }
 
     const lr = tryParse(localStorage.getItem("portfolio_roles"), null);
     if (lr) setRoles(lr);
@@ -387,11 +462,8 @@ export function PortfolioProvider({ children }) {
     const lci = tryParse(localStorage.getItem("portfolio_contact_info"), null);
     if (lci) setContactInfo(lci);
 
-    const ltm = localStorage.getItem("portfolio_theme_mode");
-    if (ltm) setThemeMode(ltm);
-
-    const lt = localStorage.getItem("portfolio_selected_template");
-    if (lt) setSelectedTemplate(lt);
+    const lt = localStorage.getItem("portfolio_selected_template") || "template-1";
+    setSelectedTemplate(lt);
 
     const lpt = tryParse(localStorage.getItem("portfolio_page_titles"), null);
     if (lpt) setPageTitles(lpt);
@@ -400,10 +472,14 @@ export function PortfolioProvider({ children }) {
     if (lpd) setPageDescriptions(lpd);
 
     const lv = tryParse(localStorage.getItem("portfolio_section_visibility"), null);
-    if (lv) setSectionVisibility(lv);
+    if (lv) {
+      setSectionVisibility({ ...DEFAULT_SECTION_VISIBILITY, ...lv });
+    }
 
     const lstl = tryParse(localStorage.getItem("portfolio_section_titles"), null);
-    if (lstl) setSectionTitles(lstl);
+    if (lstl) {
+      setSectionTitles({ ...DEFAULT_SECTION_TITLES, ...lstl });
+    }
 
     const ltest = tryParse(localStorage.getItem("portfolio_testimonials"), null);
     if (ltest) setTestimonials(ltest);
@@ -421,18 +497,94 @@ export function PortfolioProvider({ children }) {
     if (lps) setParticlesStyle(lps);
 
     const lso = tryParse(localStorage.getItem("portfolio_section_order"), null);
-    if (lso) setSectionOrder(lso);
+    if (lso) {
+      let cleanLso = lso.filter(sec => DEFAULT_SECTION_ORDER.includes(sec));
+      DEFAULT_SECTION_ORDER.forEach(sec => {
+        if (!cleanLso.includes(sec)) {
+          cleanLso.push(sec);
+        }
+      });
+      // If the stored order is purely a permutation of DEFAULT_SECTION_ORDER
+      // (no user-added custom sections), always defer to the canonical default.
+      const isJustPermutation = cleanLso.length === DEFAULT_SECTION_ORDER.length &&
+        cleanLso.every(s => DEFAULT_SECTION_ORDER.includes(s)) &&
+        DEFAULT_SECTION_ORDER.every(s => cleanLso.includes(s));
+      setSectionOrder(isJustPermutation ? DEFAULT_SECTION_ORDER : cleanLso);
+    }
 
     const lsl = tryParse(localStorage.getItem("portfolio_section_layouts"), null);
-    if (lsl) setSectionLayouts({ ...DEFAULT_SECTION_LAYOUTS, ...lsl });
+    const templateDefaults = getTemplateDefaultLayouts(lt);
+    if (lsl) {
+      setSectionLayouts({ ...templateDefaults, ...lsl });
+    } else {
+      setSectionLayouts(templateDefaults);
+    }
+
+    const lfav = localStorage.getItem("portfolio_favicon_data_url");
+    if (lfav && lfav !== "null") setFaviconDataUrl(lfav);
+
+    const lcopy = localStorage.getItem("portfolio_copyright");
+    if (lcopy) setCopyright(lcopy);
+
+    const lnp = localStorage.getItem("portfolio_nav_position");
+    if (lnp && ["left", "top", "bottom"].includes(lnp)) setNavPosition(lnp);
   }, []);
 
-  const value = {
+  // Fetch theme on mount (localStorage first, then API)
+  useEffect(() => {
+    const fetchTheme = async () => {
+      // Preview mode shortcut
+      const searchParams = new URLSearchParams(window.location.search);
+      const isPreview = searchParams.get("preview") === "true";
+      if (isPreview) {
+        const previewDataRaw = localStorage.getItem("portfolio_preview_config");
+        if (previewDataRaw) {
+          try {
+            const data = JSON.parse(previewDataRaw);
+            applyFromData(data);
+            return;
+          } catch (e) { console.error("Failed to parse preview config:", e); }
+        }
+      }
+
+      // 1. Instant load from localStorage
+      loadFromLocalStorage();
+
+      // 2. Fetch from API (may override localStorage)
+      try {
+        const res = await fetch("/api/theme");
+        if (res.ok) {
+          const data = await res.json();
+          applyFromData(data);
+          saveAllToLocalStorage({ ...getDefaultState(), ...data });
+        }
+      } catch (err) {
+        console.warn("Theme DB fetch failed, using local fallback:", err);
+      }
+    };
+    fetchTheme();
+  }, [applyFromData, loadFromLocalStorage]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Live preview sync listener
+  useEffect(() => {
+    const handlePreviewMessage = (event) => {
+      const { type, data } = event.data || {};
+      if (type === "LIVE_PREVIEW_UPDATE" && data) {
+        applyFromData(data);
+      }
+    };
+    window.addEventListener("message", handlePreviewMessage);
+    return () => window.removeEventListener("message", handlePreviewMessage);
+  }, [applyFromData]);
+
+  const value = useMemo(() => ({
     // State
     primaryColor, setPrimaryColor,
     themeMode, setThemeMode,
     selectedTemplate, setSelectedTemplate,
     fontFamily, setFontFamily,
+    faviconDataUrl, setFaviconDataUrl,
+    copyright, setCopyright,
     particlesStyle, setParticlesStyle,
     roles, setRoles,
     description, setDescription,
@@ -457,6 +609,7 @@ export function PortfolioProvider({ children }) {
     sectionTitles, setSectionTitles,
     sectionOrder, setSectionOrder,
     sectionLayouts, setSectionLayouts,
+    navPosition, setNavPosition,
     // Helpers
     applyThemeColor,
     applyFromData,
@@ -465,7 +618,14 @@ export function PortfolioProvider({ children }) {
     DEFAULT_SECTION_VISIBILITY,
     DEFAULT_SECTION_TITLES,
     DEFAULT_SECTION_LAYOUTS,
-  };
+  }), [
+    primaryColor, themeMode, selectedTemplate, fontFamily, faviconDataUrl, copyright,
+    particlesStyle, roles, description, centerSvg, orbitingStacks, about,
+    servicesSubtitle, servicesData, skills, skillCategories, projects, certifications,
+    timelineData, summaryStats, contactInfo, testimonials, blogs, faqs,
+    pageTitles, pageDescriptions, sectionVisibility, sectionTitles, sectionOrder, sectionLayouts,
+    navPosition, applyFromData,
+  ]);
 
   return (
     <PortfolioContext.Provider value={value}>

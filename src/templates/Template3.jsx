@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaLinkedinIn, FaGithub, FaTwitter, FaInstagram, FaMedium } from "react-icons/fa";
 import {
-  FiCode, FiExternalLink, FiMail, FiPhone, FiMapPin, FiMenu, FiX, FiCheck
+  FiCode, FiExternalLink, FiMail, FiPhone, FiMapPin, FiMenu, FiX, FiCheck, FiArrowUp
 } from "react-icons/fi";
 import { HiHome, HiBriefcase, HiOutlineUser, HiEnvelope } from "react-icons/hi2";
 import { SERVICES_DATA, SERVICE_ICONS } from "../constants";
@@ -10,6 +10,11 @@ import { SERVICES_DATA, SERVICE_ICONS } from "../constants";
 import resumePdf from "../assets/resume.pdf";
 import { downloadPdf } from "../utils/pdf";
 import { usePortfolio } from "../context/PortfolioContext";
+import SectionWrapper from "../components/common/SectionWrapper";
+import Sidebar from "../components/Sidebar";
+import TopNavbar from "../components/TopNavbar";
+
+import Home from "../sections/Home";
 
 const About         = React.lazy(() => import("../sections/About"));
 const Services      = React.lazy(() => import("../sections/Services"));
@@ -17,22 +22,24 @@ const Skills        = React.lazy(() => import("../sections/Skills"));
 const Projects      = React.lazy(() => import("../sections/Projects"));
 const Certification = React.lazy(() => import("../sections/Certification"));
 const Testimonials  = React.lazy(() => import("../sections/Testimonials"));
-const Journey       = React.lazy(() => import("../sections/Journey"));
+const Experience    = React.lazy(() => import("../sections/Experience"));
+const Education     = React.lazy(() => import("../sections/Education"));
 const Blogs         = React.lazy(() => import("../sections/Blogs"));
 const Faq           = React.lazy(() => import("../sections/Faq"));
 const Contact       = React.lazy(() => import("../sections/Contact"));
 
 const SECTION_COMPONENTS = {
-  About:         (props) => <About         about={props.about}             title={props.sectionTitles?.About}         sectionNum={props.getSectionNum("About")} />,
-  Services:      (props) => <Services      servicesSubtitle={props.servicesSubtitle} servicesData={props.servicesData} title={props.sectionTitles?.Services}      sectionNum={props.getSectionNum("Services")} />,
-  Skills:        (props) => <Skills        skills={props.skills}           skillCategories={props.skillCategories}    title={props.sectionTitles?.Skills}         sectionNum={props.getSectionNum("Skills")} />,
-  Projects:      (props) => <Projects      projects={props.projects}                                                  title={props.sectionTitles?.Projects}       sectionNum={props.getSectionNum("Projects")} />,
-  Certification: (props) => <Certification certifications={props.certifications}                                       title={props.sectionTitles?.Certification}  sectionNum={props.getSectionNum("Certification")} />,
-  Testimonials:  (props) => <Testimonials  testimonials={props.testimonials}                                           title={props.sectionTitles?.Testimonials}   sectionNum={props.getSectionNum("Testimonials")} />,
-  Journey:       (props) => <Journey       timelineData={props.timelineData} summaryStats={props.summaryStats}        title={props.sectionTitles?.Journey}        sectionNum={props.getSectionNum("Journey")} />,
-  Blogs:         (props) => <Blogs         blogs={props.blogs}                                                        title={props.sectionTitles?.Blogs}          sectionNum={props.getSectionNum("Blogs")} />,
-  Faq:           (props) => <Faq           faqs={props.faqs}                                                          title={props.sectionTitles?.Faq}            sectionNum={props.getSectionNum("Faq")} />,
-  Contact:       (props) => <Contact       contactInfo={props.contactInfo}                                             title={props.sectionTitles?.Contact}        sectionNum={props.getSectionNum("Contact")} />,
+  About:         (props) => <About         about={props.about}             title={props.sectionTitles?.About}         sectionNum={props.getSectionNum("About")}         design={props.sectionLayouts?.About} />,
+  Services:      (props) => <Services      servicesSubtitle={props.servicesSubtitle} servicesData={props.servicesData} title={props.sectionTitles?.Services}      sectionNum={props.getSectionNum("Services")}      design={props.sectionLayouts?.Services} />,
+  Skills:        (props) => <Skills        skills={props.skills}           skillCategories={props.skillCategories}    title={props.sectionTitles?.Skills}         sectionNum={props.getSectionNum("Skills")}        design={props.sectionLayouts?.Skills} />,
+  Projects:      (props) => <Projects      projects={props.projects}                                                  title={props.sectionTitles?.Projects}       sectionNum={props.getSectionNum("Projects")}      design={props.sectionLayouts?.Projects} />,
+  Certification: (props) => <Certification certifications={props.certifications}                                       title={props.sectionTitles?.Certification}  sectionNum={props.getSectionNum("Certification")} design={props.sectionLayouts?.Certification} />,
+  Testimonials:  (props) => <Testimonials  testimonials={props.testimonials}                                           title={props.sectionTitles?.Testimonials}   sectionNum={props.getSectionNum("Testimonials")}  design={props.sectionLayouts?.Testimonials} />,
+  Experience:    (props) => <Experience    timelineData={props.timelineData}                                           title={props.sectionTitles?.Experience}   sectionNum={props.getSectionNum("Experience")}  design={props.sectionLayouts?.Experience} />,
+  Education:     (props) => <Education     timelineData={props.timelineData}                                           title={props.sectionTitles?.Education}    sectionNum={props.getSectionNum("Education")}   design={props.sectionLayouts?.Education} />,
+  Blogs:         (props) => <Blogs         blogs={props.blogs}                                                        title={props.sectionTitles?.Blogs}          sectionNum={props.getSectionNum("Blogs")}         design={props.sectionLayouts?.Blogs} />,
+  Faq:           (props) => <Faq           faqs={props.faqs}                                                          title={props.sectionTitles?.Faq}            sectionNum={props.getSectionNum("Faq")}          design={props.sectionLayouts?.Faq} />,
+  Contact:       (props) => <Contact       contactInfo={props.contactInfo}                                             title={props.sectionTitles?.Contact}        sectionNum={props.getSectionNum("Contact")}       design={props.sectionLayouts?.Contact} />,
 };
 
 const SOCIAL_ICONS = {
@@ -83,12 +90,22 @@ export default function Template3() {
     servicesSubtitle, servicesData, skills, skillCategories,
     projects, certifications, timelineData, summaryStats,
     contactInfo, testimonials, blogs, faqs,
-    themeMode, sectionVisibility, sectionTitles, sectionOrder,
+    themeMode, sectionVisibility, sectionTitles, sectionOrder, copyright,
+    centerSvg, orbitingStacks, sectionLayouts, navPosition,
   } = portfolio;
 
   const [activeSection, setActiveSection] = useState("home");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [showScrollTop, setShowScrollTop] = useState(false);
   const pageContainerRef = useRef(null);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowScrollTop(window.scrollY > 300);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const accent = primaryColor || "#00D5D5";
   const isDark = themeMode === "dark";
@@ -104,7 +121,7 @@ export default function Template3() {
   // Build ordered visible section list
   const orderedSections = (sectionOrder || [
     "About","Services","Skills","Projects","Certification",
-    "Testimonials","Journey","Blogs","Faq","Contact"
+    "Testimonials","Experience","Education","Blogs","Faq","Contact"
   ]).filter(id => id !== "Home" && (!sectionVisibility || sectionVisibility[id] !== false));
 
   const getSectionNum = (id) => {
@@ -116,7 +133,7 @@ export default function Template3() {
     about, servicesSubtitle, servicesData, skills, skillCategories,
     projects, certifications, timelineData, summaryStats,
     contactInfo, testimonials, blogs, faqs,
-    sectionTitles, getSectionNum,
+    sectionTitles, getSectionNum, sectionLayouts,
   };
 
   // Scroll section observer
@@ -158,17 +175,37 @@ export default function Template3() {
     }))
   ];
 
+  const transitionToSection = useCallback((item) => {
+    const id = item.href.replace("#", "");
+    scrollTo(id);
+    setActiveSection(item.name);
+  }, [scrollTo]);
+
   return (
     <div
       ref={pageContainerRef}
-      className="relative z-0"
+      className={`relative z-0 min-h-screen flex ${navPosition === "left" ? "flex-col md:flex-row" : "flex-col"}`}
       style={{
         backgroundColor: "transparent",
         color: textColor,
-        minHeight: "100vh",
         fontFamily: "'Inter', sans-serif",
       }}
     >
+      <TopNavbar
+        activeSection={activeSection}
+        onItemClick={transitionToSection}
+        sectionVisibility={sectionVisibility}
+        about={about}
+        primaryColor={primaryColor}
+        navPosition={navPosition}
+      />
+      <Sidebar
+        activeSection={activeSection}
+        onItemClick={transitionToSection}
+        sectionVisibility={sectionVisibility}
+        navPosition={navPosition}
+      />
+
       {/* Dynamic Favicon Accent Style */}
       <style>{`
         .t3-glow-hover:hover {
@@ -192,11 +229,12 @@ export default function Template3() {
       `}</style>
 
       {/* HEADER / STICKY NAVBAR */}
-      <header
-        style={{
-          position: "sticky",
-          top: 0,
-          zIndex: 100,
+      {navPosition === "top" && (
+        <header
+          style={{
+            position: "sticky",
+            top: 0,
+            zIndex: 100,
           backgroundColor: bgNavbar,
           backdropFilter: "blur(12px)",
           WebkitBackdropFilter: "blur(12px)",
@@ -222,7 +260,7 @@ export default function Template3() {
                 onClick={() => scrollTo(item.id)}
                 className="text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer"
                 style={{
-                  color: activeSection === item.id ? accent : textTitle,
+                  color: activeSection?.toLowerCase() === item.id?.toLowerCase() ? accent : textTitle,
                 }}
               >
                 {item.label}
@@ -308,92 +346,23 @@ export default function Template3() {
           )}
         </AnimatePresence>
       </header>
+      )}
 
+      <main className={`flex-1 ${navPosition === "left" ? "md:ml-20" : ""} pb-24 md:pb-6`}>
       {/* HERO SECTION */}
-      <section
-        id="home"
-        data-t3-section
-        className="min-h-[85vh] flex items-center py-20 relative px-6"
-      >
-        <div className="max-w-4xl mx-auto w-full text-center flex flex-col items-center gap-6 z-10">
-          {/* Availability Badge */}
-          <div
-            className="inline-flex items-center gap-2 py-1 px-3.5 rounded-full border text-[10px] font-bold uppercase tracking-widest"
-            style={{
-              backgroundColor: `${accent}12`,
-              borderColor: `${accent}30`,
-              color: accent,
-            }}
-          >
-            <span className="w-1.5 h-1.5 rounded-full bg-current animate-pulse" />
-            {about.statusBadgeText || "Available for work"}
-          </div>
-
-          {/* Name */}
-          <h1
-            className="text-5xl sm:text-6xl md:text-7xl font-black tracking-tight"
-            style={{ color: textTitle, lineHeight: 1.1 }}
-          >
-            Hi, I am <span style={{ color: accent }}>{about.name || "Daniel Ochi"}</span>
-          </h1>
-
-          {/* Typewriter role subtitles */}
-          <div
-            className="text-md sm:text-lg font-bold tracking-wide min-h-[28px]"
-            style={{ color: textTitle }}
-          >
-            A seasoned <span style={{ color: accent }}><Typewriter roles={displayRoles} /></span>
-          </div>
-
-          {/* Description info */}
-          <p
-            className="text-sm sm:text-base leading-relaxed max-w-2xl mt-2"
-            style={{ color: textColor }}
-          >
-            {description || about.bio || "Transforming complex requirements into simple, beautifully executed web architectures."}
-          </p>
-
-          {/* Social icons row */}
-          <div className="flex items-center gap-3 mt-6">
-            {(about.socialLinks || []).map((link, i) => {
-              const Icon = SOCIAL_ICONS[link.icon] || FaGithub;
-              return (
-                <a
-                  key={i}
-                  href={link.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-10 h-10 rounded-full border flex items-center justify-center transition-all t3-glow-hover"
-                  style={{
-                    borderColor: borderColor,
-                    backgroundColor: "transparent",
-                    color: textTitle,
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.borderColor = accent;
-                    e.currentTarget.style.color = accent;
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.borderColor = borderColor;
-                    e.currentTarget.style.color = textTitle;
-                  }}
-                >
-                  <Icon className="text-sm" />
-                </a>
-              );
-            })}
-          </div>
+      <SectionWrapper sectionName="Home">
+        <div id="home" data-t3-section>
+          <Home
+            name={about?.name}
+            roles={roles}
+            description={description}
+            centerSvg={centerSvg}
+            orbitingStacks={orbitingStacks}
+            statusBadgeText={about?.statusBadgeText}
+            design={sectionLayouts?.Home}
+          />
         </div>
-
-        {/* Backdrop Grid Pattern */}
-        <div
-          className="absolute inset-0 pointer-events-none opacity-[0.03] select-none"
-          style={{
-            backgroundImage: `radial-gradient(${accent} 1px, transparent 1.5px)`,
-            backgroundSize: "32px 32px",
-          }}
-        />
-      </section>
+      </SectionWrapper>
 
       <React.Suspense fallback={
         <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "200px" }}>
@@ -413,9 +382,11 @@ export default function Template3() {
         {orderedSections.map((sectionName) => {
           const renderer = SECTION_COMPONENTS[sectionName];
           return renderer ? (
-            <div key={sectionName} id={sectionName.toLowerCase()} data-t3-section>
-              {renderer(sectionProps)}
-            </div>
+            <SectionWrapper key={sectionName} sectionName={sectionName}>
+              <div id={sectionName.toLowerCase()} data-t3-section>
+                {renderer(sectionProps)}
+              </div>
+            </SectionWrapper>
           ) : null;
         })}
       </React.Suspense>
@@ -440,10 +411,35 @@ export default function Template3() {
           </nav>
 
           <span className="text-[10px] text-stone-500 font-semibold uppercase tracking-wider">
-            &copy; 2026 {about.name || "Leloud"}. All rights reserved.
+            {copyright || `© 2026 ${about.name || "Leloud"}. All rights reserved.`}
           </span>
         </div>
       </footer>
+      </main>
+
+      {/* Floating Move to Top Button */}
+      <AnimatePresence>
+        {showScrollTop && (
+          <motion.button
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            className="fixed bottom-6 right-6 z-50 w-10 h-10 rounded-full flex items-center justify-center cursor-pointer shadow-lg transition-all"
+            style={{
+              backgroundColor: accent,
+              color: "#ffffff",
+              border: "none",
+              boxShadow: `0 4px 16px ${accent}50`,
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.transform = "scale(1.1) translateY(-2px)"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.transform = "scale(1) translateY(0)"; }}
+            aria-label="Scroll to top"
+          >
+            <FiArrowUp />
+          </motion.button>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

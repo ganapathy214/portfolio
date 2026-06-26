@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { PortfolioProvider } from "./context/PortfolioContext";
 import PageLoader from "./components/common/PageLoader";
 
@@ -9,17 +9,41 @@ const Settings = React.lazy(() => import("./pages/Settings"));
 export default function App() {
   const basename = import.meta.env.BASE_URL.replace(/\/$/, "");
 
+  const router = createBrowserRouter(
+    [
+      {
+        path: "/",
+        element: (
+          <React.Suspense fallback={<PageLoader />}>
+            <Portfolio />
+          </React.Suspense>
+        ),
+      },
+      {
+        path: "/setitings",
+        element: (
+          <React.Suspense fallback={<PageLoader />}>
+            <Settings />
+          </React.Suspense>
+        ),
+      },
+      {
+        path: "/settings",
+        element: (
+          <React.Suspense fallback={<PageLoader />}>
+            <Settings />
+          </React.Suspense>
+        ),
+      },
+    ],
+    {
+      basename: basename,
+    }
+  );
+
   return (
     <PortfolioProvider>
-      <BrowserRouter basename={basename}>
-        <React.Suspense fallback={<PageLoader />}>
-          <Routes>
-            <Route path="/" element={<Portfolio />} />
-            <Route path="/setitings" element={<Settings />} />
-            <Route path="/settings"  element={<Settings />} />
-          </Routes>
-        </React.Suspense>
-      </BrowserRouter>
+      <RouterProvider router={router} />
     </PortfolioProvider>
   );
 }
