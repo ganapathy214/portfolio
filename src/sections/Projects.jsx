@@ -124,14 +124,80 @@ const ProjectFeatured = ({ projects, onClick }) => {
   );
 };
 
+/* ─── Design 5: Modern Glass cards list ─── */
+const ProjectsDesign5 = ({ projects, onClick }) => (
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
+    {projects.map((project, idx) => (
+      <motion.div
+        key={project.title}
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ delay: idx * 0.05 }}
+        onClick={() => onClick(project)}
+        className="group p-6 rounded-2xl border border-stone-850 bg-stone-900/20 hover:bg-stone-900/40 hover:border-primary/30 transition-all duration-300 flex flex-col justify-between cursor-pointer"
+      >
+        <div>
+          <div className="flex justify-between items-center mb-3">
+            <span
+              className="text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full border shrink-0"
+              style={{ color: "var(--primary)", borderColor: "rgba(var(--primary-rgb),0.25)", background: "rgba(var(--primary-rgb),0.08)" }}
+            >
+              {project.category || "Project"}
+            </span>
+            <span className="text-[10px] text-stone-500 font-bold">{project.duration}</span>
+          </div>
+          <h3 className="text-base font-bold text-white group-hover:text-primary transition-colors mb-2">
+            {project.title}
+          </h3>
+          <p className="text-stone-400 text-xs leading-relaxed line-clamp-3 mb-4">
+            {project.synopsis || project.description}
+          </p>
+        </div>
+        <div className="flex items-center justify-between border-t border-stone-850/60 pt-3 mt-2">
+          <div className="flex gap-1.5 flex-wrap">
+            {(project.stacks || []).slice(0, 3).map((t) => (
+              <span key={t} className="text-[8px] text-stone-500 font-semibold uppercase tracking-wider">
+                #{t}
+              </span>
+            ))}
+          </div>
+          <div className="flex items-center gap-1.5">
+            {project.github && (
+              <a href={project.github} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()}
+                 className="text-stone-500 hover:text-white transition-colors p-1">
+                <FiGithub className="w-3.5 h-3.5" />
+              </a>
+            )}
+            {project.demo && (
+              <a href={project.demo} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()}
+                 className="text-stone-500 hover:text-primary transition-colors p-1">
+                <FiExternalLink className="w-3.5 h-3.5" />
+              </a>
+            )}
+          </div>
+        </div>
+      </motion.div>
+    ))}
+  </div>
+);
+
 /* ─── Main Projects Section ─── */
-const Projects = ({ projects: propProjects, title, sectionNum }) => {
+const Projects = ({ projects: propProjects, title, sectionNum, design = "design1" }) => {
   const headerRef = useRef(null);
   const [activeFilter, setActiveFilter] = useState("all");
   const [selectedProject, setSelectedProject] = useState(null);
 
   const { sectionLayouts } = usePortfolio();
-  const layout = sectionLayouts?.Projects || "card-row";
+  const activeDesign = design || sectionLayouts?.Projects || "design1";
+  
+  // Map activeDesign to the legacy layouts
+  const layout = useMemo(() => {
+    if (activeDesign === "design1") return "card-row";
+    if (activeDesign === "design2") return "masonry";
+    if (activeDesign === "design3") return "table";
+    if (activeDesign === "design4") return "featured";
+    return "design5";
+  }, [activeDesign]);
 
   const allProjects = propProjects && propProjects.length > 0 ? propProjects : defaultProjects;
 
@@ -158,7 +224,11 @@ const Projects = ({ projects: propProjects, title, sectionNum }) => {
         const match = defaultProjects.find(p => p.title.toLowerCase() === project.title.toLowerCase());
         if (match) resolvedImage = match.image;
       }
-      return { ...project, image: resolvedImage };
+      const stacks = project.stacks || project.tech || [];
+      const tech = project.tech || project.stacks || [];
+      const synopsis = project.synopsis || project.description || "";
+      const description = project.description || project.synopsis || "";
+      return { ...project, image: resolvedImage, stacks, tech, synopsis, description };
     });
   }, [filteredProjects]);
 
@@ -299,6 +369,11 @@ const Projects = ({ projects: propProjects, title, sectionNum }) => {
         {/* ── Layout: Featured Hero ── */}
         {layout === "featured" && (
           <ProjectFeatured projects={resolvedFilteredProjects} onClick={setSelectedProject} />
+        )}
+
+        {/* ── Layout: Modern Glass Cards Grid (Design 5) ── */}
+        {layout === "design5" && (
+          <ProjectsDesign5 projects={resolvedFilteredProjects} onClick={setSelectedProject} />
         )}
       </div>
 

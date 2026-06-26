@@ -73,3 +73,40 @@ export function getLightShade(hexColor, factor = 0.6) {
 
   return `#${hexR}${hexG}${hexB}`;
 }
+
+/**
+ * Blend a hex color with black to create a darker, more saturated shade.
+ * @param {string} hexColor
+ * @param {number} factor - Blend factor between 0 (original color) and 1 (pure black)
+ * @returns {string} - Darkened hex color
+ */
+export function getDarkShade(hexColor, factor = 0.4) {
+  if (!hexColor || typeof hexColor !== "string") return "#000000";
+  const color = hexColor.startsWith("#") ? hexColor.slice(1) : hexColor;
+  let r, g, b;
+  if (color.length === 3) {
+    r = parseInt(color[0] + color[0], 16);
+    g = parseInt(color[1] + color[1], 16);
+    b = parseInt(color[2] + color[2], 16);
+  } else if (color.length === 6) {
+    r = parseInt(color.slice(0, 2), 16);
+    g = parseInt(color.slice(2, 4), 16);
+    b = parseInt(color.slice(4, 6), 16);
+  } else {
+    return "#000000";
+  }
+  if (isNaN(r) || isNaN(g) || isNaN(b)) {
+    return "#000000";
+  }
+
+  const nr = Math.max(0, Math.round(r * (1 - factor)));
+  const ng = Math.max(0, Math.round(g * (1 - factor)));
+  const nb = Math.max(0, Math.round(b * (1 - factor)));
+
+  const hexR = nr.toString(16).padStart(2, "0");
+  const hexG = ng.toString(16).padStart(2, "0");
+  const hexB = nb.toString(16).padStart(2, "0");
+
+  return `#${hexR}${hexG}${hexB}`;
+}
+

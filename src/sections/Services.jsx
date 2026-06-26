@@ -5,10 +5,15 @@ import { SERVICES_DATA, SERVICE_ICONS } from "../constants";
 import SectionLayout from "../layouts/SectionLayout";
 import { usePortfolio } from "../context/PortfolioContext";
 
-const Services = ({ servicesSubtitle, servicesData, title, sectionNum }) => {
+const Services = ({ servicesSubtitle, servicesData, title, sectionNum, design = "design1" }) => {
   const headerRef = useRef(null);
   const { sectionLayouts } = usePortfolio();
-  const layout = sectionLayouts?.Services || "icon-cards";
+  const activeDesign = design || sectionLayouts?.Services || "design1";
+  const layout = activeDesign === "design2" || activeDesign === "horizontal"
+    ? "horizontal"
+    : activeDesign === "design3" || activeDesign === "minimal-list"
+    ? "minimal-list"
+    : "icon-cards";
 
   const items = servicesData && servicesData.length > 0 ? servicesData : SERVICES_DATA;
   const subtitle = servicesSubtitle !== undefined

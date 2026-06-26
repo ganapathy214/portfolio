@@ -10,43 +10,46 @@ import { motion } from "framer-motion";
 import "./index.css";
 
 function useAnimationFrame(callback) {
+  const callbackRef = useRef(callback);
+
+  useEffect(() => {
+    callbackRef.current = callback;
+  }, [callback]);
+
   useEffect(() => {
     let frameId;
     const loop = () => {
-      callback();
+      callbackRef.current();
       frameId = requestAnimationFrame(loop);
     };
     frameId = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(frameId);
-  }, [callback]);
+  }, []);
 }
 
-function useMousePositionRef(containerRef) {
+function useGlobalMousePositionRef() {
   const positionRef = useRef({ x: 0, y: 0 });
 
   useEffect(() => {
     const updatePosition = (x, y) => {
-      if (containerRef?.current) {
-        const rect = containerRef.current.getBoundingClientRect();
-        positionRef.current = { x: x - rect.left, y: y - rect.top };
-      } else {
-        positionRef.current = { x, y };
+      positionRef.current = { x, y };
+    };
+
+    const handleMouseMove = (ev) => updatePosition(ev.pageX, ev.pageY);
+    const handleTouchMove = (ev) => {
+      if (ev.touches.length > 0) {
+        const touch = ev.touches[0];
+        updatePosition(touch.pageX, touch.pageY);
       }
     };
 
-    const handleMouseMove = (ev) => updatePosition(ev.clientX, ev.clientY);
-    const handleTouchMove = (ev) => {
-      const touch = ev.touches[0];
-      updatePosition(touch.clientX, touch.clientY);
-    };
-
-    window.addEventListener("mousemove", handleMouseMove);
-    window.addEventListener("touchmove", handleTouchMove);
+    window.addEventListener("mousemove", handleMouseMove, { passive: true });
+    window.addEventListener("touchmove", handleTouchMove, { passive: true });
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("touchmove", handleTouchMove);
     };
-  }, [containerRef]);
+  }, []);
 
   return positionRef;
 }
@@ -66,8 +69,11 @@ const VariableProximity = forwardRef((props, ref) => {
   } = props;
 
   const letterRefs = useRef([]);
+  const letterPositions = useRef([]);
+  const containerRectRef = useRef(null);
+  const isVisibleRef = useRef(false);
   const interpolatedSettingsRef = useRef([]);
-  const mousePositionRef = useMousePositionRef(containerRef);
+  const mousePositionRef = useGlobalMousePositionRef();
   const lastPositionRef = useRef({ x: null, y: null });
   const [responsiveRadius, setResponsiveRadius] = useState(radius);
 
@@ -109,28 +115,63 @@ const VariableProximity = forwardRef((props, ref) => {
     }
   };
 
+  useEffect(() => {
+    const container = containerRef?.current;
+    if (!container) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        isVisibleRef.current = entry.isIntersecting;
+      },
+      { threshold: 0.01 }
+    );
+    observer.observe(container);
+    return () => {
+      observer.disconnect();
+    };
+  }, [containerRef]);
+
   useAnimationFrame(() => {
-    if (!containerRef?.current) return;
-    const containerRect = containerRef.current.getBoundingClientRect();
+    if (!containerRef?.current || !isVisibleRef.current) return;
+
     const { x, y } = mousePositionRef.current;
     if (lastPositionRef.current.x === x && lastPositionRef.current.y === y) {
       return;
     }
     lastPositionRef.current = { x, y };
 
+    if (letterPositions.current.length === 0 || !containerRectRef.current) {
+      const container = containerRef.current;
+      const rect = container.getBoundingClientRect();
+      containerRectRef.current = {
+        left: rect.left + window.scrollX,
+        top: rect.top + window.scrollY,
+      };
+
+      const positions = [];
+      letterRefs.current.forEach((letterRef) => {
+        if (!letterRef) {
+          positions.push(null);
+          return;
+        }
+        const letterRect = letterRef.getBoundingClientRect();
+        positions.push({
+          x: letterRect.left + letterRect.width / 2 - rect.left,
+          y: letterRect.top + letterRect.height / 2 - rect.top,
+        });
+      });
+      letterPositions.current = positions;
+    }
+
+    const containerDocPos = containerRectRef.current;
+    const mouseRelX = x - containerDocPos.left;
+    const mouseRelY = y - containerDocPos.top;
+
     letterRefs.current.forEach((letterRef, index) => {
       if (!letterRef) return;
+      const pos = letterPositions.current[index];
+      if (!pos) return;
 
-      const rect = letterRef.getBoundingClientRect();
-      const letterCenterX = rect.left + rect.width / 2 - containerRect.left;
-      const letterCenterY = rect.top + rect.height / 2 - containerRect.top;
-
-      const distance = calculateDistance(
-        mousePositionRef.current.x,
-        mousePositionRef.current.y,
-        letterCenterX,
-        letterCenterY
-      );
+      const distance = calculateDistance(mouseRelX, mouseRelY, pos.x, pos.y);
 
       if (distance >= responsiveRadius) {
         letterRef.style.fontVariationSettings = fromFontVariationSettings;
@@ -156,6 +197,8 @@ const VariableProximity = forwardRef((props, ref) => {
     const handleResize = () => {
       const width = containerRef.current.offsetWidth;
       setResponsiveRadius(Math.max(width * 0.2, 40)); // 20% of width, min 40px
+      letterPositions.current = [];
+      containerRectRef.current = null;
     };
     handleResize();
     window.addEventListener("resize", handleResize);

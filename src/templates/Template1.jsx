@@ -4,9 +4,11 @@ import React, { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { HiArrowUp } from "react-icons/hi2";
 import Sidebar from "../components/Sidebar";
+import TopNavbar from "../components/TopNavbar";
 import { sidebarItems } from "../constants";
 import Home from "../sections/Home";
 import { usePortfolio } from "../context/PortfolioContext";
+import SectionWrapper from "../components/common/SectionWrapper";
 
 const About         = React.lazy(() => import("../sections/About"));
 const Services      = React.lazy(() => import("../sections/Services"));
@@ -14,22 +16,24 @@ const Skills        = React.lazy(() => import("../sections/Skills"));
 const Projects      = React.lazy(() => import("../sections/Projects"));
 const Certification = React.lazy(() => import("../sections/Certification"));
 const Testimonials  = React.lazy(() => import("../sections/Testimonials"));
-const Journey       = React.lazy(() => import("../sections/Journey"));
+const Experience    = React.lazy(() => import("../sections/Experience"));
+const Education     = React.lazy(() => import("../sections/Education"));
 const Blogs         = React.lazy(() => import("../sections/Blogs"));
 const Faq           = React.lazy(() => import("../sections/Faq"));
 const Contact       = React.lazy(() => import("../sections/Contact"));
 
 const SECTION_COMPONENTS = {
-  About:         (props) => <About         about={props.about}             title={props.sectionTitles?.About}         sectionNum={props.getSectionNum("About")} />,
-  Services:      (props) => <Services      servicesSubtitle={props.servicesSubtitle} servicesData={props.servicesData} title={props.sectionTitles?.Services}      sectionNum={props.getSectionNum("Services")} />,
-  Skills:        (props) => <Skills        skills={props.skills}           skillCategories={props.skillCategories}    title={props.sectionTitles?.Skills}         sectionNum={props.getSectionNum("Skills")} />,
-  Projects:      (props) => <Projects      projects={props.projects}                                                  title={props.sectionTitles?.Projects}       sectionNum={props.getSectionNum("Projects")} />,
-  Certification: (props) => <Certification certifications={props.certifications}                                       title={props.sectionTitles?.Certification}  sectionNum={props.getSectionNum("Certification")} />,
-  Testimonials:  (props) => <Testimonials  testimonials={props.testimonials}                                           title={props.sectionTitles?.Testimonials}   sectionNum={props.getSectionNum("Testimonials")} />,
-  Journey:       (props) => <Journey       timelineData={props.timelineData} summaryStats={props.summaryStats}        title={props.sectionTitles?.Journey}        sectionNum={props.getSectionNum("Journey")} />,
-  Blogs:         (props) => <Blogs         blogs={props.blogs}                                                        title={props.sectionTitles?.Blogs}          sectionNum={props.getSectionNum("Blogs")} />,
-  Faq:           (props) => <Faq           faqs={props.faqs}                                                          title={props.sectionTitles?.Faq}            sectionNum={props.getSectionNum("Faq")} />,
-  Contact:       (props) => <Contact       contactInfo={props.contactInfo}                                             title={props.sectionTitles?.Contact}        sectionNum={props.getSectionNum("Contact")} />,
+  About:         (props) => <About         about={props.about}             title={props.sectionTitles?.About}         sectionNum={props.getSectionNum("About")}         design={props.sectionLayouts?.About} />,
+  Services:      (props) => <Services      servicesSubtitle={props.servicesSubtitle} servicesData={props.servicesData} title={props.sectionTitles?.Services}      sectionNum={props.getSectionNum("Services")}      design={props.sectionLayouts?.Services} />,
+  Skills:        (props) => <Skills        skills={props.skills}           skillCategories={props.skillCategories}    title={props.sectionTitles?.Skills}         sectionNum={props.getSectionNum("Skills")}        design={props.sectionLayouts?.Skills} />,
+  Projects:      (props) => <Projects      projects={props.projects}                                                  title={props.sectionTitles?.Projects}       sectionNum={props.getSectionNum("Projects")}      design={props.sectionLayouts?.Projects} />,
+  Certification: (props) => <Certification certifications={props.certifications}                                       title={props.sectionTitles?.Certification}  sectionNum={props.getSectionNum("Certification")} design={props.sectionLayouts?.Certification} />,
+  Testimonials:  (props) => <Testimonials  testimonials={props.testimonials}                                           title={props.sectionTitles?.Testimonials}   sectionNum={props.getSectionNum("Testimonials")}  design={props.sectionLayouts?.Testimonials} />,
+  Experience:    (props) => <Experience    timelineData={props.timelineData}                                           title={props.sectionTitles?.Experience}   sectionNum={props.getSectionNum("Experience")}  design={props.sectionLayouts?.Experience} />,
+  Education:     (props) => <Education     timelineData={props.timelineData}                                           title={props.sectionTitles?.Education}    sectionNum={props.getSectionNum("Education")}   design={props.sectionLayouts?.Education} />,
+  Blogs:         (props) => <Blogs         blogs={props.blogs}                                                        title={props.sectionTitles?.Blogs}          sectionNum={props.getSectionNum("Blogs")}         design={props.sectionLayouts?.Blogs} />,
+  Faq:           (props) => <Faq           faqs={props.faqs}                                                          title={props.sectionTitles?.Faq}            sectionNum={props.getSectionNum("Faq")}          design={props.sectionLayouts?.Faq} />,
+  Contact:       (props) => <Contact       contactInfo={props.contactInfo}                                             title={props.sectionTitles?.Contact}        sectionNum={props.getSectionNum("Contact")}       design={props.sectionLayouts?.Contact} />,
 };
 
 export default function Template1() {
@@ -39,7 +43,8 @@ export default function Template1() {
     projects, certifications, timelineData, summaryStats,
     contactInfo, testimonials, blogs, faqs,
     pageTitles, pageDescriptions, sectionVisibility, sectionTitles, sectionOrder,
-    selectedTemplate,
+    selectedTemplate, copyright, sectionLayouts,
+    navPosition, primaryColor,
   } = usePortfolio();
 
   const [activeSection,    setActiveSection]    = useState("Home");
@@ -53,7 +58,7 @@ export default function Template1() {
   // Build ordered visible section list
   const orderedSections = (sectionOrder || [
     "About","Services","Skills","Projects","Certification",
-    "Testimonials","Journey","Blogs","Faq","Contact"
+    "Testimonials","Experience","Education","Blogs","Faq","Contact"
   ]).filter(id => id !== "Home" && (!sectionVisibility || sectionVisibility[id] !== false));
 
   const getSectionNum = (id) => {
@@ -65,9 +70,8 @@ export default function Template1() {
     about, servicesSubtitle, servicesData, skills, skillCategories,
     projects, certifications, timelineData, summaryStats,
     contactInfo, testimonials, blogs, faqs,
-    sectionTitles, getSectionNum,
+    sectionTitles, getSectionNum, sectionLayouts,
   };
-
   useEffect(() => {
     const titles = pageTitles || {};
     const descriptions = pageDescriptions || {};
@@ -190,7 +194,17 @@ export default function Template1() {
   };
 
   return (
-    <div className={`relative z-0 min-h-screen flex flex-col md:flex-row bg-transparent overflow-hidden text-[var(--text-white-or-dark)]`}>
+    <div className={`relative z-0 min-h-screen flex ${navPosition === "left" ? "flex-col md:flex-row" : "flex-col"} bg-transparent overflow-hidden text-[var(--text-white-or-dark)]`}>
+
+      {/* Top Navbar (only renders when navPosition === 'top') */}
+      <TopNavbar
+        activeSection={activeSection}
+        onItemClick={transitionToSection}
+        sectionVisibility={sectionVisibility}
+        about={about}
+        primaryColor={primaryColor}
+        navPosition={navPosition}
+      />
 
       {/* Tracking Beam */}
       <div
@@ -216,27 +230,29 @@ export default function Template1() {
           activeSection={activeSection}
           onItemClick={transitionToSection}
           sectionVisibility={sectionVisibility}
+          navPosition={navPosition}
         />
       </motion.div>
 
       {/* Scrollable content */}
       <main
         ref={mainRef}
-        className="flex-1 md:ml-20 md:h-screen md:overflow-y-auto h-auto overflow-y-visible scroll-smooth relative z-10 p-2 sm:p-4 md:p-6 pb-24 md:pb-6"
+        className={`flex-1 ${navPosition === "left" ? "md:ml-20" : ""} md:h-screen md:overflow-y-auto h-auto overflow-y-visible scroll-smooth relative z-10 p-2 sm:p-4 md:p-6 pb-24 md:pb-6`}
       >
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8 }}>
-          {(!sectionVisibility || sectionVisibility.Home !== false) && (
-            <Home
-              name={about?.name}
-              roles={roles}
-              description={description}
-              centerSvg={centerSvg}
-              orbitingStacks={orbitingStacks}
-              statusBadgeText={about?.statusBadgeText}
-              selectedTemplate={selectedTemplate}
-              summaryStats={summaryStats}
-            />
-          )}
+          {(!sectionVisibility || sectionVisibility.Home !== false) && (            <SectionWrapper sectionName="Home">
+              <Home
+                name={about?.name}
+                roles={roles}
+                description={description}
+                centerSvg={centerSvg}
+                orbitingStacks={orbitingStacks}
+                statusBadgeText={about?.statusBadgeText}
+                selectedTemplate={selectedTemplate}
+                summaryStats={summaryStats}
+                design={sectionLayouts?.Home}
+              />
+            </SectionWrapper>)}
           <React.Suspense fallback={
             <div className="w-full h-[50vh] flex items-center justify-center">
               <div className="w-10 h-10 rounded-full border-4 border-t-transparent animate-spin"
@@ -248,12 +264,19 @@ export default function Template1() {
               const renderer = SECTION_COMPONENTS[sectionName];
               if (!renderer) return null;
               return (
-                <React.Fragment key={sectionName}>
+                <SectionWrapper key={sectionName} sectionName={sectionName}>
                   {renderer(sectionProps)}
-                </React.Fragment>
+                </SectionWrapper>
               );
             })}
           </React.Suspense>
+
+          {/* Footer */}
+          <footer className="border-t py-12 px-6 mt-12 text-center animate-fadeIn" style={{ borderColor: "rgba(255, 255, 255, 0.08)", backgroundColor: "transparent" }}>
+            <span className="text-[11px] text-stone-500 font-bold uppercase tracking-wider block">
+              {copyright || `© 2026 ${about?.name || "Developer"}. All rights reserved.`}
+            </span>
+          </footer>
         </motion.div>
       </main>
 
@@ -271,11 +294,11 @@ export default function Template1() {
                 mainRef.current.scrollTo({ top: 0, behavior: "smooth" });
               }
             }}
-            className="fixed bottom-6 right-6 md:right-10 z-40 w-10 h-10 rounded-full bg-black/60 border flex items-center justify-center cursor-pointer shadow-lg backdrop-blur-md transition-all"
+            className="fixed bottom-6 right-6 md:right-10 z-40 w-10 h-10 rounded-full border flex items-center justify-center cursor-pointer shadow-lg backdrop-blur-md transition-all"
             style={{
               borderColor: isScrollHovered ? "transparent" : "rgba(var(--primary-rgb), 0.4)",
-              color: isScrollHovered ? "#000000" : "var(--primary)",
-              backgroundColor: isScrollHovered ? "var(--primary)" : "rgba(0, 0, 0, 0.6)",
+              color: isScrollHovered ? "var(--primary-contrast, #000000)" : "var(--primary)",
+              backgroundColor: isScrollHovered ? "var(--primary)" : "var(--card-bg, rgba(0,0,0,0.6))",
               boxShadow: isScrollHovered ? "0 0 15px rgba(var(--primary-rgb), 0.4)" : "none",
             }}
             onMouseEnter={() => setIsScrollHovered(true)}
