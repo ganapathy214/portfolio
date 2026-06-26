@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { FiArrowRight, FiBriefcase, FiCompass } from "react-icons/fi";
 
 const TypewriterRole = ({ roles = [] }) => {
   const [roleIndex, setRoleIndex] = useState(0);
@@ -37,7 +38,7 @@ const TypewriterRole = ({ roles = [] }) => {
   );
 };
 
-const Home = ({ name, roles, description, centerSvg, orbitingStacks, statusBadgeText }) => {
+const Home = ({ name, roles, description, centerSvg, orbitingStacks, statusBadgeText, design = "design1" }) => {
   const displayName = name || "Ganapathy Natarajan";
 
   const ORBIT_POSITIONS = [
@@ -62,21 +63,176 @@ const Home = ({ name, roles, description, centerSvg, orbitingStacks, statusBadge
 
   const scrollToSection = (id) => {
     const el = document.getElementById(id);
-    if (el) {
-      const mainEl = el.closest("main");
-      if (mainEl) {
-        const rect = el.getBoundingClientRect();
-        const mainRect = mainEl.getBoundingClientRect();
-        const targetTop = rect.top - mainRect.top + mainEl.scrollTop;
-        mainEl.scrollTo({ top: targetTop, behavior: "smooth" });
-      } else {
-        el.scrollIntoView({ behavior: "smooth" });
-      }
-    }
+    if (el) el.scrollIntoView({ behavior: "smooth" });
   };
 
+  // --- RENDER DESIGNS ---
+
+  if (design === "design2") {
+    // DESIGN 2: Centered Bold Typography (No Avatar, Grid Backdrop)
+    return (
+      <section id="home" className="min-h-[90vh] flex items-center justify-center relative overflow-hidden bg-stone-950 py-20">
+        <div className="absolute inset-0 grid-pattern opacity-40 pointer-events-none" />
+        <div className="absolute w-[500px] h-[500px] rounded-full bg-primary/5 blur-[120px] pointer-events-none" />
+        
+        <div className="w-full max-w-4xl mx-auto px-6 text-center z-10 space-y-8">
+          <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-stone-850 bg-stone-900/60 text-[10px] font-bold uppercase tracking-widest text-primary mx-auto">
+            <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+            {statusBadgeText || "Available for Work"}
+          </motion.div>
+          
+          <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }} className="text-5xl sm:text-7xl lg:text-8xl font-black text-white tracking-tighter leading-none">
+            {displayName}
+          </motion.h1>
+
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} className="text-lg sm:text-2xl font-mono text-primary font-bold uppercase tracking-widest">
+            <TypewriterRole roles={roles} />
+          </motion.div>
+
+          <motion.p initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className="text-stone-400 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
+            {description}
+          </motion.p>
+
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }} className="flex justify-center gap-4">
+            <button onClick={() => scrollToSection("projects")} className="primary_button px-8 py-3.5">Explore My Work</button>
+            <button onClick={() => scrollToSection("contact")} className="secondary_button px-8 py-3.5">Let's Connect</button>
+          </motion.div>
+        </div>
+      </section>
+    );
+  }
+
+  if (design === "design3") {
+    // DESIGN 3: Left content, sphere & orbiting stacks right
+    return (
+      <section id="home" className="min-h-[90vh] flex items-center justify-center relative overflow-hidden py-16">
+        <div className="absolute inset-0 bg-stone-950/20" />
+        <div className="w-full max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center z-10 relative">
+          
+          <motion.div className="lg:col-span-7 flex flex-col items-start text-left gap-5" initial={{ opacity: 0, x: -40 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }}>
+            <span className="text-[10px] font-bold tracking-[0.2em] text-primary uppercase">{statusBadgeText || "Available for Projects"}</span>
+            <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold text-white leading-none tracking-tight">{displayName}</h1>
+            <div className="text-base sm:text-lg font-bold text-stone-400">
+              Specialized in <span className="text-primary font-mono"><TypewriterRole roles={roles} /></span>
+            </div>
+            <p className="text-stone-400 text-sm leading-relaxed max-w-xl">{description}</p>
+            <div className="flex gap-3 mt-2">
+              <button onClick={() => scrollToSection("projects")} className="primary_button flex items-center gap-2">View Projects <FiArrowRight /></button>
+            </div>
+          </motion.div>
+
+          <motion.div className="lg:col-span-5 flex justify-center items-center relative" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}>
+            <div className="relative w-72 h-72 rounded-full border border-stone-850 bg-stone-900/40 flex items-center justify-center animate-float">
+              {centerSvg ? (
+                <div className="w-[60%] h-[60%] flex items-center justify-center" dangerouslySetInnerHTML={{ __html: centerSvg }} />
+              ) : (
+                <FiCompass className="text-6xl text-primary animate-pulse" />
+              )}
+            </div>
+            {/* Orbiting badge stack */}
+            <div className="absolute w-[360px] h-[360px]" style={{ animation: "orbit-clockwise 30s linear infinite" }}>
+              {activeStacks.slice(0, 4).map((stack, idx) => {
+                const angle = (idx * 360) / 4;
+                const rad = (angle * Math.PI) / 180;
+                const x = 180 + 150 * Math.cos(rad) - 40;
+                const y = 180 + 150 * Math.sin(rad) - 16;
+                return (
+                  <div key={idx} className="absolute" style={{ left: `${x}px`, top: `${y}px` }}>
+                    <div style={{ animation: "orbit-counter-clockwise 30s linear infinite" }}>
+                      <span className="tag-primary text-[8px] bg-stone-950/90 border border-stone-800">{stack.label}</span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </motion.div>
+        </div>
+      </section>
+    );
+  }
+
+  if (design === "design4") {
+    // DESIGN 4: Typographic Minimalist (Large Name & Status Indicator)
+    return (
+      <section id="home" className="min-h-[90vh] flex items-center justify-start relative overflow-hidden bg-stone-950 py-20 px-6 sm:px-12 lg:px-20 text-left">
+        <div className="w-full max-w-5xl z-10 space-y-6">
+          <div className="flex items-center gap-3">
+            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping" />
+            <span className="text-[10px] font-mono tracking-widest text-stone-500 uppercase font-black">{statusBadgeText || "Available for Contract"}</span>
+          </div>
+
+          <h1 className="text-6xl sm:text-8xl lg:text-9xl font-black text-white tracking-tighter uppercase leading-none select-none">
+            I AM <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-white to-primary-contrast" style={{ textShadow: "0 0 40px rgba(var(--primary-rgb),0.1)" }}>
+              {displayName.split(" ")[0]}
+            </span>
+          </h1>
+
+          <div className="text-lg sm:text-xl text-stone-400 font-bold uppercase tracking-wider font-mono">
+            // <TypewriterRole roles={roles} />
+          </div>
+
+          <p className="text-stone-500 text-xs sm:text-sm max-w-md leading-relaxed">
+            {description}
+          </p>
+
+          <div className="flex gap-4 pt-4">
+            <button onClick={() => scrollToSection("contact")} className="primary_button uppercase font-mono tracking-widest text-xs">Get In Touch</button>
+            <button onClick={() => scrollToSection("about")} className="secondary_button uppercase font-mono tracking-widest text-xs">Learn More</button>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (design === "design5") {
+    // DESIGN 5: Rounded Container Card Layout (Avatar Inside)
+    return (
+      <section id="home" className="min-h-[90vh] flex items-center justify-center relative overflow-hidden py-10 px-4">
+        <div className="w-full max-w-5xl bg-stone-900/30 border border-stone-850 rounded-[2.5rem] p-8 sm:p-12 lg:p-16 relative overflow-hidden z-10 flex flex-col md:flex-row items-center gap-10">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent pointer-events-none" />
+          
+          <div className="flex-1 text-left space-y-6">
+            <div className="inline-flex items-center gap-2 text-stone-500 text-[10px] font-bold uppercase tracking-widest">
+              <FiBriefcase className="text-primary" />
+              <span>{statusBadgeText || "Active & Available"}</span>
+            </div>
+            
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-tight">
+              Hey, I'm <span className="text-primary">{displayName}</span>
+            </h1>
+
+            <div className="text-sm font-bold uppercase text-stone-400 font-mono">
+              <TypewriterRole roles={roles} />
+            </div>
+
+            <p className="text-stone-400 text-xs sm:text-sm leading-relaxed">
+              {description}
+            </p>
+
+            <div className="flex gap-3">
+              <button onClick={() => scrollToSection("projects")} className="primary_button px-6 py-2.5 rounded-xl text-[11px]">My Projects</button>
+              <button onClick={() => scrollToSection("contact")} className="secondary_button px-6 py-2.5 rounded-xl text-[11px]">Hire Me</button>
+            </div>
+          </div>
+
+          <div className="w-64 h-64 shrink-0 rounded-[2rem] bg-stone-950 border border-stone-800 p-3 relative flex items-center justify-center overflow-hidden">
+            {centerSvg ? (
+              <div className="w-[80%] h-[80%] flex items-center justify-center" dangerouslySetInnerHTML={{ __html: centerSvg }} />
+            ) : (
+              <div className="w-full h-full rounded-2xl bg-stone-900 flex items-center justify-center text-4xl text-primary font-bold uppercase font-mono">
+                {displayName.slice(0, 2)}
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // DEFAULT: DESIGN 1 (Original Split Tech with Orbit Icons)
   return (
-    <section id="home" className="min-h-[98vh] flex items-center justify-center relative overflow-hidden">
+    <section id="home" className="min-h-[90vh] flex items-center justify-center relative overflow-hidden">
       <div className="absolute inset-0 grid-pattern opacity-60 pointer-events-none" />
       <div
         className="absolute right-0 top-0 w-[55%] h-full pointer-events-none"

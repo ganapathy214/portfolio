@@ -3,31 +3,40 @@ import { motion, AnimatePresence } from "framer-motion";
 import { FaLinkedinIn, FaGithub, FaTwitter, FaInstagram } from "react-icons/fa";
 import {
   FiCode, FiExternalLink, FiMail, FiPhone, FiMapPin, FiMenu, FiX,
-  FiMic, FiMicOff, FiVideo, FiVideoOff, FiPhoneOff, FiPhoneCall
+  FiMic, FiMicOff, FiVideo, FiVideoOff, FiPhoneOff, FiPhoneCall, FiArrowUp
 } from "react-icons/fi";
 import avatar from "../assets/avatar.png";
 import { usePortfolio } from "../context/PortfolioContext";
+import SectionWrapper from "../components/common/SectionWrapper";
+import Sidebar from "../components/Sidebar";
+import TopNavbar from "../components/TopNavbar";
 
+import Home from "../sections/Home";
+
+const About         = React.lazy(() => import("../sections/About"));
 const Services      = React.lazy(() => import("../sections/Services"));
 const Skills        = React.lazy(() => import("../sections/Skills"));
 const Projects      = React.lazy(() => import("../sections/Projects"));
 const Certification = React.lazy(() => import("../sections/Certification"));
 const Testimonials  = React.lazy(() => import("../sections/Testimonials"));
-const Journey       = React.lazy(() => import("../sections/Journey"));
+const Experience    = React.lazy(() => import("../sections/Experience"));
+const Education     = React.lazy(() => import("../sections/Education"));
 const Blogs         = React.lazy(() => import("../sections/Blogs"));
 const Faq           = React.lazy(() => import("../sections/Faq"));
 const Contact       = React.lazy(() => import("../sections/Contact"));
 
 const SECTION_COMPONENTS = {
-  Services:      (props) => <Services      servicesSubtitle={props.servicesSubtitle} servicesData={props.servicesData} title={props.sectionTitles?.Services}      sectionNum={props.getSectionNum("Services")} />,
-  Skills:        (props) => <Skills        skills={props.skills}           skillCategories={props.skillCategories}    title={props.sectionTitles?.Skills}         sectionNum={props.getSectionNum("Skills")} />,
-  Projects:      (props) => <Projects      projects={props.projects}                                                  title={props.sectionTitles?.Projects}       sectionNum={props.getSectionNum("Projects")} />,
-  Certification: (props) => <Certification certifications={props.certifications}                                       title={props.sectionTitles?.Certification}  sectionNum={props.getSectionNum("Certification")} />,
-  Testimonials:  (props) => <Testimonials  testimonials={props.testimonials}                                           title={props.sectionTitles?.Testimonials}   sectionNum={props.getSectionNum("Testimonials")} />,
-  Journey:       (props) => <Journey       timelineData={props.timelineData} summaryStats={props.summaryStats}        title={props.sectionTitles?.Journey}        sectionNum={props.getSectionNum("Journey")} />,
-  Blogs:         (props) => <Blogs         blogs={props.blogs}                                                        title={props.sectionTitles?.Blogs}          sectionNum={props.getSectionNum("Blogs")} />,
-  Faq:           (props) => <Faq           faqs={props.faqs}                                                          title={props.sectionTitles?.Faq}            sectionNum={props.getSectionNum("Faq")} />,
-  Contact:       (props) => <Contact       contactInfo={props.contactInfo}                                             title={props.sectionTitles?.Contact}        sectionNum={props.getSectionNum("Contact")} />,
+  About:         (props) => <About         about={props.about}             title={props.sectionTitles?.About}         sectionNum={props.getSectionNum("About")}         design={props.sectionLayouts?.About} />,
+  Services:      (props) => <Services      servicesSubtitle={props.servicesSubtitle} servicesData={props.servicesData} title={props.sectionTitles?.Services}      sectionNum={props.getSectionNum("Services")}      design={props.sectionLayouts?.Services} />,
+  Skills:        (props) => <Skills        skills={props.skills}           skillCategories={props.skillCategories}    title={props.sectionTitles?.Skills}         sectionNum={props.getSectionNum("Skills")}        design={props.sectionLayouts?.Skills} />,
+  Projects:      (props) => <Projects      projects={props.projects}                                                  title={props.sectionTitles?.Projects}       sectionNum={props.getSectionNum("Projects")}      design={props.sectionLayouts?.Projects} />,
+  Certification: (props) => <Certification certifications={props.certifications}                                       title={props.sectionTitles?.Certification}  sectionNum={props.getSectionNum("Certification")} design={props.sectionLayouts?.Certification} />,
+  Testimonials:  (props) => <Testimonials  testimonials={props.testimonials}                                           title={props.sectionTitles?.Testimonials}   sectionNum={props.getSectionNum("Testimonials")}  design={props.sectionLayouts?.Testimonials} />,
+  Experience:    (props) => <Experience    timelineData={props.timelineData}                                           title={props.sectionTitles?.Experience}   sectionNum={props.getSectionNum("Experience")}  design={props.sectionLayouts?.Experience} />,
+  Education:     (props) => <Education     timelineData={props.timelineData}                                           title={props.sectionTitles?.Education}    sectionNum={props.getSectionNum("Education")}   design={props.sectionLayouts?.Education} />,
+  Blogs:         (props) => <Blogs         blogs={props.blogs}                                                        title={props.sectionTitles?.Blogs}          sectionNum={props.getSectionNum("Blogs")}         design={props.sectionLayouts?.Blogs} />,
+  Faq:           (props) => <Faq           faqs={props.faqs}                                                          title={props.sectionTitles?.Faq}            sectionNum={props.getSectionNum("Faq")}          design={props.sectionLayouts?.Faq} />,
+  Contact:       (props) => <Contact       contactInfo={props.contactInfo}                                             title={props.sectionTitles?.Contact}        sectionNum={props.getSectionNum("Contact")}       design={props.sectionLayouts?.Contact} />,
 };
 
 const SOCIAL_ICONS = {
@@ -220,12 +229,20 @@ export default function Template6() {
     servicesSubtitle, servicesData, skills, skillCategories,
     projects, certifications, timelineData, summaryStats,
     contactInfo, testimonials, blogs, faqs,
-    themeMode, sectionVisibility, sectionTitles, sectionOrder,
+    themeMode, sectionVisibility, sectionTitles, sectionOrder, copyright,
+    sectionLayouts, roles, centerSvg, orbitingStacks, selectedTemplate, navPosition,
   } = portfolio;
 
   const [activeSection, setActiveSection] = useState("home");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [showScrollTop, setShowScrollTop] = useState(false);
   const isDark = themeMode === "dark";
+
+  useEffect(() => {
+    const handleScroll = () => setShowScrollTop(window.scrollY > 300);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
   
   // Custom design accent is pink by default, falling back nicely, otherwise dynamic
   const accent = primaryColor || "#f43f5e";
@@ -239,7 +256,7 @@ export default function Template6() {
   // Build ordered visible section list
   const orderedSections = (sectionOrder || [
     "About","Services","Skills","Projects","Certification",
-    "Testimonials","Journey","Blogs","Faq","Contact"
+    "Testimonials","Experience","Education","Blogs","Faq","Contact"
   ]).filter(id => id !== "Home" && (!sectionVisibility || sectionVisibility[id] !== false));
 
   const getSectionNum = (id) => {
@@ -251,7 +268,7 @@ export default function Template6() {
     about, servicesSubtitle, servicesData, skills, skillCategories,
     projects, certifications, timelineData, summaryStats,
     contactInfo, testimonials, blogs, faqs,
-    sectionTitles, getSectionNum,
+    sectionTitles, getSectionNum, sectionLayouts,
   };
 
   // Section scroll tracker
@@ -307,24 +324,43 @@ export default function Template6() {
   // Format nav labels to be lowercase dynamic mappings
   const NAV_ITEMS = orderedSections.map(name => ({
     id: name.toLowerCase(),
-    label: name === "About" ? "about me" : (name === "Journey" ? "experience" : name === "Projects" ? "work" : name === "Blogs" ? "blog" : name === "Contact" ? "contact me" : name.toLowerCase())
+    label: name === "About" ? "about me" : (name === "Experience" ? "experience" : name === "Education" ? "education" : name === "Projects" ? "work" : name === "Blogs" ? "blog" : name === "Contact" ? "contact me" : name.toLowerCase())
   }));
 
   const logoName = (about?.name || "James John").toLowerCase().replace(/\s+/g, ".");
   const displayBio = about?.bio || "I'm a fullstack software engineer specializing in building exceptional software. Currently, I am focused on building products.";
   const bioParagraphs = displayBio.split("\n\n").filter(p => p.trim().length > 0);
 
+  const transitionToSection = useCallback((item) => {
+    const id = item.href.replace("#", "");
+    scrollTo(id);
+    setActiveSection(item.name);
+  }, [scrollTo]);
+
   return (
     <div
-      className="relative z-0"
+      className={`relative z-0 min-h-screen flex ${navPosition === "left" ? "flex-col md:flex-row" : "flex-col"}`}
       style={{
         backgroundColor: "transparent",
         color: textColor,
-        minHeight: "100vh",
         fontFamily: "'Outfit', 'Plus Jakarta Sans', sans-serif",
         position: "relative"
       }}
     >
+      <TopNavbar
+        activeSection={activeSection}
+        onItemClick={transitionToSection}
+        sectionVisibility={sectionVisibility}
+        about={about}
+        primaryColor={primaryColor}
+        navPosition={navPosition}
+      />
+      <Sidebar
+        activeSection={activeSection}
+        onItemClick={transitionToSection}
+        sectionVisibility={sectionVisibility}
+        navPosition={navPosition}
+      />
       {/* Blurred background glow circles */}
       <div
         className="absolute w-80 h-80 rounded-full blur-[120px] pointer-events-none opacity-20"
@@ -355,8 +391,9 @@ export default function Template6() {
       `}</style>
 
       {/* NAVBAR */}
-      <header
-        style={{
+      {navPosition === "top" && (
+        <header
+          style={{
           position: "sticky",
           top: 0,
           zIndex: 100,
@@ -384,7 +421,7 @@ export default function Template6() {
                 onClick={() => scrollTo(item.id)}
                 className="text-xs font-semibold tracking-wider transition-colors cursor-pointer normal-case font-mono"
                 style={{
-                  color: activeSection === item.id ? textTitle : textColor
+                  color: activeSection?.toLowerCase() === item.id?.toLowerCase() ? accent : textColor
                 }}
               >
                 <span style={{ color: accent, marginRight: "4px" }}>0{idx + 1}.</span>
@@ -424,7 +461,7 @@ export default function Template6() {
                   onClick={() => scrollTo(item.id)}
                   className="text-xs font-semibold tracking-wider text-left py-2 font-mono"
                   style={{
-                    color: activeSection === item.id ? textTitle : textColor
+                    color: activeSection?.toLowerCase() === item.id?.toLowerCase() ? accent : textColor
                   }}
                 >
                   <span style={{ color: accent, marginRight: "6px" }}>0{idx + 1}.</span>
@@ -435,60 +472,27 @@ export default function Template6() {
           )}
         </AnimatePresence>
       </header>
+      )}
 
+      <main className={`flex-1 ${navPosition === "left" ? "md:ml-20" : ""} pb-24 md:pb-6`}>
       {/* HERO SECTION */}
-      <section
-        id="home"
-        data-t6-section
-        className="min-h-[85vh] flex items-center py-20 px-6 relative w-full max-w-[90%] mx-auto"
-      >
-        <div className="w-full grid grid-cols-1 md:grid-cols-12 gap-16 items-center">
-          {/* Left Hero Text */}
-          <div className="md:col-span-7 text-left space-y-6">
-            <h1
-              className="text-5xl sm:text-6xl md:text-7xl font-extrabold tracking-tight"
-              style={{ color: textTitle, lineHeight: 1.1 }}
-            >
-              I<span style={{ color: accent }}>'</span>m {about?.name || "James John"}<span style={{ color: accent }}>.</span>
-            </h1>
-            <p className="text-sm md:text-base leading-relaxed max-w-lg" style={{ color: textColor }}>
-              {description || about.bio || "I'm a fullstack software engineer specializing in building exceptional software. Currently, I am focused on building products."}
-            </p>
-            <p className="text-xs md:text-sm font-semibold tracking-wide" style={{ color: textColor }}>
-              The world is better with my code in it.
-            </p>
-            <div className="pt-2">
-              <button
-                type="button"
-                onClick={() => scrollTo("about")}
-                className="px-6 py-3.5 rounded-xl text-xs font-bold transition-all cursor-pointer border font-mono tracking-widest"
-                style={{
-                  borderColor: accent,
-                  color: accent,
-                  backgroundColor: "transparent"
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = `${accent}15`;
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = "transparent";
-                }}
-              >
-                Check out my work!
-              </button>
-            </div>
-          </div>
-
-          {/* Right Code Editor Card */}
-          <div className="md:col-span-5 flex justify-center items-center relative">
-            <CodeEditor
-              skills={skills}
-              accent={accent}
-              isDark={isDark}
+      {(!sectionVisibility || sectionVisibility.Home !== false) && (
+        <SectionWrapper sectionName="Home">
+          <div id="home" data-t6-section>
+            <Home
+              name={about?.name}
+              roles={roles}
+              description={description}
+              centerSvg={centerSvg}
+              orbitingStacks={orbitingStacks}
+              statusBadgeText={about?.statusBadgeText}
+              selectedTemplate={selectedTemplate}
+              summaryStats={summaryStats}
+              design={sectionLayouts?.Home}
             />
           </div>
-        </div>
-      </section>
+        </SectionWrapper>
+      )}
 
       <React.Suspense fallback={
         <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "200px" }}>
@@ -506,52 +510,13 @@ export default function Template6() {
         </div>
       }>
         {orderedSections.map((sectionName) => {
-          // Custom render the About section to perfectly fit the mockup design
-          if (sectionName === "About") {
-            return (
-              <section
-                key={sectionName}
-                id="about"
-                data-t6-section
-                className="min-h-[80vh] flex flex-col py-16 px-6 relative overflow-hidden w-full max-w-[90%] mx-auto"
-              >
-                <div className="flex items-center gap-3 mb-12">
-                  <span className="text-3xl font-extrabold" style={{ color: accent }}>01.</span>
-                  <h2 className="text-3xl font-extrabold tracking-tight" style={{ color: textTitle }}>
-                    {sectionTitles?.About || "About Me"}
-                  </h2>
-                  <div className="flex-1 h-px" style={{ background: `linear-gradient(to left, transparent, ${accent}30)` }} />
-                </div>
-                
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-                  {/* Biography text */}
-                  <div className="lg:col-span-7 text-left space-y-4">
-                    {bioParagraphs.map((p, idx) => (
-                      <p key={idx} className="text-sm md:text-base leading-relaxed" style={{ color: textColor }}>
-                        {p}
-                      </p>
-                    ))}
-                  </div>
-                  
-                  {/* Photo / Video call mock */}
-                  <div className="lg:col-span-5 flex justify-center">
-                    <VideoCallMock
-                      avatarUrl={about.avatarUrl}
-                      accent={accent}
-                      isDark={isDark}
-                      name={about.name}
-                    />
-                  </div>
-                </div>
-              </section>
-            );
-          }
-
           const renderer = SECTION_COMPONENTS[sectionName];
           return renderer ? (
-            <div key={sectionName} id={sectionName.toLowerCase()} data-t6-section>
-              {renderer(sectionProps)}
-            </div>
+            <SectionWrapper key={sectionName} sectionName={sectionName}>
+              <div id={sectionName.toLowerCase()} data-t6-section>
+                {renderer(sectionProps)}
+              </div>
+            </SectionWrapper>
           ) : null;
         })}
       </React.Suspense>
@@ -560,11 +525,12 @@ export default function Template6() {
       <footer className="border-t py-12 px-6" style={{ borderColor: borderColor, backgroundColor: isDark ? "#030712" : "#f8fafc" }}>
         <div className="w-full max-w-[90%] mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
           <span className="text-[11px] text-stone-500 font-bold uppercase tracking-wider">
-            &copy; 2026 {about.name || "James John"}. All rights reserved.
+            {copyright || `© ${new Date().getFullYear()} ${about.name || "James John"}. All rights reserved.`}
           </span>
 
           <div className="flex gap-4">
             {(about.socialLinks || []).map((link, i) => {
+              if (!link) return null;
               const Icon = SOCIAL_ICONS[link.icon] || FaGithub;
               return (
                 <a
@@ -572,7 +538,14 @@ export default function Template6() {
                   href={link.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-8 h-8 rounded-full border border-zinc-800 bg-stone-900 flex items-center justify-center text-sm text-zinc-400 hover:text-white transition-colors"
+                  className="w-8 h-8 rounded-full flex items-center justify-center text-sm transition-colors"
+                  style={{
+                    border: `1px solid ${borderColor}`,
+                    backgroundColor: isDark ? "#111827" : "#f3f4f6",
+                    color: isDark ? "#9ca3af" : "#4b5563",
+                  }}
+                  onMouseEnter={(e) => { e.currentTarget.style.color = "var(--primary)"; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.color = isDark ? "#9ca3af" : "#4b5563"; }}
                 >
                   <Icon />
                 </a>
@@ -581,6 +554,31 @@ export default function Template6() {
           </div>
         </div>
       </footer>
+      </main>
+
+      {/* Floating Move to Top Button */}
+      <AnimatePresence>
+        {showScrollTop && (
+          <motion.button
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            className="fixed bottom-6 right-6 z-50 w-10 h-10 rounded-full flex items-center justify-center cursor-pointer shadow-lg"
+            style={{
+              backgroundColor: accent,
+              color: "#ffffff",
+              border: "none",
+              boxShadow: `0 4px 16px ${accent}50`,
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.transform = "scale(1.1) translateY(-2px)"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.transform = "scale(1) translateY(0)"; }}
+            aria-label="Scroll to top"
+          >
+            <FiArrowUp />
+          </motion.button>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

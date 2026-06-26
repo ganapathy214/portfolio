@@ -3,14 +3,17 @@
  */
 
 export const FONT_OPTIONS = [
-  { name: "Outfit",         label: "Outfit",         category: "Sans-serif" },
-  { name: "Inter",          label: "Inter",           category: "Sans-serif" },
-  { name: "Space Grotesk",  label: "Space Grotesk",  category: "Sans-serif" },
-  { name: "Poppins",        label: "Poppins",        category: "Rounded" },
-  { name: "DM Sans",        label: "DM Sans",        category: "Humanist" },
-  { name: "Sora",           label: "Sora",           category: "Geometric" },
-  { name: "Raleway",        label: "Raleway",        category: "Elegant" },
-  { name: "IBM Plex Mono",  label: "IBM Plex Mono",  category: "Monospace" },
+  { name: "Elms Sans",      label: "Elms Sans",      category: "Modern",     description: "Clean, humanist sans-serif for reading" },
+  { name: "Google Sans",    label: "Google Sans",    category: "Geometric",  description: "Modern, premium corporate typeface" },
+  { name: "Roboto Condensed", label: "Roboto Condensed", category: "Condensed", description: "Slim, space-efficient structural styling" },
+  { name: "Outfit",         label: "Outfit",         category: "Sans-serif", description: "Sleek, geometric styling for headers" },
+  { name: "Inter",          label: "Inter",           category: "Sans-serif", description: "Highly readable, optimized for clean UI" },
+  { name: "Space Grotesk",  label: "Space Grotesk",  category: "Sans-serif", description: "Tech-focused, quirky geometric details" },
+  { name: "Poppins",        label: "Poppins",        category: "Rounded",    description: "Warm, friendly, circular modern shapes" },
+  { name: "DM Sans",        label: "DM Sans",        category: "Humanist",   description: "Clean, neutral, highly professional layout" },
+  { name: "Sora",           label: "Sora",           category: "Geometric",  description: "Futuristic, dynamic structure & aesthetics" },
+  { name: "Raleway",        label: "Raleway",        category: "Elegant",    description: "Sophisticated, high-contrast headings" },
+  { name: "IBM Plex Mono",  label: "IBM Plex Mono",  category: "Monospace",  description: "Industrial monospace, great for statistics & code" },
 ];
 
 const loadedFonts = new Set();
