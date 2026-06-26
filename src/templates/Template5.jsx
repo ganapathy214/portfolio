@@ -1,11 +1,16 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaLinkedinIn, FaGithub, FaTwitter, FaInstagram, FaGlobe } from "react-icons/fa";
-import { FiCode, FiArrowRight, FiCheckCircle, FiSmile, FiMenu, FiX } from "react-icons/fi";
+import { FiCode, FiArrowRight, FiCheckCircle, FiSmile, FiMenu, FiX, FiArrowUp } from "react-icons/fi";
 import { HiHome, HiOutlineUser, HiBriefcase, HiEnvelope } from "react-icons/hi2";
 import { SERVICES_DATA, SERVICE_ICONS } from "../constants";
 import avatar from "../assets/avatar.png";
 import { usePortfolio } from "../context/PortfolioContext";
+import SectionWrapper from "../components/common/SectionWrapper";
+import Sidebar from "../components/Sidebar";
+import TopNavbar from "../components/TopNavbar";
+
+import Home from "../sections/Home";
 
 const About         = React.lazy(() => import("../sections/About"));
 const Services      = React.lazy(() => import("../sections/Services"));
@@ -13,22 +18,24 @@ const Skills        = React.lazy(() => import("../sections/Skills"));
 const Projects      = React.lazy(() => import("../sections/Projects"));
 const Certification = React.lazy(() => import("../sections/Certification"));
 const Testimonials  = React.lazy(() => import("../sections/Testimonials"));
-const Journey       = React.lazy(() => import("../sections/Journey"));
+const Experience    = React.lazy(() => import("../sections/Experience"));
+const Education     = React.lazy(() => import("../sections/Education"));
 const Blogs         = React.lazy(() => import("../sections/Blogs"));
 const Faq           = React.lazy(() => import("../sections/Faq"));
 const Contact       = React.lazy(() => import("../sections/Contact"));
 
 const SECTION_COMPONENTS = {
-  About:         (props) => <About         about={props.about}             title={props.sectionTitles?.About}         sectionNum={props.getSectionNum("About")} />,
-  Services:      (props) => <Services      servicesSubtitle={props.servicesSubtitle} servicesData={props.servicesData} title={props.sectionTitles?.Services}      sectionNum={props.getSectionNum("Services")} />,
-  Skills:        (props) => <Skills        skills={props.skills}           skillCategories={props.skillCategories}    title={props.sectionTitles?.Skills}         sectionNum={props.getSectionNum("Skills")} />,
-  Projects:      (props) => <Projects      projects={props.projects}                                                  title={props.sectionTitles?.Projects}       sectionNum={props.getSectionNum("Projects")} />,
-  Certification: (props) => <Certification certifications={props.certifications}                                       title={props.sectionTitles?.Certification}  sectionNum={props.getSectionNum("Certification")} />,
-  Testimonials:  (props) => <Testimonials  testimonials={props.testimonials}                                           title={props.sectionTitles?.Testimonials}   sectionNum={props.getSectionNum("Testimonials")} />,
-  Journey:       (props) => <Journey       timelineData={props.timelineData} summaryStats={props.summaryStats}        title={props.sectionTitles?.Journey}        sectionNum={props.getSectionNum("Journey")} />,
-  Blogs:         (props) => <Blogs         blogs={props.blogs}                                                        title={props.sectionTitles?.Blogs}          sectionNum={props.getSectionNum("Blogs")} />,
-  Faq:           (props) => <Faq           faqs={props.faqs}                                                          title={props.sectionTitles?.Faq}            sectionNum={props.getSectionNum("Faq")} />,
-  Contact:       (props) => <Contact       contactInfo={props.contactInfo}                                             title={props.sectionTitles?.Contact}        sectionNum={props.getSectionNum("Contact")} />,
+  About:         (props) => <About         about={props.about}             title={props.sectionTitles?.About}         sectionNum={props.getSectionNum("About")}         design={props.sectionLayouts?.About} />,
+  Services:      (props) => <Services      servicesSubtitle={props.servicesSubtitle} servicesData={props.servicesData} title={props.sectionTitles?.Services}      sectionNum={props.getSectionNum("Services")}      design={props.sectionLayouts?.Services} />,
+  Skills:        (props) => <Skills        skills={props.skills}           skillCategories={props.skillCategories}    title={props.sectionTitles?.Skills}         sectionNum={props.getSectionNum("Skills")}        design={props.sectionLayouts?.Skills} />,
+  Projects:      (props) => <Projects      projects={props.projects}                                                  title={props.sectionTitles?.Projects}       sectionNum={props.getSectionNum("Projects")}      design={props.sectionLayouts?.Projects} />,
+  Certification: (props) => <Certification certifications={props.certifications}                                       title={props.sectionTitles?.Certification}  sectionNum={props.getSectionNum("Certification")} design={props.sectionLayouts?.Certification} />,
+  Testimonials:  (props) => <Testimonials  testimonials={props.testimonials}                                           title={props.sectionTitles?.Testimonials}   sectionNum={props.getSectionNum("Testimonials")}  design={props.sectionLayouts?.Testimonials} />,
+  Experience:    (props) => <Experience    timelineData={props.timelineData}                                           title={props.sectionTitles?.Experience}   sectionNum={props.getSectionNum("Experience")}  design={props.sectionLayouts?.Experience} />,
+  Education:     (props) => <Education     timelineData={props.timelineData}                                           title={props.sectionTitles?.Education}    sectionNum={props.getSectionNum("Education")}   design={props.sectionLayouts?.Education} />,
+  Blogs:         (props) => <Blogs         blogs={props.blogs}                                                        title={props.sectionTitles?.Blogs}          sectionNum={props.getSectionNum("Blogs")}         design={props.sectionLayouts?.Blogs} />,
+  Faq:           (props) => <Faq           faqs={props.faqs}                                                          title={props.sectionTitles?.Faq}            sectionNum={props.getSectionNum("Faq")}          design={props.sectionLayouts?.Faq} />,
+  Contact:       (props) => <Contact       contactInfo={props.contactInfo}                                             title={props.sectionTitles?.Contact}        sectionNum={props.getSectionNum("Contact")}       design={props.sectionLayouts?.Contact} />,
 };
 
 
@@ -43,12 +50,20 @@ export default function Template5() {
     servicesSubtitle, servicesData, skills, skillCategories,
     projects, certifications, timelineData, summaryStats,
     contactInfo, testimonials, blogs, faqs,
-    themeMode, sectionVisibility, sectionTitles, sectionOrder,
+    themeMode, sectionVisibility, sectionTitles, sectionOrder, copyright,
+    centerSvg, orbitingStacks, sectionLayouts, navPosition,
   } = portfolio;
 
   const [activeSection, setActiveSection] = useState("home");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [showScrollTop, setShowScrollTop] = useState(false);
   const isDark = themeMode === "dark";
+
+  useEffect(() => {
+    const handleScroll = () => setShowScrollTop(window.scrollY > 300);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
   const accent = primaryColor || "#10b981";
 
   // Dynamic Theme Colors
@@ -62,7 +77,7 @@ export default function Template5() {
   // Build ordered visible section list
   const orderedSections = (sectionOrder || [
     "About","Services","Skills","Projects","Certification",
-    "Testimonials","Journey","Blogs","Faq","Contact"
+    "Testimonials","Experience","Education","Blogs","Faq","Contact"
   ]).filter(id => id !== "Home" && (!sectionVisibility || sectionVisibility[id] !== false));
 
   const getSectionNum = (id) => {
@@ -74,7 +89,7 @@ export default function Template5() {
     about, servicesSubtitle, servicesData, skills, skillCategories,
     projects, certifications, timelineData, summaryStats,
     contactInfo, testimonials, blogs, faqs,
-    sectionTitles, getSectionNum,
+    sectionTitles, getSectionNum, sectionLayouts,
   };
 
   // Scroll observer
@@ -116,16 +131,36 @@ export default function Template5() {
     }))
   ];
 
+  const transitionToSection = useCallback((item) => {
+    const id = item.href.replace("#", "");
+    scrollTo(id);
+    setActiveSection(item.name);
+  }, [scrollTo]);
+
   return (
     <div
-      className="relative z-0"
+      className={`relative z-0 min-h-screen flex ${navPosition === "left" ? "flex-col md:flex-row" : "flex-col"}`}
       style={{
         backgroundColor: "transparent",
         color: textColor,
-        minHeight: "100vh",
         fontFamily: "'Outfit', 'Inter', sans-serif",
       }}
     >
+      <TopNavbar
+        activeSection={activeSection}
+        onItemClick={transitionToSection}
+        sectionVisibility={sectionVisibility}
+        about={about}
+        primaryColor={primaryColor}
+        navPosition={navPosition}
+      />
+      <Sidebar
+        activeSection={activeSection}
+        onItemClick={transitionToSection}
+        sectionVisibility={sectionVisibility}
+        navPosition={navPosition}
+      />
+
       <style>{`
         .t5-hover-card:hover {
           transform: translateY(-5px);
@@ -135,17 +170,18 @@ export default function Template5() {
       `}</style>
 
       {/* NAVBAR */}
-      <header
-        style={{
-          position: "sticky",
-          top: 0,
-          zIndex: 100,
-          backgroundColor: bgNavbar,
-          backdropFilter: "blur(12px)",
-          WebkitBackdropFilter: "blur(12px)",
-          borderBottom: `1px solid ${borderColor}`
-        }}
-      >
+      {navPosition === "top" && (
+        <header
+          style={{
+            position: "sticky",
+            top: 0,
+            zIndex: 100,
+            backgroundColor: bgNavbar,
+            backdropFilter: "blur(12px)",
+            WebkitBackdropFilter: "blur(12px)",
+            borderBottom: `1px solid ${borderColor}`
+          }}
+        >
         <div className="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between">
           {/* Logo */}
           <button
@@ -164,7 +200,7 @@ export default function Template5() {
                 onClick={() => scrollTo(item.id)}
                 className="text-xs font-semibold tracking-wide transition-colors cursor-pointer"
                 style={{
-                  color: activeSection === item.id ? accent : textTitle
+                  color: activeSection?.toLowerCase() === item.id?.toLowerCase() ? accent : textTitle
                 }}
               >
                 {item.label}
@@ -229,95 +265,23 @@ export default function Template5() {
           )}
         </AnimatePresence>
       </header>
+      )}
 
+      <main className={`flex-1 ${navPosition === "left" ? "md:ml-20" : ""} pb-24 md:pb-6`}>
       {/* HERO SECTION */}
-      <section
-        id="home"
-        data-t5-section
-        className="min-h-[85vh] flex items-center py-20 px-6 relative"
-      >
-        <div className="max-w-6xl mx-auto w-full grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
-          {/* Left Text */}
-          <div className="text-left space-y-6">
-            <span
-              className="text-xs font-bold uppercase tracking-wider font-mono"
-              style={{ color: accent }}
-            >
-              HELLO, I AM
-            </span>
-            <h1
-              className="text-5xl sm:text-6xl font-extrabold tracking-tight"
-              style={{ color: textTitle, lineHeight: 1.1 }}
-            >
-              {about?.name || "JOHN DOE"}
-            </h1>
-            <div className="inline-flex py-1 px-3 rounded bg-zinc-800 text-[11px] font-bold text-white uppercase tracking-widest">
-              {displayRoles[0] || "I AM WEB DEVELOPER"}
-            </div>
-            <p className="text-xs sm:text-sm leading-relaxed max-w-lg">
-              {description || about.bio || "Crafting robust interfaces and backend code."}
-            </p>
-            <div className="pt-2">
-              <button
-                onClick={() => scrollTo("contact")}
-                className="px-8 py-3 rounded-full text-xs font-bold transition-all cursor-pointer text-white"
-                style={{
-                  backgroundColor: accent,
-                  boxShadow: `0 6px 18px ${accent}35`
-                }}
-              >
-                Contact
-              </button>
-            </div>
-          </div>
-
-          {/* Right Image with statistics overlapping badges */}
-          <div className="flex justify-center items-center relative">
-            {/* Glowing circle container backdrop */}
-            <div
-              className="w-80 h-80 rounded-full relative flex items-center justify-center overflow-visible"
-              style={{
-                backgroundColor: `${accent}10`,
-                border: `1.5px solid ${accent}15`,
-                boxShadow: `0 0 50px ${accent}08`
-              }}
-            >
-              <div className="w-[85%] h-[85%] rounded-full overflow-hidden border-4 border-zinc-900 bg-zinc-850 z-10 shrink-0">
-                <img
-                  src={about.avatarUrl || avatar}
-                  alt={about.name || "Developer Portrait"}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-
-              {/* Overlapping Stats Badges */}
-              <div
-                className="absolute -bottom-4 -left-6 bg-zinc-900 border border-zinc-800 p-4 rounded-2xl shadow-xl z-20 text-left transition-transform hover:scale-105"
-                style={{ borderColor: `${accent}25` }}
-              >
-                <div style={{ color: accent, fontSize: "16px", fontWeight: 800, lineHeight: 1 }}>
-                  6 +
-                </div>
-                <div className="text-[9px] uppercase tracking-wider text-zinc-400 font-bold mt-1">
-                  Years of<br />Experience
-                </div>
-              </div>
-
-              <div
-                className="absolute top-8 -right-6 bg-zinc-900 border border-zinc-800 p-4 rounded-2xl shadow-xl z-20 text-left transition-transform hover:scale-105"
-                style={{ borderColor: `${accent}25` }}
-              >
-                <div style={{ color: accent, fontSize: "16px", fontWeight: 800, lineHeight: 1 }}>
-                  100 +
-                </div>
-                <div className="text-[9px] uppercase tracking-wider text-zinc-400 font-bold mt-1">
-                  Completed<br />Projects
-                </div>
-              </div>
-            </div>
-          </div>
+      <SectionWrapper sectionName="Home">
+        <div id="home" data-t5-section>
+          <Home
+            name={about?.name}
+            roles={roles}
+            description={description}
+            centerSvg={centerSvg}
+            orbitingStacks={orbitingStacks}
+            statusBadgeText={about?.statusBadgeText}
+            design={sectionLayouts?.Home}
+          />
         </div>
-      </section>
+      </SectionWrapper>
 
       <React.Suspense fallback={
         <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "200px" }}>
@@ -337,9 +301,11 @@ export default function Template5() {
         {orderedSections.map((sectionName) => {
           const renderer = SECTION_COMPONENTS[sectionName];
           return renderer ? (
-            <div key={sectionName} id={sectionName.toLowerCase()} data-t5-section>
-              {renderer(sectionProps)}
-            </div>
+            <SectionWrapper key={sectionName} sectionName={sectionName}>
+              <div id={sectionName.toLowerCase()} data-t5-section>
+                {renderer(sectionProps)}
+              </div>
+            </SectionWrapper>
           ) : null;
         })}
       </React.Suspense>
@@ -349,6 +315,7 @@ export default function Template5() {
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex gap-4">
             {(about.socialLinks || []).map((link, i) => {
+              if (!link) return null;
               const Icon = SOCIAL_ICONS[link.icon] || FaGlobe;
               return (
                 <a
@@ -356,7 +323,14 @@ export default function Template5() {
                   href={link.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-8 h-8 rounded-full border border-zinc-850 bg-zinc-900/60 flex items-center justify-center text-sm text-zinc-400 hover:text-white transition-colors"
+                  className="w-8 h-8 rounded-full flex items-center justify-center text-sm transition-colors"
+                  style={{
+                    border: `1px solid ${borderColor}`,
+                    backgroundColor: isDark ? "#18181b" : "#f4f4f5",
+                    color: isDark ? "#a1a1aa" : "#6b7280",
+                  }}
+                  onMouseEnter={(e) => { e.currentTarget.style.color = accent; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.color = isDark ? "#a1a1aa" : "#6b7280"; }}
                 >
                   <Icon />
                 </a>
@@ -365,10 +339,35 @@ export default function Template5() {
           </div>
 
           <span className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider">
-            &copy; 2026 {about.name || "JOHN DOE"}. All Rights Reserved.
+            {copyright || `© ${new Date().getFullYear()} ${about.name || "JOHN DOE"}. All Rights Reserved.`}
           </span>
         </div>
       </footer>
+      </main>
+
+      {/* Floating Move to Top Button */}
+      <AnimatePresence>
+        {showScrollTop && (
+          <motion.button
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            className="fixed bottom-6 right-6 z-50 w-10 h-10 rounded-full flex items-center justify-center cursor-pointer shadow-lg"
+            style={{
+              backgroundColor: accent,
+              color: "#ffffff",
+              border: "none",
+              boxShadow: `0 4px 16px ${accent}50`,
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.transform = "scale(1.1) translateY(-2px)"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.transform = "scale(1) translateY(0)"; }}
+            aria-label="Scroll to top"
+          >
+            <FiArrowUp />
+          </motion.button>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

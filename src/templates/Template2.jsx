@@ -16,6 +16,11 @@ import avatar from "../assets/avatar.png";
 import resumePdf from "../assets/resume.pdf";
 import { downloadPdf } from "../utils/pdf";
 import { usePortfolio } from "../context/PortfolioContext";
+import SectionWrapper from "../components/common/SectionWrapper";
+import Sidebar from "../components/Sidebar";
+import TopNavbar from "../components/TopNavbar";
+
+import Home from "../sections/Home";
 
 const About         = React.lazy(() => import("../sections/About"));
 const Services      = React.lazy(() => import("../sections/Services"));
@@ -23,22 +28,24 @@ const Skills        = React.lazy(() => import("../sections/Skills"));
 const Projects      = React.lazy(() => import("../sections/Projects"));
 const Certification = React.lazy(() => import("../sections/Certification"));
 const Testimonials  = React.lazy(() => import("../sections/Testimonials"));
-const Journey       = React.lazy(() => import("../sections/Journey"));
+const Experience    = React.lazy(() => import("../sections/Experience"));
+const Education     = React.lazy(() => import("../sections/Education"));
 const Blogs         = React.lazy(() => import("../sections/Blogs"));
 const Faq           = React.lazy(() => import("../sections/Faq"));
 const Contact       = React.lazy(() => import("../sections/Contact"));
 
 const SECTION_COMPONENTS = {
-  About:         (props) => <About         about={props.about}             title={props.sectionTitles?.About}         sectionNum={props.getSectionNum("About")} />,
-  Services:      (props) => <Services      servicesSubtitle={props.servicesSubtitle} servicesData={props.servicesData} title={props.sectionTitles?.Services}      sectionNum={props.getSectionNum("Services")} />,
-  Skills:        (props) => <Skills        skills={props.skills}           skillCategories={props.skillCategories}    title={props.sectionTitles?.Skills}         sectionNum={props.getSectionNum("Skills")} />,
-  Projects:      (props) => <Projects      projects={props.projects}                                                  title={props.sectionTitles?.Projects}       sectionNum={props.getSectionNum("Projects")} />,
-  Certification: (props) => <Certification certifications={props.certifications}                                       title={props.sectionTitles?.Certification}  sectionNum={props.getSectionNum("Certification")} />,
-  Testimonials:  (props) => <Testimonials  testimonials={props.testimonials}                                           title={props.sectionTitles?.Testimonials}   sectionNum={props.getSectionNum("Testimonials")} />,
-  Journey:       (props) => <Journey       timelineData={props.timelineData} summaryStats={props.summaryStats}        title={props.sectionTitles?.Journey}        sectionNum={props.getSectionNum("Journey")} />,
-  Blogs:         (props) => <Blogs         blogs={props.blogs}                                                        title={props.sectionTitles?.Blogs}          sectionNum={props.getSectionNum("Blogs")} />,
-  Faq:           (props) => <Faq           faqs={props.faqs}                                                          title={props.sectionTitles?.Faq}            sectionNum={props.getSectionNum("Faq")} />,
-  Contact:       (props) => <Contact       contactInfo={props.contactInfo}                                             title={props.sectionTitles?.Contact}        sectionNum={props.getSectionNum("Contact")} />,
+  About:         (props) => <About         about={props.about}             title={props.sectionTitles?.About}         sectionNum={props.getSectionNum("About")}         design={props.sectionLayouts?.About} />,
+  Services:      (props) => <Services      servicesSubtitle={props.servicesSubtitle} servicesData={props.servicesData} title={props.sectionTitles?.Services}      sectionNum={props.getSectionNum("Services")}      design={props.sectionLayouts?.Services} />,
+  Skills:        (props) => <Skills        skills={props.skills}           skillCategories={props.skillCategories}    title={props.sectionTitles?.Skills}         sectionNum={props.getSectionNum("Skills")}        design={props.sectionLayouts?.Skills} />,
+  Projects:      (props) => <Projects      projects={props.projects}                                                  title={props.sectionTitles?.Projects}       sectionNum={props.getSectionNum("Projects")}      design={props.sectionLayouts?.Projects} />,
+  Certification: (props) => <Certification certifications={props.certifications}                                       title={props.sectionTitles?.Certification}  sectionNum={props.getSectionNum("Certification")} design={props.sectionLayouts?.Certification} />,
+  Testimonials:  (props) => <Testimonials  testimonials={props.testimonials}                                           title={props.sectionTitles?.Testimonials}   sectionNum={props.getSectionNum("Testimonials")}  design={props.sectionLayouts?.Testimonials} />,
+  Experience:    (props) => <Experience    timelineData={props.timelineData}                                           title={props.sectionTitles?.Experience}   sectionNum={props.getSectionNum("Experience")}  design={props.sectionLayouts?.Experience} />,
+  Education:     (props) => <Education     timelineData={props.timelineData}                                           title={props.sectionTitles?.Education}    sectionNum={props.getSectionNum("Education")}   design={props.sectionLayouts?.Education} />,
+  Blogs:         (props) => <Blogs         blogs={props.blogs}                                                        title={props.sectionTitles?.Blogs}          sectionNum={props.getSectionNum("Blogs")}         design={props.sectionLayouts?.Blogs} />,
+  Faq:           (props) => <Faq           faqs={props.faqs}                                                          title={props.sectionTitles?.Faq}            sectionNum={props.getSectionNum("Faq")}          design={props.sectionLayouts?.Faq} />,
+  Contact:       (props) => <Contact       contactInfo={props.contactInfo}                                             title={props.sectionTitles?.Contact}        sectionNum={props.getSectionNum("Contact")}       design={props.sectionLayouts?.Contact} />,
 };
 
 /* ─── Social icon map ─────────────────────────── */
@@ -46,7 +53,7 @@ const SOCIAL_ICONS = {
   FaLinkedinIn, FaGithub, FaTwitter, FaInstagram,
 };
 
-/* ─── Typewriter for hero ─────────────────────── */
+/* ─── Typewriter for hero ─────── */
 const Typewriter = ({ roles = [] }) => {
   const [idx, setIdx] = useState(0);
   const [displayed, setDisplayed] = useState("");
@@ -54,24 +61,26 @@ const Typewriter = ({ roles = [] }) => {
   const speed = deleting ? 35 : 70;
 
   useEffect(() => {
-    if (!roles.length) return;
-    const current = roles[idx] || "";
-    const timer = setTimeout(() => {
-      if (!deleting) {
-        if (displayed.length < current.length) {
-          setDisplayed(current.slice(0, displayed.length + 1));
-        } else {
-          setTimeout(() => setDeleting(true), 1800);
-        }
-      } else {
-        if (displayed.length > 0) {
-          setDisplayed(current.slice(0, displayed.length - 1));
-        } else {
-          setDeleting(false);
-          setIdx((i) => (i + 1) % roles.length);
-        }
-      }
-    }, speed);
+    let timer;
+    const currentText = roles[idx % roles.length] || "";
+
+    if (deleting) {
+      timer = setTimeout(() => {
+        setDisplayed(currentText.slice(0, displayed.length - 1));
+      }, speed);
+    } else {
+      timer = setTimeout(() => {
+        setDisplayed(currentText.slice(0, displayed.length + 1));
+      }, speed);
+    }
+
+    if (!deleting && displayed === currentText) {
+      timer = setTimeout(() => setDeleting(true), 1500);
+    } else if (deleting && displayed === "") {
+      setDeleting(false);
+      setIdx(idx + 1);
+    }
+
     return () => clearTimeout(timer);
   }, [displayed, deleting, idx, speed, roles]);
 
@@ -93,10 +102,11 @@ export default function Template2() {
     servicesSubtitle, servicesData, skills, skillCategories,
     projects, certifications, timelineData, summaryStats,
     contactInfo, testimonials, blogs, faqs,
-    themeMode, sectionVisibility, sectionTitles, sectionOrder,
+    themeMode, sectionVisibility, sectionTitles, sectionOrder, copyright,
+    centerSvg, orbitingStacks, sectionLayouts, navPosition,
   } = portfolio;
 
-  const [activeSection, setActiveSection] = useState("home");
+  const [activeSection, setActiveSection] = useState("Home");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
   const contentRef = useRef(null);
@@ -116,7 +126,7 @@ export default function Template2() {
   // Build ordered visible section list
   const orderedSections = (sectionOrder || [
     "About","Services","Skills","Projects","Certification",
-    "Testimonials","Journey","Blogs","Faq","Contact"
+    "Testimonials","Experience","Education","Blogs","Faq","Contact"
   ]).filter(id => id !== "Home" && (!sectionVisibility || sectionVisibility[id] !== false));
 
   const getSectionNum = (id) => {
@@ -128,7 +138,7 @@ export default function Template2() {
     about, servicesSubtitle, servicesData, skills, skillCategories,
     projects, certifications, timelineData, summaryStats,
     contactInfo, testimonials, blogs, faqs,
-    sectionTitles, getSectionNum,
+    sectionTitles, getSectionNum, sectionLayouts,
   };
 
   /* ── active section tracker ── */
@@ -183,7 +193,8 @@ export default function Template2() {
         Projects: HiCodeBracket,
         Certification: GrCertificate,
         Testimonials: HiChatBubbleLeftRight,
-        Journey: HiRocketLaunch,
+        Experience: HiRocketLaunch,
+        Education: HiBookOpen,
         Blogs: HiBookOpen,
         Faq: HiQuestionMarkCircle,
         Contact: HiEnvelope
@@ -196,9 +207,15 @@ export default function Template2() {
     })
   ];
 
+  const transitionToSection = useCallback((item) => {
+    const id = item.href.replace("#", "");
+    scrollTo(id);
+    setActiveSection(item.name);
+  }, [scrollTo]);
+
   return (
     <div
-      className="t2-root relative z-0"
+      className={`t2-root relative z-0 ${navPosition === "left" ? "" : "flex-col"}`}
       style={{
         display: "flex",
         minHeight: "100vh",
@@ -207,9 +224,24 @@ export default function Template2() {
         color: textColor,
       }}
     >
+      <TopNavbar
+        activeSection={activeSection}
+        onItemClick={transitionToSection}
+        sectionVisibility={sectionVisibility}
+        about={about}
+        primaryColor={primaryColor}
+        navPosition={navPosition}
+      />
+      <Sidebar
+        activeSection={activeSection}
+        onItemClick={transitionToSection}
+        sectionVisibility={sectionVisibility}
+        navPosition={navPosition}
+      />
+
       {/* ══════ MOBILE OVERLAY ══════ */}
       <AnimatePresence>
-        {sidebarOpen && (
+        {navPosition === "left" && sidebarOpen && (
           <motion.div
             className="t2-overlay"
             initial={{ opacity: 0 }}
@@ -225,9 +257,10 @@ export default function Template2() {
       </AnimatePresence>
 
       {/* ══════ LEFT SIDEBAR ══════ */}
-      <motion.aside
-        initial={false}
-        animate={{ x: sidebarOpen ? 0 : undefined }}
+      {navPosition === "left" && (
+        <motion.aside
+          initial={false}
+          animate={{ x: sidebarOpen ? 0 : undefined }}
         style={{
           width: "240px",
           minWidth: "240px",
@@ -286,6 +319,7 @@ export default function Template2() {
           {/* Social links */}
           <div style={{ display: "flex", gap: "8px", justifyContent: "center", flexWrap: "wrap" }}>
             {(data.socialLinks || []).map((link, i) => {
+              if (!link) return null;
               const Icon = SOCIAL_ICONS[link.icon];
               return (
                 <a
@@ -320,10 +354,10 @@ export default function Template2() {
         </div>
 
         {/* Navigation */}
-        <nav style={{ flex: 1, padding: "12px 0" }}>
+        <nav className="sidebar-nav" style={{ flex: 1, padding: "12px 0" }}>
           {navItems.map((item) => {
             const Icon = item.icon;
-            const isActive = activeSection === item.id;
+            const isActive = activeSection?.toLowerCase() === item.id?.toLowerCase();
             return (
               <button
                 key={item.id}
@@ -395,42 +429,45 @@ export default function Template2() {
           </button>
         </div>
       </motion.aside>
+      )}
 
       {/* ══════ MOBILE TOP BAR ══════ */}
-      <div
-        className="t2-mobile-bar"
-        style={{
-          display: "none",
-          position: "fixed",
-          top: 0, left: 0, right: 0,
-          height: "56px",
-          backgroundColor: bgSidebar,
-          borderBottom: `1px solid ${borderColor}`,
-          zIndex: 45,
-          alignItems: "center",
-          justifyContent: "space-between",
-          padding: "0 16px",
-          boxShadow: isDark ? "0 2px 8px rgba(0,0,0,0.3)" : "0 2px 8px rgba(0,0,0,0.05)",
-        }}
-      >
-        <div style={{ fontWeight: 800, fontSize: "15px", color: textTitle }}>{data.name?.split(" ")[0]}</div>
-        <button
-          onClick={() => setSidebarOpen((v) => !v)}
+      {navPosition === "left" && (
+        <div
+          className="t2-mobile-bar"
           style={{
-            border: "none", background: "transparent",
-            cursor: "pointer", fontSize: "20px",
-            color: textColor, padding: "4px",
+            display: "none",
+            position: "fixed",
+            top: 0, left: 0, right: 0,
+            height: "56px",
+            backgroundColor: bgSidebar,
+            borderBottom: `1px solid ${borderColor}`,
+            zIndex: 45,
+            alignItems: "center",
+            justifyContent: "space-between",
+            padding: "0 16px",
+            boxShadow: isDark ? "0 2px 8px rgba(0,0,0,0.3)" : "0 2px 8px rgba(0,0,0,0.05)",
           }}
         >
-          ☰
-        </button>
-      </div>
+          <div style={{ fontWeight: 800, fontSize: "15px", color: textTitle }}>{data.name?.split(" ")[0]}</div>
+          <button
+            onClick={() => setSidebarOpen((v) => !v)}
+            style={{
+              border: "none", background: "transparent",
+              cursor: "pointer", fontSize: "20px",
+              color: textColor, padding: "4px",
+            }}
+          >
+            ☰
+          </button>
+        </div>
+      )}
 
       {/* ══════ MAIN CONTENT ══════ */}
       <main
         ref={contentRef}
         style={{
-          marginLeft: "240px",
+          marginLeft: navPosition === "left" ? "240px" : "0px",
           flex: 1,
           height: "100vh",
           overflowY: "auto",
@@ -440,166 +477,19 @@ export default function Template2() {
         className="t2-main"
       >
         {/* ─── HERO ─── */}
-        <section
-          id="home"
-          data-t2-section
-          style={{
-            backgroundColor: bgCard,
-            padding: "56px 48px 48px",
-            borderBottom: `1px solid ${borderColor}`,
-            position: "relative",
-            overflow: "hidden",
-          }}
-        >
-          {/* Background subtle pattern */}
-          <div
-            style={{
-              position: "absolute", inset: 0, opacity: isDark ? 0.05 : 0.025,
-              backgroundImage: `radial-gradient(${accent} 1px, transparent 1px)`,
-              backgroundSize: "28px 28px",
-              pointerEvents: "none",
-            }}
-          />
-
-          <div style={{ display: "flex", alignItems: "flex-start", gap: "40px", position: "relative", zIndex: 1 }} className="t2-hero-inner">
-            {/* Left: text */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7 }}
-              style={{ flex: 1 }}
-            >
-              {/* Availability badge */}
-              <div
-                style={{
-                  display: "inline-flex", alignItems: "center", gap: "6px",
-                  padding: "4px 12px", borderRadius: "20px",
-                  backgroundColor: `${accent}18`, border: `1px solid ${accent}35`,
-                  color: accent, fontSize: "10px", fontWeight: 700,
-                  letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: "20px",
-                }}
-              >
-                <span
-                  style={{
-                    width: "6px", height: "6px", borderRadius: "50%",
-                    backgroundColor: accent, animation: "t2-blink 1.5s ease-in-out infinite",
-                  }}
-                />
-                {data.statusBadgeText || "Available for Work"}
-              </div>
-
-              {/* Name */}
-              <h1
-                style={{
-                  fontSize: "clamp(2rem, 4vw, 3.2rem)",
-                  fontWeight: 900,
-                  color: textTitle,
-                  lineHeight: 1.1,
-                  marginBottom: "10px",
-                  letterSpacing: "-0.03em",
-                }}
-              >
-                {data.name}
-              </h1>
-
-              {/* Typewriter role */}
-              <div
-                style={{
-                  fontSize: "15px",
-                  fontWeight: 700,
-                  color: accent,
-                  marginBottom: "18px",
-                  letterSpacing: "0.02em",
-                  minHeight: "24px",
-                }}
-              >
-                <Typewriter roles={displayRoles} />
-              </div>
-
-              {/* Description */}
-              <p
-                style={{
-                  fontSize: "14px",
-                  color: textSub,
-                  lineHeight: 1.8,
-                  maxWidth: "520px",
-                  marginBottom: "28px",
-                }}
-              >
-                {description || data.bio}
-              </p>
-
-              {/* CTA buttons */}
-              <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
-                <button
-                  onClick={() => scrollTo("t2-projects")}
-                  style={{
-                    padding: "11px 28px", borderRadius: "10px",
-                    backgroundColor: accent, color: "#fff",
-                    fontWeight: 700, fontSize: "12px",
-                    letterSpacing: "0.06em", textTransform: "uppercase",
-                    border: "none", cursor: "pointer",
-                    boxShadow: `0 4px 14px ${accent}45`,
-                    transition: "all 0.2s ease",
-                  }}
-                  onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = `0 8px 20px ${accent}55`; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = `0 4px 14px ${accent}45`; }}
-                >
-                  View Portfolio
-                </button>
-                <button
-                  onClick={() => downloadPdf(data.resumeUrl || resumePdf, data.resumeFileName || "Resume.pdf")}
-                  style={{
-                    padding: "11px 28px", borderRadius: "10px",
-                    backgroundColor: "transparent", color: isDark ? "#cbd5e1" : "#374151",
-                    fontWeight: 700, fontSize: "12px",
-                    letterSpacing: "0.06em", textTransform: "uppercase",
-                    border: `1.5px solid ${isDark ? "#475569" : "#d1d5db"}`, cursor: "pointer",
-                    transition: "all 0.2s ease",
-                  }}
-                  onMouseEnter={(e) => { e.currentTarget.style.borderColor = accent; e.currentTarget.style.color = accent; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.borderColor = isDark ? "#475569" : "#d1d5db"; e.currentTarget.style.color = isDark ? "#cbd5e1" : "#374151"; }}
-                >
-                  View Resume
-                </button>
-              </div>
-
-              {/* Stats */}
-              {data.stats && data.stats.length > 0 && (
-                <div style={{ display: "flex", gap: "32px", marginTop: "36px", flexWrap: "wrap" }}>
-                  {data.stats.map((s, i) => (
-                    <div key={i} style={{ textAlign: "center" }}>
-                      <div style={{ fontSize: "22px", fontWeight: 900, color: accent, lineHeight: 1 }}>{s.value}</div>
-                      <div style={{ fontSize: "10px", color: textMuted, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", marginTop: "3px" }}>{s.label}</div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </motion.div>
-
-            {/* Right: avatar photo */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              style={{
-                flexShrink: 0,
-                width: "180px", height: "200px",
-                borderRadius: "20px",
-                overflow: "hidden",
-                border: `2px solid ${accent}30`,
-                boxShadow: isDark ? `0 20px 50px ${accent}15, 0 8px 24px rgba(0,0,0,0.4)` : `0 20px 50px ${accent}20, 0 8px 24px rgba(0,0,0,0.1)`,
-              }}
-              className="t2-hero-photo"
-            >
-              <img
-                src={data.avatarUrl || avatar}
-                alt={data.name}
-                style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "top" }}
-              />
-            </motion.div>
+        <SectionWrapper sectionName="Home">
+          <div id="home" data-t2-section>
+            <Home
+              name={about?.name}
+              roles={roles}
+              description={description}
+              centerSvg={centerSvg}
+              orbitingStacks={orbitingStacks}
+              statusBadgeText={about?.statusBadgeText || data.statusBadgeText}
+              design={sectionLayouts?.Home}
+            />
           </div>
-        </section>
+        </SectionWrapper>
 
         <React.Suspense fallback={
           <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "200px" }}>
@@ -619,9 +509,11 @@ export default function Template2() {
           {orderedSections.map((sectionName) => {
             const renderer = SECTION_COMPONENTS[sectionName];
             return renderer ? (
-              <div key={sectionName} id={sectionName.toLowerCase()} data-t2-section>
-                {renderer(sectionProps)}
-              </div>
+              <SectionWrapper key={sectionName} sectionName={sectionName}>
+                <div id={sectionName.toLowerCase()} data-t2-section>
+                  {renderer(sectionProps)}
+                </div>
+              </SectionWrapper>
             ) : null;
           })}
         </React.Suspense>
@@ -638,7 +530,7 @@ export default function Template2() {
             backgroundColor: bgCard,
           }}
         >
-          &copy; {new Date().getFullYear()} {data.name} · All rights reserved
+          {copyright || `© 2026 ${data.name}. All rights reserved.`}
         </footer>
       </main>
 

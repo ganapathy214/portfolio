@@ -13,6 +13,7 @@ import { certifications as defaultCertifications, getTheme } from "../constants"
 import SectionLayout from "../layouts/SectionLayout";
 import CertModal from "../components/Certification/CertModal";
 import { openPdf } from "../utils/pdf";
+import { usePortfolio } from "../context/PortfolioContext";
 
 const resolveAlphaColor = (color, hexOpacity) => {
   if (color && color.startsWith("var(")) {
@@ -265,8 +266,9 @@ const CertCard = React.memo(({ cert, onExpand, onVerify }) => {
 CertCard.displayName = "CertCard";
 
 /* ─── Main Certification Section ─── */
-const Certification = ({ certifications: certificationsProp, title, sectionNum }) => {
+const Certification = ({ certifications: certificationsProp, title, sectionNum, design = "design1" }) => {
   const headerRef = useRef(null);
+  const { sectionLayouts } = usePortfolio();
 
   const [activeIndex, setActiveIndex] = useState(0);
   const [activeCert, setActiveCert] = useState(null);
@@ -293,6 +295,7 @@ const Certification = ({ certifications: certificationsProp, title, sectionNum }
     });
   }, [allCertifications]);
 
+  const activeDesign = design || sectionLayouts?.Certification || "design1";
   const activeCertData = resolvedCertifications[activeIndex];
   const theme = getTheme(activeCertData?.issuer);
 
@@ -320,12 +323,12 @@ const Certification = ({ certifications: certificationsProp, title, sectionNum }
 
   // Autoplay effect
   useEffect(() => {
-    if (!isPlaying) return;
+    if (!isPlaying || activeDesign !== "design1") return;
     const interval = setInterval(() => {
       paginate(1);
     }, 4000);
     return () => clearInterval(interval);
-  }, [isPlaying, paginate]);
+  }, [isPlaying, paginate, activeDesign]);
 
   // Lock scroll when modal open
   useEffect(() => {
@@ -381,163 +384,243 @@ const Certification = ({ certifications: certificationsProp, title, sectionNum }
         onMouseLeave={() => setIsPlaying(true)}
       >
         {/* Dynamic ambient background glow aura matching issuer theme */}
-        <div
-          className="absolute inset-0 opacity-[0.08] pointer-events-none filter blur-[80px] transition-all duration-700 rounded-full w-full max-w-2xl mx-auto"
-          style={{
-            background: `radial-gradient(circle, ${theme.accent} 0%, transparent 70%)`,
-            transform: "scale(1.3)",
-          }}
-        />
-
-        {/* Carousel Control Frame */}
-        <div className="relative w-full flex items-center justify-center gap-4 select-none px-4 md:px-0">
-
-          {/* Floating Left Navigation Button - Desktop only */}
-          <button
-            onClick={() => paginate(-1)}
-            className="w-11 h-11 rounded-full border items-center justify-center transition-all duration-300 cursor-pointer text-white hover:text-white hidden md:flex shrink-0"
+        {activeDesign === "design1" && (
+          <div
+            className="absolute inset-0 opacity-[0.08] pointer-events-none filter blur-[80px] transition-all duration-700 rounded-full w-full max-w-2xl mx-auto"
             style={{
-              background: "rgba(var(--text-muted-rgb), 0.05)",
-              borderColor: "var(--border-color)",
-              boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
-              backdropFilter: "blur(8px)",
+              background: `radial-gradient(circle, ${theme.accent} 0%, transparent 70%)`,
+              transform: "scale(1.3)",
             }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = theme.accent;
-              e.currentTarget.style.boxShadow = `0 0 14px ${resolveAlphaColor(theme.accent, "25")}`;
-              e.currentTarget.style.color = theme.accent;
-              e.currentTarget.style.transform = "scale(1.08)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = "var(--border-color)";
-              e.currentTarget.style.boxShadow = "0 4px 12px rgba(0,0,0,0.15)";
-              e.currentTarget.style.color = "white";
-              e.currentTarget.style.transform = "scale(1)";
-            }}
-            aria-label="Previous Certificate"
-          >
-            <FiChevronLeft className="text-xl" />
-          </button>
+          />
+        )}
 
-          {/* Active Card sliding window */}
-          <div className="flex-1 overflow-hidden py-4 px-1 select-none">
-            <motion.div
-              drag="x"
-              dragConstraints={{ left: 0, right: 0 }}
-              dragElastic={0.2}
-              onDragEnd={handleDragEnd}
-              animate={{ x: `${getTranslation()}%` }}
-              transition={{ type: "spring", stiffness: 220, damping: 26 }}
-              className="flex cursor-grab active:cursor-grabbing"
-            >
-              {resolvedCertifications.map((cert) => (
-                <div
-                  key={cert.id}
-                  className="flex-shrink-0 w-full md:w-1/2 lg:w-1/3 px-3"
-                >
-                  <CertCard
-                    cert={cert}
-                    onExpand={setActiveCert}
-                    onVerify={handleVerify}
-                  />
-                </div>
-              ))}
-            </motion.div>
-          </div>
-
-          {/* Floating Right Navigation Button - Desktop only */}
-          <button
-            onClick={() => paginate(1)}
-            className="w-11 h-11 rounded-full border items-center justify-center transition-all duration-300 cursor-pointer text-white hover:text-white hidden md:flex shrink-0"
-            style={{
-              background: "rgba(var(--text-muted-rgb), 0.05)",
-              borderColor: "var(--border-color)",
-              boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
-              backdropFilter: "blur(8px)",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = theme.accent;
-              e.currentTarget.style.boxShadow = `0 0 14px ${resolveAlphaColor(theme.accent, "25")}`;
-              e.currentTarget.style.color = theme.accent;
-              e.currentTarget.style.transform = "scale(1.08)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = "var(--border-color)";
-              e.currentTarget.style.boxShadow = "0 4px 12px rgba(0,0,0,0.15)";
-              e.currentTarget.style.color = "white";
-              e.currentTarget.style.transform = "scale(1)";
-            }}
-            aria-label="Next Certificate"
-          >
-            <FiChevronRight className="text-xl" />
-          </button>
-        </div>
-
-        {/* Mobile Bottom Navigation Controls */}
-        <div className="flex md:hidden items-center justify-center gap-6 mt-4 select-none z-10">
-          <button
-            onClick={() => paginate(-1)}
-            className="w-10 h-10 rounded-full border flex items-center justify-center transition-all duration-300 cursor-pointer text-stone-300 hover:text-white"
-            style={{
-              background: "rgba(var(--text-muted-rgb), 0.03)",
-              borderColor: "var(--border-color)",
-            }}
-            aria-label="Previous Certificate"
-          >
-            <FiChevronLeft className="text-lg" />
-          </button>
-
-          <span className="text-xs font-mono font-bold text-stone-500">
-            {String(activeIndex + 1).padStart(2, "0")} / {String(maxIndex + 1).padStart(2, "0")}
-          </span>
-
-          <button
-            onClick={() => paginate(1)}
-            className="w-10 h-10 rounded-full border flex items-center justify-center transition-all duration-300 cursor-pointer text-stone-300 hover:text-white"
-            style={{
-              background: "rgba(var(--text-muted-rgb), 0.03)",
-              borderColor: "var(--border-color)",
-            }}
-            aria-label="Next Certificate"
-          >
-            <FiChevronRight className="text-lg" />
-          </button>
-        </div>
-
-        {/* Dots Pagination indicators */}
-        <div className="flex justify-center items-center gap-2 mt-6 select-none z-10">
-          {resolvedCertifications.slice(0, maxIndex + 1).map((cert, index) => {
-            const isActive = index === activeIndex;
-            const cardTheme = getTheme(cert.issuer);
-            return (
+        {/* ─── Design 1: Carousel Slider ─── */}
+        {activeDesign === "design1" && (
+          <>
+            {/* Carousel Control Frame */}
+            <div className="relative w-full flex items-center justify-center gap-4 select-none px-4 md:px-0">
+              {/* Floating Left Navigation Button - Desktop only */}
               <button
-                key={cert.id}
-                onClick={() => setActiveIndex(index)}
-                className="h-2 rounded-full transition-all duration-300 cursor-pointer"
+                onClick={() => paginate(-1)}
+                className="w-11 h-11 rounded-full border items-center justify-center transition-all duration-300 cursor-pointer text-white hover:text-white hidden md:flex shrink-0"
                 style={{
-                  width: isActive ? "24px" : "8px",
-                  backgroundColor: isActive ? cardTheme.accent : "var(--border-color)",
-                  opacity: isActive ? 1 : 0.4,
-                  boxShadow: isActive ? `0 0 8px ${cardTheme.accent}` : "none",
+                  background: "rgba(var(--text-muted-rgb), 0.05)",
+                  borderColor: "var(--border-color)",
+                  boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+                  backdropFilter: "blur(8px)",
                 }}
-                aria-label={`Go to slide ${index + 1}`}
-              />
-            );
-          })}
-        </div>
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = theme.accent;
+                  e.currentTarget.style.boxShadow = `0 0 14px ${resolveAlphaColor(theme.accent, "25")}`;
+                  e.currentTarget.style.color = theme.accent;
+                  e.currentTarget.style.transform = "scale(1.08)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = "var(--border-color)";
+                  e.currentTarget.style.boxShadow = "0 4px 12px rgba(0,0,0,0.15)";
+                  e.currentTarget.style.color = "white";
+                  e.currentTarget.style.transform = "scale(1)";
+                }}
+                aria-label="Previous Certificate"
+              >
+                <FiChevronLeft className="text-xl" />
+              </button>
 
-        {/* Desktop Progress Counter */}
-        <div className="hidden md:flex justify-center items-center text-[10px] font-bold font-mono tracking-widest text-stone-500 mt-4 select-none z-10">
-          <span>CREDENTIAL PAGE: &nbsp;</span>
-          <span style={{ color: theme.accent }}>
-            {String(activeIndex + 1).padStart(2, "0")} / {String(maxIndex + 1).padStart(2, "0")}
-          </span>
-        </div>
+              {/* Active Card sliding window */}
+              <div className="flex-1 overflow-hidden py-4 px-1 select-none">
+                <motion.div
+                  drag="x"
+                  dragConstraints={{ left: 0, right: 0 }}
+                  dragElastic={0.2}
+                  onDragEnd={handleDragEnd}
+                  animate={{ x: `${getTranslation()}%` }}
+                  transition={{ type: "spring", stiffness: 220, damping: 26 }}
+                  className="flex cursor-grab active:cursor-grabbing"
+                >
+                  {resolvedCertifications.map((cert) => (
+                    <div
+                      key={cert.id}
+                      className="flex-shrink-0 w-full md:w-1/2 lg:w-1/3 px-3"
+                    >
+                      <CertCard
+                        cert={cert}
+                        onExpand={setActiveCert}
+                        onVerify={handleVerify}
+                      />
+                    </div>
+                  ))}
+                </motion.div>
+              </div>
 
-        {/* Help Hint */}
-        <p className="text-[9px] font-bold font-mono uppercase tracking-widest text-stone-500 select-none mt-6 text-center z-10">
-          Swipe Track <span className="text-stone-700">|</span> Hover over card to Flip <span className="text-stone-700">|</span> Tap Card to toggle back <span className="text-stone-700">|</span> Click expand icon to zoom
-        </p>
+              {/* Floating Right Navigation Button - Desktop only */}
+              <button
+                onClick={() => paginate(1)}
+                className="w-11 h-11 rounded-full border items-center justify-center transition-all duration-300 cursor-pointer text-white hover:text-white hidden md:flex shrink-0"
+                style={{
+                  background: "rgba(var(--text-muted-rgb), 0.05)",
+                  borderColor: "var(--border-color)",
+                  boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+                  backdropFilter: "blur(8px)",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = theme.accent;
+                  e.currentTarget.style.boxShadow = `0 0 14px ${resolveAlphaColor(theme.accent, "25")}`;
+                  e.currentTarget.style.color = theme.accent;
+                  e.currentTarget.style.transform = "scale(1.08)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = "var(--border-color)";
+                  e.currentTarget.style.boxShadow = "0 4px 12px rgba(0,0,0,0.15)";
+                  e.currentTarget.style.color = "white";
+                  e.currentTarget.style.transform = "scale(1)";
+                }}
+                aria-label="Next Certificate"
+              >
+                <FiChevronRight className="text-xl" />
+              </button>
+            </div>
+
+            {/* Mobile Bottom Navigation Controls */}
+            <div className="flex md:hidden items-center justify-center gap-6 mt-4 select-none z-10">
+              <button
+                onClick={() => paginate(-1)}
+                className="w-10 h-10 rounded-full border flex items-center justify-center transition-all duration-300 cursor-pointer text-stone-300 hover:text-white"
+                style={{
+                  background: "rgba(var(--text-muted-rgb), 0.03)",
+                  borderColor: "var(--border-color)",
+                }}
+                aria-label="Previous Certificate"
+              >
+                <FiChevronLeft className="text-lg" />
+              </button>
+
+              <span className="text-xs font-mono font-bold text-stone-500">
+                {String(activeIndex + 1).padStart(2, "0")} / {String(maxIndex + 1).padStart(2, "0")}
+              </span>
+
+              <button
+                onClick={() => paginate(1)}
+                className="w-10 h-10 rounded-full border flex items-center justify-center transition-all duration-300 cursor-pointer text-stone-300 hover:text-white"
+                style={{
+                  background: "rgba(var(--text-muted-rgb), 0.03)",
+                  borderColor: "var(--border-color)",
+                }}
+                aria-label="Next Certificate"
+              >
+                <FiChevronRight className="text-lg" />
+              </button>
+            </div>
+
+            {/* Dots Pagination indicators */}
+            <div className="flex justify-center items-center gap-2 mt-6 select-none z-10">
+              {resolvedCertifications.slice(0, maxIndex + 1).map((cert, index) => {
+                const isActive = index === activeIndex;
+                const cardTheme = getTheme(cert.issuer);
+                return (
+                  <button
+                    key={cert.id}
+                    onClick={() => setActiveIndex(index)}
+                    className="h-2 rounded-full transition-all duration-300 cursor-pointer"
+                    style={{
+                      width: isActive ? "24px" : "8px",
+                      backgroundColor: isActive ? cardTheme.accent : "var(--border-color)",
+                      opacity: isActive ? 1 : 0.4,
+                      boxShadow: isActive ? `0 0 8px ${cardTheme.accent}` : "none",
+                    }}
+                    aria-label={`Go to slide ${index + 1}`}
+                  />
+                );
+              })}
+            </div>
+
+            {/* Desktop Progress Counter */}
+            <div className="hidden md:flex justify-center items-center text-[10px] font-bold font-mono tracking-widest text-stone-500 mt-4 select-none z-10">
+              <span>CREDENTIAL PAGE: &nbsp;</span>
+              <span style={{ color: theme.accent }}>
+                {String(activeIndex + 1).padStart(2, "0")} / {String(maxIndex + 1).padStart(2, "0")}
+              </span>
+            </div>
+
+            {/* Help Hint */}
+            <p className="text-[9px] font-bold font-mono uppercase tracking-widest text-stone-500 select-none mt-6 text-center z-10">
+              Swipe Track <span className="text-stone-700">|</span> Hover over card to Flip <span className="text-stone-700">|</span> Tap Card to toggle back <span className="text-stone-700">|</span> Click expand icon to zoom
+            </p>
+          </>
+        )}
+
+        {/* ─── Design 2: Responsive Card Grid ─── */}
+        {activeDesign === "design2" && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full py-6 select-none z-10 px-4 md:px-0">
+            {resolvedCertifications.map((cert) => (
+              <div key={cert.id} className="w-full">
+                <CertCard
+                  cert={cert}
+                  onExpand={setActiveCert}
+                  onVerify={handleVerify}
+                />
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* ─── Design 3: Minimalist List Rows ─── */}
+        {activeDesign === "design3" && (
+          <div className="flex flex-col gap-4 w-full py-4 select-none z-10 max-w-3xl mx-auto px-4 md:px-0">
+            {resolvedCertifications.map((cert) => {
+              const cardTheme = getTheme(cert.issuer);
+              return (
+                <motion.div
+                  key={cert.id}
+                  initial={{ opacity: 0, y: 15 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.3 }}
+                  className="flex items-center justify-between p-4 sm:p-5 rounded-2xl border bg-stone-950/40 relative group hover:border-[rgba(var(--primary-rgb),0.35)] transition-all duration-300"
+                  style={{
+                    borderColor: "var(--border-color)",
+                    backdropFilter: "blur(12px)",
+                    WebkitBackdropFilter: "blur(12px)",
+                  }}
+                >
+                  <div className="flex items-center gap-4 text-left min-w-0">
+                    <div className="w-12 h-12 rounded-xl overflow-hidden bg-stone-900 border border-stone-850 shrink-0 flex items-center justify-center">
+                      <img src={cert.image} alt={cert.title} className="w-full h-full object-cover" />
+                    </div>
+                    <div className="min-w-0">
+                      <span className={`text-[8px] font-bold uppercase tracking-widest px-2 py-0.5 rounded border select-none ${cardTheme.badge}`}>
+                        {cert.issuer}
+                      </span>
+                      <h3 className="text-sm font-black text-white mt-1 leading-snug truncate">
+                        {cert.title}
+                      </h3>
+                      <p className="text-[10px] text-stone-500 font-mono mt-0.5 flex items-center gap-1">
+                        <FiCalendar className="text-[9px]" /> {cert.lastUpdated} <span className="text-stone-700">|</span> Offered: {cert.offeredBy}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setActiveCert(cert)}
+                      className="p-2 rounded-lg border border-stone-850 bg-stone-900 text-stone-400 hover:text-white hover:border-stone-700 cursor-pointer transition-colors"
+                      title="View Details"
+                    >
+                      <FiEye className="text-sm" />
+                    </button>
+                    {cert.pdfFile && (
+                      <button
+                        onClick={() => handleVerify(cert)}
+                        className="py-2 px-3 rounded-lg text-[9px] font-extrabold uppercase tracking-wider cursor-pointer transition-colors text-white"
+                        style={{ background: cardTheme.accent }}
+                      >
+                        Verify
+                      </button>
+                    )}
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       {/* ── Detail Lightbox Modal ── */}

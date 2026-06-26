@@ -9,6 +9,7 @@ import {
   HiChatBubbleLeftRight,
   HiBookOpen,
   HiQuestionMarkCircle,
+  HiAcademicCap,
 } from "react-icons/hi2";
 import { GrCertificate } from "react-icons/gr";
 
@@ -84,17 +85,18 @@ export const framerVariants = [
 ];
 
 export const sidebarItems = [
-  { name: "Home", href: "#home", icon: HiSquares2X2 },
-  { name: "About", href: "#about", icon: HiIdentification },
-  { name: "Services", href: "#services", icon: HiBriefcase },
-  { name: "Skills", href: "#skills", icon: HiCog },
-  { name: "Projects", href: "#projects", icon: HiCodeBracket },
+  { name: "Home",          href: "#home",          icon: HiSquares2X2 },
+  { name: "About",         href: "#about",         icon: HiIdentification },
+  { name: "Services",      href: "#services",      icon: HiBriefcase },
+  { name: "Skills",        href: "#skills",        icon: HiCog },
+  { name: "Projects",      href: "#projects",      icon: HiCodeBracket },
   { name: "Certification", href: "#certification", icon: GrCertificate },
-  { name: "Testimonials", href: "#testimonials", icon: HiChatBubbleLeftRight },
-  { name: "Journey", href: "#journey", icon: HiRocketLaunch },
-  { name: "Blogs", href: "#blogs", icon: HiBookOpen },
-  { name: "Faq", href: "#faq", icon: HiQuestionMarkCircle },
-  { name: "Contact", href: "#contact", icon: HiEnvelope },
+  { name: "Testimonials",  href: "#testimonials",  icon: HiChatBubbleLeftRight },
+  { name: "Experience",    href: "#experience",    icon: HiRocketLaunch },
+  { name: "Education",     href: "#education",     icon: HiAcademicCap },
+  { name: "Blogs",         href: "#blogs",         icon: HiBookOpen },
+  { name: "Faq",           href: "#faq",           icon: HiQuestionMarkCircle },
+  { name: "Contact",       href: "#contact",       icon: HiEnvelope },
 ];
 
 export const PROFESSIONAL_TITLES = [
@@ -119,41 +121,44 @@ export const SOCIAL_LINKS = [
 ];
 
 export const PAGE_TITLES = {
-  Home: "Home | Ganapathy N | Senior Software Developer",
-  About: "About Me | Ganapathy N | Senior Full Stack Developer",
-  Services: "My Services | Ganapathy N | Senior Software Developer",
-  Skills: "Skills & Expertise | Ganapathy N | Senior Frontend Developer",
-  Projects: "Featured Portfolio Projects | Ganapathy N",
-  Certification: "Verified Certifications & Achievements | Ganapathy N",
-  Testimonials: "Testimonials & Client Feedback | Ganapathy N",
-  Journey: "Professional Journey & Timeline | Ganapathy N",
-  Blogs: "Technical Publications & Blogs | Ganapathy N",
-  Faq: "Frequently Asked Questions | Ganapathy N",
-  Contact: "Contact & Collaboration | Ganapathy N",
+  Home:          "Home | Developer Portfolio",
+  About:         "About Me | Professional Background",
+  Services:      "My Services | What I Offer",
+  Skills:        "Skills & Expertise | Tech Stack",
+  Projects:      "Featured Projects | Portfolio",
+  Certification: "Certifications & Achievements",
+  Testimonials:  "Testimonials & Client Feedback",
+  Experience:    "Professional Experience | Career History",
+  Education:     "Education & Academic Background",
+  Blogs:         "Technical Publications & Blogs",
+  Faq:           "Frequently Asked Questions",
+  Contact:       "Contact & Collaboration",
 };
 
 export const PAGE_DESCRIPTIONS = {
-  Home: "Welcome to the professional portfolio of Ganapathy N, a Senior Frontend & Full Stack Developer with 6+ years of experience in React, Next.js, React Native, and AWS cloud architecture.",
-  About: "Learn about Ganapathy N, a Senior Software Developer with 6+ years of experience building high-performance, accessible, and scalable web and mobile applications.",
-  Services: "Explore the professional services offered by Ganapathy N, including web & mobile development, API integration, code deployment, UI/UX, test automation, and cloud architecture.",
-  Skills: "Discover the core technical competencies, frameworks, testing automation tools, and cloud platforms utilized by Ganapathy N.",
-  Projects: "Explore featured full-stack, frontend, and mobile projects delivered by Ganapathy N, including healthcare and maritime platforms.",
-  Certification: "View professional credentials, cloud certifications, and technical program completions achieved by Ganapathy N from IBM, Meta, Google, and Cisco.",
-  Testimonials: "Read reviews and testimonials from client partners, tech leaders, and engineering managers who have worked with Ganapathy N.",
-  Journey: "Track the professional experience timeline, academic background, and milestones in the career of Ganapathy N.",
-  Blogs: "Read technical articles, blogs, and tutorials authored by Ganapathy N on modern frontend optimization, Next.js, and mobile development.",
-  Faq: "Find answers to frequently asked questions about Ganapathy N's remote consulting terms, technology specialization, and notice periods.",
-  Contact: "Get in touch with Ganapathy N for contract development, consulting, or job opportunities in web and mobile applications.",
+  Home:          "Welcome to my professional portfolio.",
+  About:         "Learn about my background and expertise.",
+  Services:      "Explore the professional services I offer.",
+  Skills:        "Discover my core technical competencies.",
+  Projects:      "Explore my featured full-stack projects.",
+  Certification: "View my professional credentials and certifications.",
+  Testimonials:  "Read reviews from clients and collaborators.",
+  Experience:    "Track my professional experience timeline and career milestones.",
+  Education:     "View my academic background and qualifications.",
+  Blogs:         "Read technical articles and tutorials.",
+  Faq:           "Find answers to frequently asked questions.",
+  Contact:       "Get in touch for contract development or consulting.",
 };
 
 export const SECTION_NUMBERS = {
-  about: "01",
-  skills: "02",
-  services: "03",
-  projects: "04",
-  journey: "05",
-  certification: "06",
-  contact: "07",
+  about:         "01",
+  skills:        "02",
+  services:      "03",
+  projects:      "04",
+  experience:    "05",
+  education:     "06",
+  certification: "07",
+  contact:       "08",
 };
 
 export const HIGHLIGHTS = [

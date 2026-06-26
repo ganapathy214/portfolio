@@ -3,12 +3,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import SectionLayout from "../layouts/SectionLayout";
 import { skillCategories, skills } from "../constants";
 import { FiCheckCircle } from "react-icons/fi";
-import { usePortfolio } from "../context/PortfolioContext";
 
-const Skills = ({ skills: propSkills, skillCategories: propSkillCategories, title, sectionNum }) => {
+const Skills = ({ skills: propSkills, skillCategories: propSkillCategories, title, sectionNum, design = "design1" }) => {
   const headerRef = useRef(null);
-  const { sectionLayouts } = usePortfolio();
-  const layout = sectionLayouts?.Skills || "icon-grid";
 
   const categories = propSkillCategories && propSkillCategories.length > 0 ? propSkillCategories : skillCategories;
   const allSkills = propSkills && propSkills.length > 0 ? propSkills : skills;
@@ -26,7 +23,7 @@ const Skills = ({ skills: propSkills, skillCategories: propSkillCategories, titl
     return defaultIconMap[skill.name.toLowerCase()] || skill.icon || "";
   };
 
-  // ── Category nav shared across layouts ──
+  // Category navigation selector
   const CategoryNav = () => (
     <div className="flex flex-wrap gap-2 select-none pb-4 relative">
       {categories.map((category) => {
@@ -63,8 +60,8 @@ const Skills = ({ skills: propSkills, skillCategories: propSkillCategories, titl
     >
       <div className="w-full min-h-[78vh] flex flex-col space-y-8 py-4">
 
-        {/* ── Icon Grid (default) ── */}
-        {layout === "icon-grid" && (
+        {/* ── DESIGN 1: Icon Grid (with Category Navigation) ── */}
+        {design === "design1" && (
           <>
             <CategoryNav />
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
@@ -81,7 +78,7 @@ const Skills = ({ skills: propSkills, skillCategories: propSkillCategories, titl
                       Key Expertise
                     </h3>
                     <ul className="space-y-2.5">
-                      {currentCategory?.bullets.map((bullet, idx) => (
+                      {currentCategory?.bullets?.map((bullet, idx) => (
                         <motion.li key={idx}
                           initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }}
                           transition={{ delay: idx * 0.05, duration: 0.3 }}
@@ -131,8 +128,8 @@ const Skills = ({ skills: propSkills, skillCategories: propSkillCategories, titl
           </>
         )}
 
-        {/* ── Progress Bars ── */}
-        {layout === "progress-bars" && (
+        {/* ── DESIGN 2: Progress Bars ── */}
+        {design === "design2" && (
           <>
             <CategoryNav />
             <AnimatePresence mode="wait">
@@ -147,7 +144,7 @@ const Skills = ({ skills: propSkills, skillCategories: propSkillCategories, titl
                     <motion.div key={skill.name}
                       initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: idx * 0.05 }}
-                      className="flex flex-col gap-2"
+                      className="flex flex-col gap-2 text-left"
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
@@ -160,8 +157,7 @@ const Skills = ({ skills: propSkills, skillCategories: propSkillCategories, titl
                           {level}%
                         </span>
                       </div>
-                      {/* Track */}
-                      <div className="h-1.5 rounded-full bg-stone-800 overflow-hidden">
+                      <div className="h-1.5 rounded-full bg-stone-850 overflow-hidden">
                         <motion.div
                           initial={{ width: 0 }}
                           animate={{ width: `${level}%` }}
@@ -178,9 +174,9 @@ const Skills = ({ skills: propSkills, skillCategories: propSkillCategories, titl
           </>
         )}
 
-        {/* ── Tag Cloud ── */}
-        {layout === "tag-cloud" && (
-          <div className="flex flex-col gap-8">
+        {/* ── DESIGN 3: Compact Badge Cloud (Tag Cloud) ── */}
+        {design === "design3" && (
+          <div className="flex flex-col gap-8 text-left">
             {categories.map((cat) => {
               const catSkills = allSkills.filter(s => cat.skillNames?.includes(s.name));
               if (!catSkills.length) return null;
@@ -199,12 +195,7 @@ const Skills = ({ skills: propSkills, skillCategories: propSkillCategories, titl
                         viewport={{ once: true }}
                         transition={{ delay: idx * 0.03 }}
                         whileHover={{ scale: 1.06, y: -2 }}
-                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-bold cursor-default transition-all duration-200"
-                        style={{
-                          borderColor: "var(--border-color, rgba(255,255,255,0.08))",
-                          background: "var(--card-bg, #121212)",
-                          color: "var(--text-white-or-dark, #fff)",
-                        }}
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-stone-800 bg-stone-900/60 text-xs font-bold text-white transition-all duration-200 hover:border-primary/45"
                       >
                         <div className="w-4 h-4 rounded bg-white flex items-center justify-center shrink-0">
                           <img src={getIconSource(skill)} alt={skill.name} className="w-3 h-3 object-contain" loading="lazy" />
@@ -219,9 +210,9 @@ const Skills = ({ skills: propSkills, skillCategories: propSkillCategories, titl
           </div>
         )}
 
-        {/* ── Category Cards ── */}
-        {layout === "category-cards" && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {/* ── DESIGN 4: Categorized Cards ── */}
+        {design === "design4" && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-left">
             {categories.map((cat, catIdx) => {
               const catSkills = allSkills.filter(s => cat.skillNames?.includes(s.name));
               if (!catSkills.length) return null;
@@ -232,19 +223,18 @@ const Skills = ({ skills: propSkills, skillCategories: propSkillCategories, titl
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: catIdx * 0.08, duration: 0.4 }}
-                  className="rounded-2xl border p-5 flex flex-col gap-4 transition-all duration-300 hover:border-primary/30"
-                  style={{ borderColor: "var(--border-color, rgba(255,255,255,0.06))", background: "var(--card-bg, #121212)" }}
+                  className="rounded-2xl border border-stone-850 bg-stone-900/20 p-5 flex flex-col gap-4 transition-all duration-300 hover:border-primary/30"
                 >
                   <div className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full" style={{ background: "var(--primary)" }} />
-                    <h3 className="text-xs font-black uppercase tracking-widest" style={{ color: "var(--text-white-or-dark, #fff)" }}>
+                    <span className="w-2 h-2 rounded-full animate-pulse" style={{ background: "var(--primary)" }} />
+                    <h3 className="text-xs font-black uppercase tracking-widest text-white">
                       {cat.label}
                     </h3>
                   </div>
-                  {/* Skill icons */}
+                  {/* Skill badges */}
                   <div className="flex flex-wrap gap-2">
                     {catSkills.slice(0, 8).map(skill => (
-                      <div key={skill.name} className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-stone-900 border border-stone-800">
+                      <div key={skill.name} className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-stone-950 border border-stone-850">
                         <div className="w-4 h-4 rounded bg-white flex items-center justify-center shrink-0">
                           <img src={getIconSource(skill)} alt={skill.name} className="w-3 h-3 object-contain" loading="lazy" />
                         </div>
@@ -255,14 +245,38 @@ const Skills = ({ skills: propSkills, skillCategories: propSkillCategories, titl
                       <span className="text-[9px] text-stone-600 self-center">+{catSkills.length - 8} more</span>
                     )}
                   </div>
-                  {/* Bullet points */}
+                  {/* Key points */}
                   {cat.bullets?.slice(0, 2).map((b, i) => (
                     <p key={i} className="text-[10px] text-stone-500 leading-relaxed flex items-start gap-2">
-                      <FiCheckCircle className="shrink-0 mt-0.5" style={{ color: "var(--primary)" }} />
+                      <FiCheckCircle className="shrink-0 mt-0.5 text-primary" />
                       <span dangerouslySetInnerHTML={{ __html: b }} />
                     </p>
                   ))}
                 </motion.div>
+              );
+            })}
+          </div>
+        )}
+
+        {/* ── DESIGN 5: Minimal Checklist ── */}
+        {design === "design5" && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-left p-6 bg-stone-900/10 border border-stone-850 rounded-3xl">
+            {categories.slice(0, 4).map((cat) => {
+              const catSkills = allSkills.filter(s => cat.skillNames?.includes(s.name));
+              return (
+                <div key={cat.id} className="space-y-3">
+                  <h3 className="text-xs font-black uppercase tracking-widest text-primary border-b border-stone-900 pb-2">
+                    {cat.label}
+                  </h3>
+                  <div className="grid grid-cols-2 gap-2.5">
+                    {catSkills.map((skill) => (
+                      <div key={skill.name} className="flex items-center gap-2 text-stone-300">
+                        <FiCheckCircle className="text-emerald-500 shrink-0 text-xs" />
+                        <span className="text-xs font-semibold">{skill.name}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               );
             })}
           </div>
